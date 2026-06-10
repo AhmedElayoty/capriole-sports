@@ -46,7 +46,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(7,12,32,.92);backdrop-fi
 /* tabs */
 nav{display:flex;background:rgba(7,12,32,.92);border-bottom:1px solid var(--line);position:sticky;top:62px;z-index:49}
 nav button{flex:1;background:none;border:none;color:var(--mut);font-family:'Oswald';font-weight:600;
- font-size:13.5px;letter-spacing:2px;padding:12px 0 10px;cursor:pointer;border-bottom:2.5px solid transparent}
+ font-size:12.5px;letter-spacing:1.4px;padding:12px 0 10px;cursor:pointer;border-bottom:2.5px solid transparent}
 nav button.on{color:#fff;border-bottom-color:var(--rust2)}
 main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-x:hidden}
 .hide{display:none!important}
@@ -152,6 +152,57 @@ main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-
 .secrow{display:flex;align-items:center;gap:8px;margin:2px 0 12px}
 .sect{font-family:'Oswald';font-weight:600;font-size:13px;letter-spacing:2px;color:var(--mut)}
 footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px;letter-spacing:1.6px;color:#3d4a72}
+.hero{background:linear-gradient(150deg,#0a2e1d,#0c3a24);border:1px solid var(--green);border-radius:16px;
+ padding:13px 15px;margin-bottom:12px;cursor:pointer}
+.hero .hl{font-family:'Oswald';font-size:10.5px;letter-spacing:1.6px;color:#6dffb5;display:flex;justify-content:space-between}
+.hero .hm{display:flex;align-items:center;gap:10px;margin-top:8px}
+.hero .hm img{width:30px;height:30px;object-fit:contain}
+.hero .ht1{font-family:'Oswald';font-weight:600;font-size:17px;flex:1}
+.hero .cd{font-family:'Oswald';font-weight:700;font-size:21px;color:#6dffb5;letter-spacing:1px;text-align:right}
+.hero .cd small{display:block;font-size:9.5px;font-weight:500;letter-spacing:1.5px;color:#9fd8bb}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:10px}
+.pcard.lock{opacity:.78}
+.prow{display:flex;align-items:center;gap:8px}
+.prow .pt{flex:1;display:flex;align-items:center;gap:7px;font-family:'Oswald';font-weight:600;font-size:13.5px;min-width:0}
+.prow .pt img{width:24px;height:24px;object-fit:contain}
+.prow .pt span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .pt.r{flex-direction:row-reverse;text-align:right}
+.pin{width:46px;height:42px;background:var(--navy2);border:1.5px solid var(--line);border-radius:10px;
+ color:#fff;font-family:'Oswald';font-weight:700;font-size:19px;text-align:center;outline:none}
+.pin:focus{border-color:var(--rust)}
+.pin:disabled{opacity:.55}
+.pmeta{font-family:'Oswald';font-size:10px;letter-spacing:1.2px;color:var(--dim);display:flex;
+ justify-content:space-between;margin-bottom:7px}
+.pmeta .res{color:var(--gold)}
+.pmeta .pts3{color:var(--green)} .pmeta .pts1{color:var(--cyan)} .pmeta .pts0{color:var(--dim)}
+.lb{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:14px}
+.lb h3{font-family:'Oswald';font-weight:700;font-size:14px;letter-spacing:1.8px;color:var(--gold);margin-bottom:8px}
+.lbrow{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #1a2750;font-size:13px}
+.lbrow:last-child{border-bottom:none}
+.lbrow .rk{font-family:'Oswald';font-weight:700;width:22px;color:var(--dim);text-align:center}
+.lbrow .nm{flex:1;font-weight:600}
+.lbrow .sc2{font-family:'Oswald';font-weight:700;font-size:16px;color:var(--gold)}
+.lbrow .ex{font-size:10.5px;color:var(--dim);width:96px;text-align:right}
+.lbrow.me{background:#26190f;border-radius:8px;padding:6px 8px}
+.thirds{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-top:13px}
+.thirds h3{font-family:'Oswald';font-weight:700;font-size:14px;letter-spacing:1.8px;color:var(--gold)}
+.thirds .sub{font-size:11px;color:var(--dim);margin:3px 0 8px}
+.t3row{display:flex;align-items:center;gap:8px;padding:4.5px 0;border-bottom:1px solid #1a2750;font-size:12.5px}
+.t3row:last-child{border-bottom:none}
+.t3row .rk{font-family:'Oswald';width:20px;color:var(--dim);text-align:center}
+.t3row img{width:19px;height:19px;object-fit:contain}
+.t3row .nm{flex:1;font-weight:600}
+.t3row .st{font-family:'Oswald';font-size:11px;color:var(--dim)}
+.t3row.in .ok{color:var(--green);font-family:'Oswald';font-weight:600}
+.t3row.out .ok{color:var(--red);font-family:'Oswald';font-weight:600}
+.egystat{margin-top:9px;background:#0a2e1d;border:1px solid var(--green);border-radius:10px;
+ padding:8px 11px;font-family:'Oswald';font-size:12px;letter-spacing:.8px;color:#6dffb5}
+.strow{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mut);padding:2.5px 0}
+.strow b{font-family:'Oswald';font-weight:600;color:#fff;width:44px}
+.strow .lab{flex:1;text-align:center;font-size:10.5px;letter-spacing:1px;color:var(--dim);font-family:'Oswald'}
+.sharebtn{margin-top:10px;width:100%;background:var(--card2);border:1px solid var(--line);color:var(--mut);
+ font-family:'Oswald';letter-spacing:1.5px;font-size:11.5px;border-radius:10px;padding:9px;cursor:pointer}
+.chatflag{width:20px;height:14px;vertical-align:-2px;border-radius:2px}
 </style>
 </head>
 <body>
@@ -171,18 +222,27 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 </header>
 <nav>
  <button id="tabM" class="on" onclick="showTab('M')">MATCHES</button>
+ <button id="tabP" onclick="showTab('P')">PREDICT</button>
  <button id="tabG" onclick="showTab('G')">GROUPS</button>
- <button id="tabC" onclick="showTab('C')">TEAM CHAT</button>
+ <button id="tabC" onclick="showTab('C')">CHAT</button>
 </nav>
 <main>
  <section id="paneM">
+  <div id="heroBox"></div>
   <div class="dstrip" id="dstrip"></div>
   <div id="mlist"><div class="empty"><div class="big">⚽</div>Loading matches…</div></div>
  </section>
+ <section id="paneP" class="hide">
+  <div class="lb"><h3>&#127942; CAPRIOLE LEADERBOARD</h3><div id="lbBody"><div class="empty">Loading…</div></div></div>
+  <div class="secrow"><span class="sect">YOUR PREDICTIONS</span>
+   <span style="margin-left:auto;font-size:10px;color:var(--dim);font-family:'Oswald';letter-spacing:1px">EXACT = 3 PTS · RESULT = 1 PT</span></div>
+  <div id="predList"><div class="empty">Loading…</div></div>
+ </section>
  <section id="paneG" class="hide">
   <div class="secrow"><span class="sect">GROUP STANDINGS</span>
-   <button class="refresh" onclick="loadStandings(true)">↻ REFRESH</button></div>
+   <span style="margin-left:auto;font-size:10px;color:var(--dim);font-family:'Oswald';letter-spacing:1px">AUTO-UPDATING</span></div>
   <div class="ggrid" id="ggrid"><div class="empty">Loading standings…</div></div>
+  <div id="thirdsBox"></div>
  </section>
  <section id="paneC" class="hide">
   <div class="chatnote">Shared Capriole team room · be nice, it's football 🏆</div>
@@ -213,6 +273,8 @@ const LG = "fifa.world";
 const API = "https://site.api.espn.com/apis/site/v2/sports/soccer/" + LG;
 const STAND = "https://site.api.espn.com/apis/v2/sports/soccer/" + LG + "/standings?season=2026";
 const CHAT_KEY  = "capriole_wc26_room_8842";
+const PRED_KEY  = "capriole_wc26_predictions";
+const SEASON_RANGE = "20260611-20260719";
 const CHAT_READ = "https://textdb.online/" + CHAT_KEY;
 const CHAT_WRITE = "https://api.textdb.online/update/";
 const TZ = "Asia/Dubai";
@@ -225,6 +287,10 @@ let openId = null;           // expanded match id
 let lineups = {};            // eventId -> summary data
 let chatTimer = null, matchTimer = null, lastChatJson = "";
 let lastFetch = 0, lastScores = {}, flashIds = new Set();
+let seasonCache = { t: 0, events: [] };
+let myPreds = JSON.parse(localStorage.getItem("cs_preds") || "{}");
+let groupsTimer = null, heroEvent = null;
+const MYTEAMS = () => JSON.parse(localStorage.getItem("cs_teams") || '["Egypt"]');
 const myId = localStorage.getItem("cs_id") || (localStorage.setItem("cs_id",
   "u" + Math.random().toString(36).slice(2, 9)), localStorage.getItem("cs_id"));
 
@@ -254,17 +320,23 @@ setInterval(() => {
     const s = Math.max(0, Math.round((Date.now() - lastFetch) / 1000));
     $("contxt").textContent = "LIVE FEED · UPDATED " + (s < 60 ? s + "S" : Math.round(s/60) + "M") + " AGO";
   }
+  const cd = document.getElementById("heroCd");
+  if (cd && heroEvent && heroEvent.status.type.state !== "in") {
+    cd.innerHTML = countdown(new Date(heroEvent.date)) + "<small>TO KICK-OFF</small>";
+  }
 }, 1000);
 
 /* ================= TABS ================= */
 function showTab(t) {
-  ["M", "G", "C"].forEach(x => {
+  ["M", "P", "G", "C"].forEach(x => {
     $("tab" + x).classList.toggle("on", x === t);
     $("pane" + x).classList.toggle("hide", x !== t);
   });
   if (t === "C") { ensureName(); pollChat(); chatTimer = chatTimer || setInterval(pollChat, 5000); }
   else if (chatTimer) { clearInterval(chatTimer); chatTimer = null; }
-  if (t === "G" && !window._standLoaded) loadStandings();
+  if (t === "G") { loadStandings(); groupsTimer = groupsTimer || setInterval(loadStandings, 90000); }
+  else if (groupsTimer) { clearInterval(groupsTimer); groupsTimer = null; }
+  if (t === "P") { ensureName(); renderPredict(); }
 }
 
 /* ================= DATE STRIP ================= */
@@ -318,6 +390,18 @@ async function loadMatches() {
       lastScores[e.id] = sc;
     });
     if (buzz && navigator.vibrate) navigator.vibrate([180, 90, 180]);
+    if (flashIds.size) {
+      const posts = [];
+      events.forEach(e => {
+        if (!flashIds.has(e.id)) return;
+        const c = e.competitions[0];
+        const H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
+        posts.push({ id: "g" + e.id + "-" + (H.score ?? 0) + (A.score ?? 0), uid: "goalbot", name: "\u26BD GOAL FLASH",
+          text: (e.status.displayClock || "") + " \u2014 " + H.team.displayName + " " + (H.score ?? 0) +
+                "\u2013" + (A.score ?? 0) + " " + A.team.displayName, ts: Date.now() });
+      });
+      if (posts.length) postRoom(posts).catch(() => {});
+    }
     renderMatches();
     lastFetch = Date.now();
     setCon(true, "LIVE FEED · UPDATED 0S AGO");
@@ -394,7 +478,7 @@ async function toggleM(id) {
     if (openId !== id || !box) return;
     const ros = data.rosters || [];
     if (!ros.length || !ros.some(r => (r.roster || []).length)) {
-      box.innerHTML = `<div class="dnote">Line-ups not announced yet — usually ~1 hour before kick-off.</div>`;
+      box.innerHTML = `<div class="dnote">Line-ups not announced yet — usually ~1 hour before kick-off.</div>` + statsShare(data);
       return;
     }
     box.innerHTML = `<div class="lurow">` + ros.map(r => {
@@ -404,15 +488,14 @@ async function toggleM(id) {
         starters.map(p => `<div class="pl"><b>${esc(String(p.jersey || ""))}</b> ${esc(p.athlete ? p.athlete.displayName : "")}</div>`).join("") +
         (subs.length ? `<div class="subs">⇄ ${subs.map(p => esc(p.athlete ? p.athlete.displayName : "")).join(", ")}</div>` : "") +
         `</div>`;
-    }).join("") + `</div>`;
+    }).join("") + `</div>` + statsShare(data);
   } catch (e) {
     if (box) box.innerHTML = `<div class="dnote">Couldn't load line-ups (${esc(String(e.message || e))}).</div>`;
   }
 }
 
 /* ================= GROUPS ================= */
-async function loadStandings(force) {
-  if (window._standLoaded && !force) return;
+async function loadStandings() {
   try {
     const d = await getJSON(STAND);
     const groups = d.children || [];
@@ -430,12 +513,218 @@ async function loadStandings(force) {
             <td>${s.pointDifferential || s.pointsDiff || 0}</td><td class="pts">${s.points || 0}</td></tr>`;
         }).join("") + `</table></div>`;
     }).join("");
-    window._standLoaded = true;
-    setTimeout(() => window._standLoaded = false, 600000); // refresh-able after 10 min
+    renderThirds(groups);
   } catch (e) {
-    $("ggrid").innerHTML = `<div class="empty">Couldn't load standings (${esc(String(e.message || e))}).
-      <br><button class="refresh" onclick="loadStandings(true)">TRY AGAIN</button></div>`;
+    $("ggrid").innerHTML = `<div class="empty">Couldn't load standings — retrying automatically.</div>`;
   }
+}
+function statmap(r) {
+  const s = {};
+  (r.stats || []).forEach(x => s[x.name] = parseFloat(x.value !== undefined ? x.value : x.displayValue) || 0);
+  return s;
+}
+function rankRows(rows) {
+  return [...rows].sort((a, b) => {
+    const A = statmap(a), B = statmap(b);
+    return (B.points - A.points) || (B.pointDifferential - A.pointDifferential) || (B.pointsFor - A.pointsFor);
+  });
+}
+function renderThirds(groups) {
+  const thirds = [];
+  let egyLine = "";
+  groups.forEach(g => {
+    const rows = (g.standings && g.standings.entries) || [];
+    if (!rows.length) return;
+    const ranked = rankRows(rows);
+    const gl = (g.name || "").replace("Group ", "");
+    if (ranked[2]) thirds.push({ g: gl, r: ranked[2], s: statmap(ranked[2]) });
+    const i = ranked.findIndex(r => r.team.displayName === "Egypt");
+    if (i === 0) egyLine = "EGYPT: 1ST IN GROUP " + gl + " — DIRECT R32 SPOT";
+    else if (i === 1) egyLine = "EGYPT: 2ND IN GROUP " + gl + " — DIRECT R32 SPOT";
+    else if (i === 3) egyLine = "EGYPT: 4TH IN GROUP " + gl + " — MUST CLIMB";
+    else if (i === 2) egyLine = "EGYPT3RD";
+  });
+  thirds.sort((a, b) => (b.s.points - a.s.points) || (b.s.pointDifferential - a.s.pointDifferential) || (b.s.pointsFor - a.s.pointsFor));
+  if (egyLine === "EGYPT3RD") {
+    const ti = thirds.findIndex(t => t.r.team.displayName === "Egypt");
+    egyLine = "EGYPT: 3RD IN GROUP G — #" + (ti + 1) + " OF 12 THIRDS — CURRENTLY " +
+      (ti > -1 && ti < 8 ? "INSIDE THE BEST 8 — THROUGH" : "OUTSIDE THE BEST 8 — OUT");
+  }
+  const played = thirds.some(t => t.s.gamesPlayed > 0);
+  $("thirdsBox").innerHTML = '<div class="thirds"><h3>BEST 3RD-PLACED RACE</h3>' +
+    '<div class="sub">8 of the 12 third-placed teams also reach the Round of 32' +
+    (played ? "" : " — fills in once results start") + '</div>' +
+    thirds.map((t, i) => '<div class="t3row ' + (i < 8 ? "in" : "out") + '"><div class="rk">' + (i + 1) + '</div>' +
+      '<img src="' + ((t.r.team.logos && t.r.team.logos[0]) ? t.r.team.logos[0].href : "") + '" alt="">' +
+      '<div class="nm">' + esc(t.r.team.displayName) +
+      ' <span style="color:var(--dim);font-size:10.5px">(' + t.g + ')</span></div>' +
+      '<div class="st">' + (t.s.points || 0) + ' PTS · GD ' + (t.s.pointDifferential > 0 ? "+" : "") + (t.s.pointDifferential || 0) + '</div>' +
+      '<div class="ok">' + (i < 8 ? "IN" : "OUT") + '</div></div>').join("") +
+    (egyLine ? '<div class="egystat">' + egyLine + '</div>' : "") + '</div>';
+}
+
+/* ================= HERO (my team) ================= */
+async function renderHero() {
+  try {
+    const evs = await seasonEvents();
+    const mine = evs.filter(e => e.competitions[0].competitors.some(c => MYTEAMS().includes(c.team.displayName)));
+    heroEvent = mine.find(e => e.status.type.state === "in") ||
+                mine.find(e => e.status.type.state === "pre" && new Date(e.date) > Date.now() - 7200000) || null;
+    drawHero();
+  } catch (_) { $("heroBox").innerHTML = ""; }
+}
+function drawHero() {
+  const e = heroEvent;
+  if (!e) { $("heroBox").innerHTML = ""; return; }
+  const c = e.competitions[0];
+  const H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
+  const live = e.status.type.state === "in";
+  const ko = new Date(e.date);
+  const mid = live ? (H.score ?? 0) + " – " + (A.score ?? 0) : countdown(ko);
+  $("heroBox").innerHTML = '<div class="hero" onclick="heroJump()">' +
+    '<div class="hl"><span>★ MY TEAM ' + (live ? "· LIVE NOW" : "· NEXT MATCH") + '</span>' +
+    '<span>' + fmt(ko, { weekday: "short", day: "2-digit", month: "short" }).toUpperCase() +
+    ' · ' + fmt(ko, { hour: "2-digit", minute: "2-digit" }) + ' UAE</span></div>' +
+    '<div class="hm"><img src="' + (H.team.logo || "") + '" alt="">' +
+    '<div class="ht1">' + esc(H.team.displayName) + ' <span style="color:var(--dim)">v</span> ' + esc(A.team.displayName) + '</div>' +
+    '<img src="' + (A.team.logo || "") + '" alt="">' +
+    '<div class="cd" id="heroCd">' + mid + '<small>' + (live ? esc(e.status.displayClock || "LIVE") : "TO KICK-OFF") + '</small></div></div></div>';
+}
+function countdown(d) {
+  let s = Math.max(0, Math.floor((d - Date.now()) / 1000));
+  const dd = Math.floor(s / 86400); s -= dd * 86400;
+  const hh = Math.floor(s / 3600); s -= hh * 3600;
+  const mm = Math.floor(s / 60);
+  return (dd ? dd + "D " : "") + String(hh).padStart(2, "0") + "H " + String(mm).padStart(2, "0") + "M";
+}
+function heroJump() {
+  if (heroEvent) { showTab("M"); pickDate(uaeYMD(new Date(heroEvent.date))); }
+}
+
+/* ================= PREDICTIONS ================= */
+async function renderPredict() {
+  try {
+    const evs = await seasonEvents();
+    const now = Date.now();
+    const upcoming = evs.filter(e => e.status.type.state === "pre" && new Date(e.date) > now).slice(0, 14);
+    const recent = evs.filter(e => e.status.type.state !== "pre").slice(-6).reverse();
+    $("predList").innerHTML = upcoming.map(e => predCard(e, false)).join("") +
+      (recent.length ? '<div class="secrow" style="margin-top:12px"><span class="sect">LOCKED / FINISHED</span></div>' +
+        recent.map(e => predCard(e, true)).join("") : "");
+    loadLeaderboard(evs);
+  } catch (err) {
+    $("predList").innerHTML = '<div class="empty">Could not load fixtures — check connection.</div>';
+  }
+}
+function predCard(e, locked) {
+  const c = e.competitions[0];
+  const H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
+  const p = myPreds[e.id] || {};
+  const ko = new Date(e.date);
+  let meta;
+  if (e.status.type.state === "post") {
+    const pts = scorePred(p, H.score, A.score);
+    meta = '<span class="res">FT ' + (H.score ?? "-") + '–' + (A.score ?? "-") + '</span>' +
+      '<span class="pts' + pts + '">' + (p.h !== undefined ? pts + " PTS" : "NO PREDICTION") + '</span>';
+  } else {
+    meta = '<span>' + fmt(ko, { weekday: "short", day: "2-digit", month: "short" }).toUpperCase() +
+      ' · ' + fmt(ko, { hour: "2-digit", minute: "2-digit" }) + ' UAE</span>' +
+      '<span>' + (locked ? "LOCKED" : "OPEN") + '</span>';
+  }
+  const dis = locked ? "disabled" : "";
+  return '<div class="pcard' + (locked ? " lock" : "") + '"><div class="pmeta">' + meta + '</div><div class="prow">' +
+    '<div class="pt"><img src="' + (H.team.logo || "") + '" alt=""><span>' + esc(H.team.displayName) + '</span></div>' +
+    '<input class="pin" type="number" min="0" max="20" inputmode="numeric" value="' + (p.h ?? "") + '" ' + dis +
+    ' onchange="setPred(&quot;' + e.id + '&quot;,this.value,null)">' +
+    '<input class="pin" type="number" min="0" max="20" inputmode="numeric" value="' + (p.a ?? "") + '" ' + dis +
+    ' onchange="setPred(&quot;' + e.id + '&quot;,null,this.value)">' +
+    '<div class="pt r"><img src="' + (A.team.logo || "") + '" alt=""><span>' + esc(A.team.displayName) + '</span></div></div></div>';
+}
+function scorePred(p, h, a) {
+  if (p.h === undefined || p.h === null || p.h === "" || h == null || a == null) return 0;
+  const ph = +p.h, pa = +(p.a ?? 0);
+  if (ph === +h && pa === +a) return 3;
+  if (Math.sign(ph - pa) === Math.sign((+h) - (+a))) return 1;
+  return 0;
+}
+let predPush = null;
+function setPred(id, h, a) {
+  const p = myPreds[id] || {};
+  if (h !== null && h !== "") p.h = +h;
+  if (a !== null && a !== "") p.a = +a;
+  myPreds[id] = p;
+  localStorage.setItem("cs_preds", JSON.stringify(myPreds));
+  clearTimeout(predPush);
+  predPush = setTimeout(pushPreds, 900);
+}
+async function pushPreds() {
+  if (!localStorage.getItem("cs_name")) { ensureName(); return; }
+  try {
+    const all = await readKey(PRED_KEY, {});
+    all[myId] = { name: localStorage.getItem("cs_name"), preds: myPreds };
+    await writeKey(PRED_KEY, all);
+  } catch (_) {}
+}
+async function loadLeaderboard(evs) {
+  try {
+    const all = await readKey(PRED_KEY, {});
+    const done = evs.filter(e => e.status.type.state === "post");
+    const rows = Object.entries(all).map(([uid, u]) => {
+      let pts = 0, exact = 0, played = 0;
+      done.forEach(e => {
+        const c = e.competitions[0];
+        const H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
+        const p = (u.preds || {})[e.id];
+        if (!p || p.h === undefined) return;
+        played++;
+        const s = scorePred(p, H.score, A.score);
+        pts += s;
+        if (s === 3) exact++;
+      });
+      return { uid, name: u.name || "?", pts, exact, played };
+    }).sort((a, b) => b.pts - a.pts || b.exact - a.exact);
+    $("lbBody").innerHTML = rows.length
+      ? rows.map((r, i) => '<div class="lbrow' + (r.uid === myId ? " me" : "") + '"><div class="rk">' + (i + 1) + '</div>' +
+          '<div class="nm">' + esc(r.name) + '</div><div class="ex">' + r.exact + ' exact · ' + r.played + ' played</div>' +
+          '<div class="sc2">' + r.pts + '</div></div>').join("")
+      : '<div class="empty" style="padding:12px">No predictions yet — be the first! Points appear once matches finish.</div>';
+  } catch (_) {
+    $("lbBody").innerHTML = '<div class="empty" style="padding:12px">Leaderboard unreachable.</div>';
+  }
+}
+
+/* ================= STATS + SHARE ================= */
+function statsShare(data) {
+  let html = "";
+  const t = (data.boxscore && data.boxscore.teams) || [];
+  if (t.length === 2 && (t[0].statistics || []).length) {
+    const want = ["possessionPct", "totalShots", "shotsOnTarget", "wonCorners", "foulsCommitted", "totalYellowCards", "totalRedCards"];
+    const labs = { possessionPct: "POSSESSION %", totalShots: "SHOTS", shotsOnTarget: "ON TARGET",
+                   wonCorners: "CORNERS", foulsCommitted: "FOULS", totalYellowCards: "YELLOW", totalRedCards: "RED" };
+    const m0 = {}, m1 = {};
+    (t[0].statistics || []).forEach(s => m0[s.name] = s.displayValue);
+    (t[1].statistics || []).forEach(s => m1[s.name] = s.displayValue);
+    const rows = want.filter(k => m0[k] !== undefined || m1[k] !== undefined)
+      .map(k => '<div class="strow"><b>' + (m0[k] ?? "-") + '</b><div class="lab">' + labs[k] + '</div>' +
+                '<b style="text-align:right">' + (m1[k] ?? "-") + '</b></div>').join("");
+    if (rows) html += '<div style="margin-top:10px">' + rows + '</div>';
+  }
+  return html + '<button class="sharebtn" onclick="shareMatch(event)">SHARE THIS MATCH TO THE TEAM</button>';
+}
+function shareMatch(ev) {
+  ev.stopPropagation();
+  const e = events.find(x => x.id === openId);
+  if (!e) return;
+  const c = e.competitions[0];
+  const H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
+  const pre = e.status.type.state === "pre";
+  const txt = "Capriole Sports: " + H.team.displayName + " " +
+    (pre ? "v " + A.team.displayName + " — " + fmt(new Date(e.date), { weekday: "short", day: "2-digit", month: "short" }) +
+           " " + fmt(new Date(e.date), { hour: "2-digit", minute: "2-digit" }) + " UAE"
+         : (H.score ?? 0) + "–" + (A.score ?? 0) + " " + A.team.displayName) +
+    " · https://ahmedelayoty.github.io/capriole-sports/";
+  if (navigator.share) navigator.share({ text: txt }).catch(() => {});
+  else { if (navigator.clipboard) navigator.clipboard.writeText(txt); alert("Copied — paste it in WhatsApp!"); }
 }
 
 /* ================= CHAT ================= */
@@ -449,12 +738,34 @@ function saveName() {
   $("nameModal").classList.add("hide");
   pollChat();
 }
-async function readRoom() {
-  const r = await fetch(CHAT_READ + "?t=" + Date.now(), { cache: "no-store" });
+async function readKey(key, fallback) {
+  const r = await fetch("https://textdb.online/" + key + "?t=" + Date.now(), { cache: "no-store" });
   if (!r.ok) throw new Error("HTTP " + r.status);
   const t = (await r.text()).trim();
-  if (!t) return [];
-  try { const a = JSON.parse(t); return Array.isArray(a) ? a : []; } catch (_) { return []; }
+  if (!t) return fallback;
+  try { return JSON.parse(t); } catch (_) { return fallback; }
+}
+async function writeKey(key, value) {
+  const r = await fetch(CHAT_WRITE, { method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "key=" + encodeURIComponent(key) + "&value=" + encodeURIComponent(JSON.stringify(value)) });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+}
+const readRoom = () => readKey(CHAT_KEY, []);
+async function postRoom(newMsgs) {
+  let msgs = [];
+  try { msgs = await readRoom(); } catch (_) {}
+  msgs.push(...newMsgs);
+  const dedup = [...new Map(msgs.map(m => [m.id, m])).values()]
+    .sort((a, b) => (a.ts || 0) - (b.ts || 0)).slice(-80);
+  await writeKey(CHAT_KEY, dedup);
+  return dedup;
+}
+async function seasonEvents(force) {
+  if (!force && Date.now() - seasonCache.t < 600000 && seasonCache.events.length) return seasonCache.events;
+  const d = await getJSON(API + "/scoreboard?dates=" + SEASON_RANGE);
+  seasonCache = { t: Date.now(), events: (d.events || []).sort((a, b) => new Date(a.date) - new Date(b.date)) };
+  return seasonCache.events;
 }
 async function pollChat() {
   try {
@@ -466,12 +777,19 @@ async function pollChat() {
       <span style="font-size:11px">${esc(String(e.message || e))}</span></div>`;
   }
 }
+function emojiFlags(s) {
+  return s.replace(/[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/g, pair => {
+    const cc = String.fromCharCode(pair.codePointAt(0) - 0x1F1E6 + 97) +
+               String.fromCharCode(pair.codePointAt(2) - 0x1F1E6 + 97);
+    return '<img class="chatflag" src="https://flagcdn.com/20x15/' + cc + '.png" alt="' + cc + '">';
+  });
+}
 function renderChat(msgs) {
   const atBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 160;
   $("chatlog").innerHTML = msgs.slice(-100).map(m => `
     <div class="msg${m.uid === myId ? " me" : ""}">
       <div class="who">${esc(m.name || "?")}</div>
-      <div class="txt">${esc(m.text || "")}</div>
+      <div class="txt">${emojiFlags(esc(m.text || ""))}</div>
       <div class="when">${fmt(new Date(m.ts || Date.now()), { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}</div>
     </div>`).join("") || `<div class="empty">No messages yet — say hello! 👋</div>`;
   if (atBottom) window.scrollTo(0, document.body.scrollHeight);
@@ -484,16 +802,7 @@ async function sendMsg() {
   const mine = { id: "m" + Date.now() + Math.random().toString(36).slice(2, 6),
                  uid: myId, name: localStorage.getItem("cs_name"), text, ts: Date.now() };
   try {
-    let msgs = [];
-    try { msgs = await readRoom(); } catch (_) {}
-    msgs.push(mine);
-    const dedup = [...new Map(msgs.map(m => [m.id, m])).values()]
-      .sort((a, b) => (a.ts || 0) - (b.ts || 0)).slice(-80);
-    const r = await fetch(CHAT_WRITE, { method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: "key=" + encodeURIComponent(CHAT_KEY) +
-            "&value=" + encodeURIComponent(JSON.stringify(dedup)) });
-    if (!r.ok) throw new Error("HTTP " + r.status);
+    await postRoom([mine]);
     lastChatJson = ""; pollChat();
   } catch (e) { alert("Couldn't send — check connection."); }
 }
@@ -501,6 +810,8 @@ async function sendMsg() {
 /* ================= BOOT ================= */
 setCon(null, "CONNECTING");
 buildStrip();
+renderHero();
+setInterval(renderHero, 300000);
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) { loadMatches(); if (chatTimer) pollChat(); }
 });
