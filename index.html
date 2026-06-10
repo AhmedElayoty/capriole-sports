@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a1230">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Capriole">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Capriole Sports — World Cup 26 Live</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1230; --navy2:#0d1838; --card:#121d44; --card2:#0e1736;
+  --line:#22305f; --txt:#eef2ff; --mut:#8fa2d8; --dim:#5e6da0;
+  --rust:#e05a2b; --rust2:#ff7a45; --cyan:#19c8ff; --gold:#ffc02e;
+  --green:#00d26a; --red:#ff3b5c; --lime:#b8e62e;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:
+ radial-gradient(120vw 60vh at 80% -10%,#13245e 0%,transparent 60%),
+ radial-gradient(100vw 50vh at -10% 110%,#0c2b1f 0%,transparent 55%),var(--navy);
+ color:var(--txt);min-height:100dvh;display:flex;flex-direction:column}
+.wrap{width:100%;max-width:760px;margin:0 auto;flex:1;display:flex;flex-direction:column}
+/* header */
+header{position:sticky;top:0;z-index:50;background:rgba(7,12,32,.92);backdrop-filter:blur(10px);
+ border-bottom:1px solid var(--line);padding:max(10px,env(safe-area-inset-top)) 16px 10px}
+.brand{display:flex;align-items:center;gap:10px}
+.crest{width:38px;height:38px;border-radius:10px;background:linear-gradient(150deg,var(--rust),#8f3315);
+ display:flex;align-items:center;justify-content:center;font-size:20px}
+.bname{font-family:'Oswald';font-weight:700;font-size:21px;letter-spacing:1px;line-height:1}
+.bname b{color:var(--rust2);font-weight:700}
+.bsub{font-family:'Oswald';font-weight:500;font-size:10.5px;letter-spacing:2.4px;color:var(--mut);margin-top:3px}
+.hright{margin-left:auto;text-align:right}
+.uaeclock{font-family:'Oswald';font-weight:600;font-size:17px;letter-spacing:.5px}
+.constate{display:flex;align-items:center;gap:5px;justify-content:flex-end;font-family:'Oswald';
+ font-size:10px;letter-spacing:1.5px;color:var(--mut);margin-top:2px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--dim)}
+.dot.ok{background:var(--green);box-shadow:0 0 8px var(--green)}
+.dot.bad{background:var(--red)}
+/* tabs */
+nav{display:flex;background:rgba(7,12,32,.92);border-bottom:1px solid var(--line);position:sticky;top:62px;z-index:49}
+nav button{flex:1;background:none;border:none;color:var(--mut);font-family:'Oswald';font-weight:600;
+ font-size:13.5px;letter-spacing:2px;padding:12px 0 10px;cursor:pointer;border-bottom:2.5px solid transparent}
+nav button.on{color:#fff;border-bottom-color:var(--rust2)}
+main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-x:hidden}
+.hide{display:none!important}
+/* date strip */
+.dstrip{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none}
+.dstrip::-webkit-scrollbar{display:none}
+.dchip{flex:0 0 auto;background:var(--card2);border:1px solid var(--line);border-radius:11px;
+ padding:7px 13px;text-align:center;cursor:pointer;color:var(--mut)}
+.dchip .dw{font-family:'Oswald';font-weight:500;font-size:10px;letter-spacing:1.5px}
+.dchip .dn{font-family:'Oswald';font-weight:700;font-size:16px;color:var(--txt)}
+.dchip.on{background:var(--rust);border-color:var(--rust2)}
+.dchip.on .dw,.dchip.on .dn{color:#fff}
+.dchip.today{border-color:var(--gold)}
+/* match cards */
+.mcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 14px;
+ margin-bottom:11px;cursor:pointer;transition:transform .08s}
+.mcard:active{transform:scale(.985)}
+.mcard.egy{background:#0a2e1d;border-color:var(--green)}
+.mtop{display:flex;align-items:center;gap:8px;font-family:'Oswald';font-size:10.5px;
+ letter-spacing:1.4px;color:var(--mut);margin-bottom:10px}
+.badge{padding:2px 9px;border-radius:20px;font-weight:600}
+.badge.live{background:var(--red);color:#fff;animation:pulse 1.4s infinite}
+.badge.ft{background:#26345f;color:#cdd9ff}
+.badge.pre{background:#26345f;color:var(--cyan)}
+.badge.ht{background:var(--gold);color:#231500}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.mrow{display:flex;align-items:center;gap:10px}
+.team{flex:1;display:flex;align-items:center;gap:9px;min-width:0}
+.team.away{flex-direction:row-reverse;text-align:right}
+.team img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.tname{font-family:'Oswald';font-weight:600;font-size:15.5px;letter-spacing:.4px;white-space:nowrap;
+ overflow:hidden;text-overflow:ellipsis}
+.tname.egy{color:#6dffb5}
+.score{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:1px;min-width:74px;text-align:center}
+.score small{display:block;font-size:10px;font-weight:500;letter-spacing:1.6px;color:var(--cyan);margin-top:1px}
+.mven{margin-top:9px;font-size:11px;color:var(--dim);display:flex;justify-content:space-between;gap:8px}
+.mven b{color:var(--mut);font-weight:600}
+/* expanded detail */
+.mdetail{border-top:1px dashed var(--line);margin-top:11px;padding-top:11px;display:none}
+.mcard.open .mdetail{display:block}
+.goals{font-size:12.5px;color:var(--mut);line-height:1.9}
+.goals b{color:var(--txt)}
+.lurow{display:flex;gap:10px;margin-top:10px}
+.lucol{flex:1;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:9px 11px;min-width:0}
+.lucol h4{font-family:'Oswald';font-weight:600;font-size:12px;letter-spacing:1px;color:var(--gold);
+ margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lucol h4 span{color:var(--dim);font-weight:500}
+.pl{font-size:11.5px;color:var(--mut);padding:2px 0;display:flex;gap:6px}
+.pl b{color:var(--dim);font-family:'Oswald';font-weight:500;width:18px;text-align:right;flex:none}
+.subs{color:var(--dim);font-size:10.5px;margin-top:6px;line-height:1.7}
+.dnote{text-align:center;color:var(--dim);font-size:11.5px;padding:6px 0 2px}
+.empty{text-align:center;color:var(--dim);padding:46px 20px;font-size:14px;line-height:2}
+.empty .big{font-size:38px}
+/* groups */
+.ggrid{display:grid;grid-template-columns:1fr;gap:11px}
+@media(min-width:640px){.ggrid{grid-template-columns:1fr 1fr}}
+.gcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 13px}
+.gcard.egy{background:#0a2e1d;border-color:var(--green)}
+.gcard h3{font-family:'Oswald';font-weight:700;font-size:15px;letter-spacing:1.6px;color:var(--gold);margin-bottom:8px}
+.gt{width:100%;border-collapse:collapse;font-size:12.5px}
+.gt th{font-family:'Oswald';font-weight:500;font-size:10px;letter-spacing:1px;color:var(--dim);
+ text-align:center;padding:3px 2px;border-bottom:1px solid var(--line)}
+.gt th:first-child{text-align:left}
+.gt td{padding:6px 2px;text-align:center;color:var(--mut);border-bottom:1px solid #1a2750}
+.gt tr:last-child td{border-bottom:none}
+.gt .tm{display:flex;align-items:center;gap:7px;text-align:left;color:var(--txt);font-weight:600;font-size:12.5px}
+.gt .tm img{width:20px;height:20px;object-fit:contain}
+.gt .pts{font-family:'Oswald';font-weight:700;color:#fff}
+.gt tr.q td:first-child{box-shadow:inset 3px 0 0 var(--cyan)}
+.gt tr.egy .tm{color:#6dffb5}
+/* chat */
+#chatlog{display:flex;flex-direction:column;gap:9px;padding-bottom:8px;min-height:40vh}
+.msg{max-width:82%;background:var(--card);border:1px solid var(--line);border-radius:14px 14px 14px 4px;
+ padding:8px 12px;align-self:flex-start}
+.msg.me{align-self:flex-end;background:linear-gradient(150deg,#a23c16,#7c2d0e);border-color:var(--rust);
+ border-radius:14px 14px 4px 14px}
+.msg .who{font-family:'Oswald';font-weight:600;font-size:10.5px;letter-spacing:1px;color:var(--rust2);margin-bottom:2px}
+.msg.me .who{color:#ffd2bd}
+.msg .txt{font-size:13.5px;line-height:1.45;word-wrap:break-word;white-space:pre-wrap}
+.msg .when{font-size:9.5px;color:var(--dim);text-align:right;margin-top:3px}
+.chatbar{position:sticky;bottom:0;display:flex;gap:8px;padding:10px 0 2px;background:linear-gradient(transparent,var(--navy) 30%)}
+.chatbar input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:24px;color:var(--txt);
+ font-family:'Inter';font-size:14px;padding:11px 16px;outline:none}
+.chatbar input:focus{border-color:var(--rust)}
+.chatbar button{background:var(--rust);border:none;color:#fff;font-family:'Oswald';font-weight:600;
+ letter-spacing:1px;font-size:13px;border-radius:24px;padding:0 20px;cursor:pointer}
+.chatnote{font-size:10.5px;color:var(--dim);text-align:center;padding:4px 0 8px}
+/* name modal */
+#nameModal{position:fixed;inset:0;background:rgba(4,8,22,.86);z-index:100;display:flex;
+ align-items:center;justify-content:center;padding:24px}
+#nameModal .box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 22px;
+ width:100%;max-width:380px;text-align:center}
+#nameModal h2{font-family:'Oswald';font-weight:700;letter-spacing:1px;font-size:20px;margin-bottom:4px}
+#nameModal p{color:var(--mut);font-size:12.5px;margin-bottom:16px}
+#nameModal input{width:100%;background:var(--navy2);border:1px solid var(--line);border-radius:12px;
+ color:var(--txt);font-size:15px;padding:12px 14px;outline:none;text-align:center;margin-bottom:12px}
+#nameModal button{width:100%;background:var(--rust);border:none;color:#fff;font-family:'Oswald';
+ font-weight:600;letter-spacing:1.5px;font-size:14px;border-radius:12px;padding:13px;cursor:pointer}
+.refresh{background:var(--card2);border:1px solid var(--line);color:var(--mut);font-family:'Oswald';
+ letter-spacing:1px;font-size:11px;border-radius:20px;padding:6px 14px;cursor:pointer;margin-left:auto;flex:none}
+.secrow{display:flex;align-items:center;gap:8px;margin:2px 0 12px}
+.sect{font-family:'Oswald';font-weight:600;font-size:13px;letter-spacing:2px;color:var(--mut)}
+footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px;letter-spacing:1.6px;color:#3d4a72}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div class="brand">
+  <div class="crest">⚽</div>
+  <div>
+   <div class="bname">CAPRIOLE <b>SPORTS</b></div>
+   <div class="bsub">WORLD CUP 26 · ALL TIMES UAE</div>
+  </div>
+  <div class="hright">
+   <div class="uaeclock" id="clock">--:--</div>
+   <div class="constate"><span class="dot" id="condot"></span><span id="contxt">CONNECTING</span></div>
+  </div>
+ </div>
+</header>
+<nav>
+ <button id="tabM" class="on" onclick="showTab('M')">MATCHES</button>
+ <button id="tabG" onclick="showTab('G')">GROUPS</button>
+ <button id="tabC" onclick="showTab('C')">TEAM CHAT</button>
+</nav>
+<main>
+ <section id="paneM">
+  <div class="dstrip" id="dstrip"></div>
+  <div id="mlist"><div class="empty"><div class="big">⚽</div>Loading matches…</div></div>
+ </section>
+ <section id="paneG" class="hide">
+  <div class="secrow"><span class="sect">GROUP STANDINGS</span>
+   <button class="refresh" onclick="loadStandings(true)">↻ REFRESH</button></div>
+  <div class="ggrid" id="ggrid"><div class="empty">Loading standings…</div></div>
+ </section>
+ <section id="paneC" class="hide">
+  <div class="chatnote">Shared Capriole team room · be nice, it's football 🏆</div>
+  <div id="chatlog"><div class="empty">Loading chat…</div></div>
+  <div class="chatbar">
+   <input id="chatIn" maxlength="280" placeholder="Message the team…"
+          onkeydown="if(event.key==='Enter')sendMsg()">
+   <button onclick="sendMsg()">SEND</button>
+  </div>
+ </section>
+ <footer>CAPRIOLE SPORTS · UNOFFICIAL FAN APP · DATA: ESPN PUBLIC API</footer>
+</main>
+</div>
+
+<div id="nameModal" class="hide">
+ <div class="box">
+  <h2>JOIN THE CAPRIOLE ROOM</h2>
+  <p>Pick the name your teammates will see</p>
+  <input id="nameIn" maxlength="20" placeholder="e.g. Mohamed">
+  <button onclick="saveName()">LET'S GO ⚽</button>
+ </div>
+</div>
+
+<script>
+"use strict";
+/* ================= CONFIG ================= */
+const LG = "fifa.world";
+const API = "https://site.api.espn.com/apis/site/v2/sports/soccer/" + LG;
+const STAND = "https://site.api.espn.com/apis/v2/sports/soccer/" + LG + "/standings?season=2026";
+const CHAT_KEY  = "capriole_wc26_room_8842";
+const CHAT_READ = "https://textdb.online/" + CHAT_KEY;
+const CHAT_WRITE = "https://api.textdb.online/update/";
+const TZ = "Asia/Dubai";
+const T0 = Date.UTC(2026, 5, 11), T1 = Date.UTC(2026, 6, 19);
+
+/* ================= STATE ================= */
+let selDate = null;          // 'YYYYMMDD' in UAE calendar
+let events = [];             // merged events for selected UAE day
+let openId = null;           // expanded match id
+let lineups = {};            // eventId -> summary data
+let chatTimer = null, matchTimer = null, lastChatJson = "";
+const myId = localStorage.getItem("cs_id") || (localStorage.setItem("cs_id",
+  "u" + Math.random().toString(36).slice(2, 9)), localStorage.getItem("cs_id"));
+
+/* ================= HELPERS ================= */
+const $ = id => document.getElementById(id);
+const fmt = (d, o) => new Intl.DateTimeFormat("en-GB", Object.assign({ timeZone: TZ }, o)).format(d);
+const uaeYMD = d => {
+  const p = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" })
+    .formatToParts(d).reduce((a, x) => (a[x.type] = x.value, a), {});
+  return p.year + p.month + p.day;
+};
+const esc = s => s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function setCon(ok, msg) {
+  $("condot").className = "dot " + (ok === null ? "" : ok ? "ok" : "bad");
+  $("contxt").textContent = msg;
+}
+async function getJSON(url) {
+  const r = await fetch(url, { cache: "no-store" });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+
+/* ================= CLOCK ================= */
+setInterval(() => { $("clock").textContent = fmt(new Date(), { hour: "2-digit", minute: "2-digit" }); }, 1000);
+
+/* ================= TABS ================= */
+function showTab(t) {
+  ["M", "G", "C"].forEach(x => {
+    $("tab" + x).classList.toggle("on", x === t);
+    $("pane" + x).classList.toggle("hide", x !== t);
+  });
+  if (t === "C") { ensureName(); pollChat(); chatTimer = chatTimer || setInterval(pollChat, 5000); }
+  else if (chatTimer) { clearInterval(chatTimer); chatTimer = null; }
+  if (t === "G" && !window._standLoaded) loadStandings();
+}
+
+/* ================= DATE STRIP ================= */
+function buildStrip() {
+  const today = uaeYMD(new Date());
+  let html = "", first = null;
+  for (let t = T0 - 86400000; t <= T1 + 86400000; t += 86400000) {
+    const d = new Date(t), key = uaeYMD(d);
+    if (key < "20260611" || key > "20260719") continue;
+    if (!first) first = key;
+    const dw = fmt(d, { weekday: "short" }).toUpperCase();
+    const dn = fmt(d, { day: "2-digit" }) + " " + fmt(d, { month: "short" }).toUpperCase();
+    html += `<div class="dchip${key === today ? " today" : ""}" data-d="${key}" id="dc${key}">
+      <div class="dw">${dw}</div><div class="dn">${dn}</div></div>`;
+  }
+  $("dstrip").innerHTML = html;
+  $("dstrip").querySelectorAll(".dchip").forEach(c => c.onclick = () => pickDate(c.dataset.d));
+  pickDate(today >= "20260611" && today <= "20260720" ? today : first, true);
+}
+function pickDate(key, scroll) {
+  selDate = key;
+  document.querySelectorAll(".dchip").forEach(c => c.classList.toggle("on", c.dataset.d === key));
+  const chip = $("dc" + key);
+  if (chip) chip.scrollIntoView({ inline: "center", block: "nearest", behavior: scroll ? "auto" : "smooth" });
+  loadMatches();
+}
+
+/* ================= MATCHES ================= */
+async function loadMatches() {
+  const day = selDate;
+  try {
+    // a UAE day spans two ESPN (event-local) days — fetch both and filter
+    const prev = ymdShift(day, -1);
+    const [a, b] = await Promise.all([
+      getJSON(API + "/scoreboard?dates=" + prev).catch(() => ({ events: [] })),
+      getJSON(API + "/scoreboard?dates=" + day).catch(() => ({ events: [] })),
+    ]);
+    if (selDate !== day) return; // user moved on
+    const seen = new Set();
+    events = [...(a.events || []), ...(b.events || [])]
+      .filter(e => !seen.has(e.id) && seen.add(e.id))
+      .filter(e => uaeYMD(new Date(e.date)) === day)
+      .sort((x, y) => new Date(x.date) - new Date(y.date));
+    renderMatches();
+    setCon(true, "LIVE FEED OK · " + fmt(new Date(), { hour: "2-digit", minute: "2-digit" }));
+    const anyLive = events.some(e => e.status.type.state === "in");
+    clearTimeout(matchTimer);
+    matchTimer = setTimeout(loadMatches, anyLive ? 30000 : 300000);
+  } catch (err) {
+    setCon(false, "OFFLINE · RETRYING");
+    $("mlist").innerHTML = `<div class="empty"><div class="big">📡</div>Can't reach the live feed.<br>
+      <span style="font-size:11px">${esc(String(err.message || err))} — retrying in 20s</span></div>`;
+    clearTimeout(matchTimer);
+    matchTimer = setTimeout(loadMatches, 20000);
+  }
+}
+function ymdShift(key, days) {
+  const d = new Date(Date.UTC(+key.slice(0, 4), +key.slice(4, 6) - 1, +key.slice(6, 8)));
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10).replace(/-/g, "");
+}
+function renderMatches() {
+  if (!events.length) {
+    $("mlist").innerHTML = `<div class="empty"><div class="big">🗓️</div>No matches this day (UAE time).<br>Pick another date above.</div>`;
+    return;
+  }
+  $("mlist").innerHTML = events.map(e => {
+    const c = e.competitions[0];
+    const H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
+    const st = e.status, state = st.type.state;
+    const egy = [H, A].some(x => x.team.displayName === "Egypt");
+    const note = (c.notes && c.notes[0] && c.notes[0].headline) || "";
+    const ko = fmt(new Date(e.date), { hour: "2-digit", minute: "2-digit" });
+    const dayw = fmt(new Date(e.date), { weekday: "short", day: "2-digit", month: "short" }).toUpperCase();
+    let badge, mid;
+    if (state === "in") {
+      const half = (st.type.description || "").includes("Half") && st.type.description.includes("time");
+      badge = half ? `<span class="badge ht">HALF-TIME</span>`
+                   : `<span class="badge live">● LIVE ${esc(st.displayClock || "")}</span>`;
+      mid = `<div class="score">${H.score ?? 0} – ${A.score ?? 0}<small>${esc(st.displayClock || "")}</small></div>`;
+    } else if (state === "post") {
+      badge = `<span class="badge ft">FULL-TIME</span>`;
+      mid = `<div class="score">${H.score ?? "-"} – ${A.score ?? "-"}<small>FT</small></div>`;
+    } else {
+      badge = `<span class="badge pre">${ko} UAE</span>`;
+      mid = `<div class="score">${ko}<small>KICK-OFF UAE</small></div>`;
+    }
+    const goals = (c.details || []).filter(d => d.scoringPlay).map(d => {
+      const who = d.athletesInvolved && d.athletesInvolved[0] ? d.athletesInvolved[0].displayName : "Goal";
+      return `<b>${esc(d.clock?.displayValue || "")}</b> ⚽ ${esc(who)}${d.type && /penalty/i.test(d.type.text || "") ? " (pen)" : ""}${d.ownGoal ? " (OG)" : ""}`;
+    }).join(" &nbsp;·&nbsp; ");
+    return `<div class="mcard${egy ? " egy" : ""}${openId === e.id ? " open" : ""}" onclick="toggleM('${e.id}')">
+      <div class="mtop">${badge}<span>${esc(note)}</span><span style="margin-left:auto">${dayw}</span></div>
+      <div class="mrow">
+        <div class="team">${logo(H)}<span class="tname${H.team.displayName === "Egypt" ? " egy" : ""}">${esc(H.team.displayName)}</span></div>
+        ${mid}
+        <div class="team away">${logo(A)}<span class="tname${A.team.displayName === "Egypt" ? " egy" : ""}">${esc(A.team.displayName)}</span></div>
+      </div>
+      ${goals ? `<div class="mven" style="margin-top:7px"><span>${goals}</span></div>` : ""}
+      <div class="mven"><span>🏟️ ${esc(c.venue ? c.venue.fullName : "")}</span><b>${esc(c.venue && c.venue.address ? (c.venue.address.city || "") : "")}</b></div>
+      <div class="mdetail" id="det${e.id}"><div class="dnote">Loading line-ups…</div></div>
+    </div>`;
+  }).join("");
+}
+const logo = c => `<img src="${c.team.logo || ""}" alt="" onerror="this.style.visibility='hidden'">`;
+async function toggleM(id) {
+  openId = openId === id ? null : id;
+  renderMatches();
+  if (!openId) return;
+  const box = $("det" + id);
+  try {
+    const data = lineups[id] || (lineups[id] = await getJSON(API + "/summary?event=" + id));
+    if (openId !== id || !box) return;
+    const ros = data.rosters || [];
+    if (!ros.length || !ros.some(r => (r.roster || []).length)) {
+      box.innerHTML = `<div class="dnote">Line-ups not announced yet — usually ~1 hour before kick-off.</div>`;
+      return;
+    }
+    box.innerHTML = `<div class="lurow">` + ros.map(r => {
+      const starters = (r.roster || []).filter(p => p.starter);
+      const subs = (r.roster || []).filter(p => !p.starter && p.subbedIn);
+      return `<div class="lucol"><h4>${esc(r.team ? r.team.displayName : "")} <span>${esc(r.formation || "")}</span></h4>` +
+        starters.map(p => `<div class="pl"><b>${esc(String(p.jersey || ""))}</b> ${esc(p.athlete ? p.athlete.displayName : "")}</div>`).join("") +
+        (subs.length ? `<div class="subs">⇄ ${subs.map(p => esc(p.athlete ? p.athlete.displayName : "")).join(", ")}</div>` : "") +
+        `</div>`;
+    }).join("") + `</div>`;
+  } catch (e) {
+    if (box) box.innerHTML = `<div class="dnote">Couldn't load line-ups (${esc(String(e.message || e))}).</div>`;
+  }
+}
+
+/* ================= GROUPS ================= */
+async function loadStandings(force) {
+  if (window._standLoaded && !force) return;
+  try {
+    const d = await getJSON(STAND);
+    const groups = d.children || [];
+    $("ggrid").innerHTML = groups.map(g => {
+      const rows = (g.standings && g.standings.entries) || [];
+      const hasEgy = rows.some(r => r.team.displayName === "Egypt");
+      return `<div class="gcard${hasEgy ? " egy" : ""}"><h3>${esc(g.name || "")}</h3>
+        <table class="gt"><tr><th>TEAM</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>PTS</th></tr>` +
+        rows.map((r, i) => {
+          const s = {}; (r.stats || []).forEach(x => s[x.name] = x.displayValue);
+          const egy = r.team.displayName === "Egypt";
+          return `<tr class="${i < 2 ? "q " : ""}${egy ? "egy" : ""}">
+            <td><span class="tm"><img src="${r.team.logos && r.team.logos[0] ? r.team.logos[0].href : ""}" alt="">${esc(r.team.displayName)}</span></td>
+            <td>${s.gamesPlayed || 0}</td><td>${s.wins || 0}</td><td>${s.ties || 0}</td><td>${s.losses || 0}</td>
+            <td>${s.pointDifferential || s.pointsDiff || 0}</td><td class="pts">${s.points || 0}</td></tr>`;
+        }).join("") + `</table></div>`;
+    }).join("");
+    window._standLoaded = true;
+    setTimeout(() => window._standLoaded = false, 600000); // refresh-able after 10 min
+  } catch (e) {
+    $("ggrid").innerHTML = `<div class="empty">Couldn't load standings (${esc(String(e.message || e))}).
+      <br><button class="refresh" onclick="loadStandings(true)">TRY AGAIN</button></div>`;
+  }
+}
+
+/* ================= CHAT ================= */
+function ensureName() {
+  if (!localStorage.getItem("cs_name")) $("nameModal").classList.remove("hide");
+}
+function saveName() {
+  const v = $("nameIn").value.trim();
+  if (!v) return;
+  localStorage.setItem("cs_name", v);
+  $("nameModal").classList.add("hide");
+  pollChat();
+}
+async function readRoom() {
+  const r = await fetch(CHAT_READ + "?t=" + Date.now(), { cache: "no-store" });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  const t = (await r.text()).trim();
+  if (!t) return [];
+  try { const a = JSON.parse(t); return Array.isArray(a) ? a : []; } catch (_) { return []; }
+}
+async function pollChat() {
+  try {
+    const msgs = await readRoom();
+    const j = JSON.stringify(msgs);
+    if (j !== lastChatJson) { lastChatJson = j; renderChat(msgs); }
+  } catch (e) {
+    $("chatlog").innerHTML = `<div class="empty">Chat room unreachable.<br>
+      <span style="font-size:11px">${esc(String(e.message || e))}</span></div>`;
+  }
+}
+function renderChat(msgs) {
+  const atBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 160;
+  $("chatlog").innerHTML = msgs.slice(-100).map(m => `
+    <div class="msg${m.uid === myId ? " me" : ""}">
+      <div class="who">${esc(m.name || "?")}</div>
+      <div class="txt">${esc(m.text || "")}</div>
+      <div class="when">${fmt(new Date(m.ts || Date.now()), { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}</div>
+    </div>`).join("") || `<div class="empty">No messages yet — say hello! 👋</div>`;
+  if (atBottom) window.scrollTo(0, document.body.scrollHeight);
+}
+async function sendMsg() {
+  const inp = $("chatIn"), text = inp.value.trim();
+  if (!text) return;
+  if (!localStorage.getItem("cs_name")) { ensureName(); return; }
+  inp.value = "";
+  const mine = { id: "m" + Date.now() + Math.random().toString(36).slice(2, 6),
+                 uid: myId, name: localStorage.getItem("cs_name"), text, ts: Date.now() };
+  try {
+    let msgs = [];
+    try { msgs = await readRoom(); } catch (_) {}
+    msgs.push(mine);
+    const dedup = [...new Map(msgs.map(m => [m.id, m])).values()]
+      .sort((a, b) => (a.ts || 0) - (b.ts || 0)).slice(-80);
+    const r = await fetch(CHAT_WRITE, { method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "key=" + encodeURIComponent(CHAT_KEY) +
+            "&value=" + encodeURIComponent(JSON.stringify(dedup)) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    lastChatJson = ""; pollChat();
+  } catch (e) { alert("Couldn't send — check connection."); }
+}
+
+/* ================= BOOT ================= */
+setCon(null, "CONNECTING");
+buildStrip();
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) { loadMatches(); if (chatTimer) pollChat(); }
+});
+</script>
+</body>
+</html>

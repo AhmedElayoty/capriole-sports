@@ -1,0 +1,20 @@
+{
+ "name": "Capriole Sports \u2014 World Cup 26",
+ "short_name": "Capriole",
+ "start_url": ".",
+ "display": "standalone",
+ "background_color": "#0a1230",
+ "theme_color": "#0a1230",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  }
+ ]
+}
