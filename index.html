@@ -1622,14 +1622,11 @@ function board(title, icon, accent, items, opts) {
   if (!total) { body = '<div class="lbempty">' + (opts.empty || "No data yet") + '</div>'; }
   else {
     const cap = expanded ? Math.min(10, total) : Math.min(5, total);
-    let prev = null;
     for (let i = 0; i < cap; i++) {
       const x = items[i], egy = x.isMy ? " egy" : "";
-      const rk = x._rank !== undefined ? x._rank : (i + 1);
-      const showRk = rk !== prev ? rk : ""; prev = rk;
-      const lead = rk === 1 ? " lead" : "";
+      const lead = i === 0 ? " lead" : "";
       const nm = '<div class="nm"><div class="p">' + esc(x.name) + '</div>' + (sub(x) ? '<div class="tm">' + esc(sub(x)) + '</div>' : "") + '</div>';
-      body += '<div class="lbr' + egy + lead + '"><div class="rk">' + showRk + '</div>' + crestImg(x.logo) + nm + val(x) + '</div>';
+      body += '<div class="lbr' + egy + lead + '"><div class="rk">' + (i + 1) + '</div>' + crestImg(x.logo) + nm + val(x) + '</div>';
     }
     if (expanded && total > 10) body += '<div class="lbmore">+' + (total - 10) + ' more</div>';
   }
