@@ -86,6 +86,10 @@ main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-
 .score small{display:block;font-size:10px;font-weight:500;letter-spacing:1.6px;color:var(--cyan);margin-top:1px}
 .mven{margin-top:9px;font-size:11px;color:var(--dim);display:flex;justify-content:space-between;gap:8px}
 .mven b{color:var(--mut);font-weight:600}
+.gsum2{display:flex;gap:12px;margin-top:7px}
+.gsum2 .gcol{flex:1;min-width:0}
+.gsum2 .gcol.r{text-align:right}
+.gln{font-size:11.5px;color:var(--mut);line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* expanded detail */
 .mdetail{border-top:1px dashed var(--line);margin-top:11px;padding-top:11px;display:none}
 .mcard.open .mdetail{display:block}
@@ -233,6 +237,35 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 .mypred.hint{background:var(--card2);border-color:var(--line);color:var(--dim);cursor:pointer}
 .lbchamp{background:#26190f;border:1px solid #5a3a1a;border-radius:8px;padding:7px 10px;
  font-family:'Oswald';font-size:11px;letter-spacing:.8px;color:var(--gold);margin-bottom:8px}
+.md2{margin-top:2px}
+.starman{display:flex;align-items:center;gap:10px;background:linear-gradient(150deg,#3a2a07,#241a06);border:1px solid var(--gold);border-radius:12px;padding:9px 13px;margin-bottom:10px}
+.starman .ic{font-size:20px}
+.starman .nm{font-family:'Oswald';font-weight:600;font-size:15px;color:#ffe9b8;line-height:1.1}
+.starman .sub{font-size:11px;color:#c9a44a;margin-top:2px}
+.starman .tag{margin-left:auto;font-family:'Oswald';font-size:8.5px;letter-spacing:1.2px;color:#c9a44a;text-align:right;line-height:1.2}
+.sech{font-family:'Oswald';font-weight:600;font-size:10.5px;letter-spacing:1.6px;color:var(--mut);margin:12px 0 8px;display:flex;align-items:center;gap:8px}
+.sech::before,.sech::after{content:'';flex:1;height:1px;background:var(--line)}
+.tl{margin:2px 0}
+.tlrow{display:flex;align-items:center;gap:8px;padding:3px 0}
+.tlside{flex:1;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--txt);min-width:0}
+.tlside.l{justify-content:flex-end;text-align:right}
+.tlside .ev{font-size:14px}
+.tlmin{flex:0 0 40px;text-align:center;font-family:'Oswald';font-weight:600;font-size:11px;color:#9fb3e6;background:#1a2548;border-radius:10px;padding:2px 0}
+.flabel{display:flex;align-items:center;justify-content:space-between;font-family:'Oswald';font-size:11px;letter-spacing:1px;color:var(--mut);margin:8px 2px 5px}
+.flabel b{color:#fff;font-weight:600}
+.flabel img{width:16px;height:16px;object-fit:contain;vertical-align:-3px;margin-right:3px}
+.pitch{position:relative;width:100%;padding-bottom:150%;border-radius:14px;overflow:hidden;background:repeating-linear-gradient(0deg,#137a3f 0,#137a3f 10%,#12723b 10%,#12723b 20%)}
+.pitch svg{position:absolute;inset:0;width:100%;height:100%}
+.pchip{position:absolute;transform:translate(-50%,-50%);width:19%;text-align:center;z-index:2}
+.pnum{width:25px;height:25px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Oswald';font-weight:700;font-size:12px;color:#fff;border:1.5px solid rgba(255,255,255,.75);box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.pname{font-size:8px;color:#fff;margin-top:1px;line-height:1.05;text-shadow:0 1px 2px rgba(0,0,0,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar{margin:8px 0}
+.sbar .top{display:flex;justify-content:space-between;font-family:'Oswald';font-size:12px;color:#fff;margin-bottom:3px}
+.sbar .top .lab{color:var(--dim);letter-spacing:1px;font-size:9.5px;align-self:center}
+.sbar .track{display:flex;height:6px;border-radius:4px;overflow:hidden;background:#1a2548}
+.sbar .track i{height:100%}
+.sbar .track .h{background:var(--rust2)}
+.sbar .track .a{background:var(--cyan)}
 </style>
 </head>
 <body>
@@ -527,17 +560,22 @@ function renderMatches() {
     } else if (state === "pre" && new Date(e.date) - Date.now() > 1800000) {
       predStrip = '<div class="mypred hint" onclick="event.stopPropagation();showTab(&quot;P&quot;)">PREDICT THIS MATCH \u2192</div>';
     }
-    const goals = (c.details || [])
-      .filter(d => d.scoringPlay || /card/i.test((d.type && d.type.text) || ""))
-      .map(d => {
-        const who = d.athletesInvolved && d.athletesInvolved[0] ? d.athletesInvolved[0].displayName : "";
-        const t = esc((d.clock && d.clock.displayValue) || "");
-        if (d.scoringPlay) {
-          return `<b>${t}</b> ⚽ ${esc(who || "Goal")}` +
-            (d.type && /penalty/i.test(d.type.text || "") ? " (PEN)" : "") + (d.ownGoal ? " (OG)" : "");
-        }
-        return `<b>${t}</b> ${/red/i.test(d.type.text) ? "🟥" : "🟨"} ${esc(who)}`;
-      }).join(" &nbsp;·&nbsp; ");
+    const gd = (c.details || []).filter(d => d.scoringPlay && !d.shootout);
+    const scorerLines = (T, isHome) => {
+      const mine = gd.filter(d => d.team && T.team && String(d.team.id) === String(T.team.id));
+      const by = {};
+      mine.forEach(d => {
+        const nm = (d.athletesInvolved && d.athletesInvolved[0]) ? d.athletesInvolved[0].displayName : "Goal";
+        const tag = d.ownGoal ? " (OG)" : d.penaltyKick ? " (P)" : "";
+        (by[nm] = by[nm] || []).push(((d.clock || {}).displayValue || "") + tag);
+      });
+      return Object.keys(by).map(nm => {
+        const txt = esc(nm) + " " + by[nm].join(", ");
+        return isHome ? '<div class="gln">⚽ ' + txt + '</div>' : '<div class="gln">' + txt + ' ⚽</div>';
+      }).join("");
+    };
+    const hg = scorerLines(H, true), ag = scorerLines(A, false);
+    const goalSummary = (hg || ag) ? '<div class="gsum2"><div class="gcol l">' + hg + '</div><div class="gcol r">' + ag + '</div></div>' : "";
     return `<div class="mcard${egy ? " egy" : ""}${flashIds.has(e.id) ? " goal" : ""}${openId === e.id ? " open" : ""}" onclick="toggleM('${e.id}')">
       <div class="mtop">${badge}<span>${esc(note)}</span><span style="margin-left:auto">${dayw}</span></div>
       <div class="mrow">
@@ -545,7 +583,7 @@ function renderMatches() {
         ${mid}
         <div class="team away">${logo(A)}<span class="tname${A.team.displayName === myNation() ? " egy" : ""}">${esc(A.team.displayName)}</span></div>
       </div>
-      ${goals ? `<div class="mven" style="margin-top:7px"><span>${goals}</span></div>` : ""}
+      ${goalSummary}
       <div class="mven"><span>🏟️ ${esc(c.venue ? c.venue.fullName : "")}</span><b>${esc(c.venue && c.venue.address ? (c.venue.address.city || "") : "")}</b></div>
       ${predStrip}
       <div class="mdetail" id="det${e.id}"><div class="dnote">Loading line-ups…</div></div>
@@ -561,19 +599,7 @@ async function toggleM(id) {
   try {
     const data = lineups[id] || (lineups[id] = await getJSON(API + "/summary?event=" + id));
     if (openId !== id || !box) return;
-    const ros = data.rosters || [];
-    if (!ros.length || !ros.some(r => (r.roster || []).length)) {
-      box.innerHTML = `<div class="dnote">Line-ups not announced yet — usually ~1 hour before kick-off.</div>` + statsShare(data);
-      return;
-    }
-    box.innerHTML = `<div class="lurow">` + ros.map(r => {
-      const starters = (r.roster || []).filter(p => p.starter);
-      const subs = (r.roster || []).filter(p => !p.starter && p.subbedIn);
-      return `<div class="lucol"><h4>${esc(r.team ? r.team.displayName : "")} <span>${esc(r.formation || "")}</span></h4>` +
-        starters.map(p => `<div class="pl"><b>${esc(String(p.jersey || ""))}</b> ${esc(p.athlete ? p.athlete.displayName : "")}</div>`).join("") +
-        (subs.length ? `<div class="subs">⇄ ${subs.map(p => esc(p.athlete ? p.athlete.displayName : "")).join(", ")}</div>` : "") +
-        `</div>`;
-    }).join("") + `</div>` + statsShare(data);
+    box.innerHTML = matchDetail(data, events.find(x => x.id === id));
   } catch (e) {
     if (box) box.innerHTML = `<div class="dnote">Couldn't load line-ups (${esc(String(e.message || e))}).</div>`;
   }
@@ -884,21 +910,152 @@ async function loadLeaderboard(evs) {
   }
 }
 
+/* ================= MATCH DETAIL (timeline · pitch · star man · stats) ================= */
+function matchDetail(data, ev) {
+  if (!ev) return statsShare(data);
+  const ros = data.rosters || [];
+  const hasL = ros.length && ros.some(r => (r.roster || []).length);
+  let html = '<div class="md2">';
+  html += starMan(data, ev);
+  html += evTimeline(ev);
+  if (hasL) html += pitchBlock(ros, ev);
+  else html += '<div class="dnote">Line-ups not announced yet — usually ~1 hour before kick-off.</div>';
+  html += statsShare(data);
+  return html + '</div>';
+}
+function starMan(data, ev) {
+  if (ev.status.type.state === "pre") return "";
+  let best = null;
+  (data.rosters || []).forEach(r => {
+    (r.roster || []).forEach(p => {
+      const s = {}; (p.stats || []).forEach(x => s[x.name] = parseFloat(x.value !== undefined ? x.value : x.displayValue) || 0);
+      const gk = (((p.position || {}).abbreviation) || "")[0] === "G";
+      let score = (s.totalGoals || 0) * 5 + (s.goalAssists || 0) * 3;
+      if (gk && p.starter) score += (s.saves || 0) * 0.5 + ((s.goalsConceded || 0) === 0 ? 3 : 0);
+      if (score <= 0) return;
+      if (!best || score > best.score)
+        best = { score, name: (p.athlete || {}).displayName || "", team: r.team.displayName,
+                 g: s.totalGoals || 0, a: s.goalAssists || 0, sv: s.saves || 0, gc: s.goalsConceded || 0, gk };
+    });
+  });
+  if (!best) return "";
+  const bits = [];
+  if (best.g) bits.push(best.g + (best.g > 1 ? " goals" : " goal"));
+  if (best.a) bits.push(best.a + (best.a > 1 ? " assists" : " assist"));
+  if (best.gk) { if (best.gc === 0) bits.push("clean sheet"); if (best.sv) bits.push(best.sv + " saves"); }
+  return '<div class="starman"><span class="ic">\u2B50</span><div><div class="nm">' + esc(best.name) +
+    '</div><div class="sub">' + esc(best.team) + (bits.length ? ' \u00B7 ' + bits.join(", ") : "") +
+    '</div></div><div class="tag">STAR OF<br>THE MATCH</div></div>';
+}
+function evTimeline(ev) {
+  const c = ev.competitions[0];
+  const H = c.competitors.find(x => x.homeAway === "home");
+  const evs = (c.details || []).filter(d => (d.scoringPlay || /card/i.test((d.type && d.type.text) || "")) && !d.shootout);
+  if (!evs.length) return "";
+  const minNum = d => parseInt((((d.clock || {}).displayValue) || "0").replace(/[^0-9].*/, "")) || 0;
+  evs.sort((a, b) => minNum(a) - minNum(b));
+  const rows = evs.map(d => {
+    const who = (d.athletesInvolved && d.athletesInvolved[0]) ? d.athletesInvolved[0].displayName : "";
+    const t = esc(((d.clock || {}).displayValue) || "");
+    let ic, txt;
+    if (d.scoringPlay) { ic = "\u26BD"; txt = esc(who || "Goal") + (d.penaltyKick ? " (P)" : "") + (d.ownGoal ? " (OG)" : ""); }
+    else { ic = d.redCard ? "\uD83D\uDFE5" : "\uD83D\uDFE8"; txt = esc(who); }
+    const home = d.team && H.team && String(d.team.id) === String(H.team.id);
+    const cell = '<span class="ev">' + ic + '</span> ' + txt;
+    return '<div class="tlrow"><div class="tlside l">' + (home ? cell : "") + '</div>' +
+      '<div class="tlmin">' + t + '</div><div class="tlside r">' + (home ? "" : cell) + '</div></div>';
+  }).join("");
+  return '<div class="sech">GOALS &amp; CARDS</div><div class="tl">' + rows + '</div>';
+}
+function posGroup(ab) {
+  ab = (ab || "").toUpperCase();
+  if (!ab) return "MID";
+  if (ab[0] === "G") return "GK";
+  if (ab.indexOf("DM") >= 0) return "DM";
+  if (ab.indexOf("AM") >= 0) return "AM";
+  if (ab.slice(-1) === "B" || ab.indexOf("CD") === 0 || ab.indexOf("CB") === 0 || ab === "D" || ab === "SW") return "DEF";
+  if (ab.indexOf("M") >= 0) return "MID";
+  return "FWD";
+}
+function lrKey(ab) { ab = (ab || "").toUpperCase(); if (ab.indexOf("L") >= 0) return -1; if (ab.indexOf("R") >= 0) return 1; return 0; }
+function placeTeam(starters, isHome) {
+  const DEPTH = { GK: 0.06, DEF: 0.30, DM: 0.45, MID: 0.58, AM: 0.72, FWD: 0.88 };
+  const lines = {};
+  starters.forEach(p => { const g = posGroup((p.position || {}).abbreviation); (lines[g] = lines[g] || []).push(p); });
+  const out = [];
+  Object.keys(lines).forEach(g => {
+    const arr = lines[g].slice().sort((a, b) =>
+      (lrKey((a.position || {}).abbreviation) - lrKey((b.position || {}).abbreviation)) ||
+      (parseInt(a.formationPlace || 0) - parseInt(b.formationPlace || 0)));
+    const n = arr.length, frac = DEPTH[g] !== undefined ? DEPTH[g] : 0.58;
+    arr.forEach((p, i) => {
+      let x = n === 1 ? 50 : 12 + i * (76 / (n - 1));
+      if (!isHome) x = 100 - x;
+      const y = isHome ? 97 - frac * 46 : 3 + frac * 46;
+      out.push({ x, y, num: p.jersey || "", name: (p.athlete || {}).shortName || (p.athlete || {}).displayName || "" });
+    });
+  });
+  return out;
+}
+function lineupColumns(ros) {
+  return '<div class="sech">STARTING XI</div><div class="lurow">' + ros.map(r => {
+    const st = (r.roster || []).filter(p => p.starter), su = (r.roster || []).filter(p => !p.starter && p.subbedIn);
+    return '<div class="lucol"><h4>' + esc(r.team ? r.team.displayName : "") + ' <span>' + esc(r.formation || "") + '</span></h4>' +
+      st.map(p => '<div class="pl"><b>' + esc(String(p.jersey || "")) + '</b> ' + esc(p.athlete ? p.athlete.displayName : "") + '</div>').join("") +
+      (su.length ? '<div class="subs">\u21C4 ' + su.map(p => esc(p.athlete ? p.athlete.displayName : "")).join(", ") + '</div>' : "") + '</div>';
+  }).join("") + '</div>';
+}
+function subsLine(t) {
+  const su = (t.roster || []).filter(p => !p.starter && p.subbedIn);
+  if (!su.length) return "";
+  return '<div class="subs" style="margin:5px 2px 0">\u21C4 ' + esc(t.team.displayName) + ': ' +
+    su.map(p => esc((p.athlete || {}).shortName || (p.athlete || {}).displayName || "")).join(", ") + '</div>';
+}
+function pitchBlock(ros, ev) {
+  const home = ros.find(r => r.homeAway === "home") || ros[0];
+  const away = ros.find(r => r.homeAway === "away") || ros[1];
+  const hs = (home.roster || []).filter(p => p.starter), as = (away.roster || []).filter(p => p.starter);
+  const okPos = arr => arr.length >= 11 && arr.every(p => (p.position || {}).abbreviation);
+  if (!okPos(hs) || !okPos(as)) return lineupColumns(ros);
+  const c = ev.competitions[0];
+  const logoOf = name => { const x = c.competitors.find(z => z.team.displayName === name); return x ? x.team.logo : ""; };
+  const col = name => name === myNation() ? "#00a85a" : null;
+  const chips = (starters, isHome, fallback) => placeTeam(starters, isHome).map(pl =>
+    '<div class="pchip" style="left:' + pl.x.toFixed(1) + '%;top:' + pl.y.toFixed(1) + '%">' +
+    '<div class="pnum" style="background:' + fallback + '">' + esc(String(pl.num)) + '</div>' +
+    '<div class="pname">' + esc(pl.name) + '</div></div>').join("");
+  const svg = '<svg viewBox="0 0 100 150" preserveAspectRatio="none"><g fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="0.6">' +
+    '<rect x="3" y="3" width="94" height="144"/><line x1="3" y1="75" x2="97" y2="75"/>' +
+    '<circle cx="50" cy="75" r="11"/><circle cx="50" cy="75" r="1" fill="#fff" stroke="none"/>' +
+    '<rect x="28" y="3" width="44" height="20"/><rect x="40" y="3" width="20" height="8"/>' +
+    '<rect x="28" y="127" width="44" height="20"/><rect x="40" y="139" width="20" height="8"/></g></svg>';
+  const lbl = (team, form) => '<div class="flabel"><span><img src="' + (logoOf(team) || "") + '" alt=""><b>' +
+    esc(team) + '</b></span><span>' + esc(form || "") + '</span></div>';
+  return '<div class="sech">STARTING XI</div>' + lbl(away.team.displayName, away.formation) +
+    '<div class="pitch">' + svg +
+      chips(hs, true, col(home.team.displayName) || "var(--rust)") +
+      chips(as, false, col(away.team.displayName) || "#1577c4") + '</div>' +
+    lbl(home.team.displayName, home.formation) + subsLine(home) + subsLine(away);
+}
+
 /* ================= STATS + SHARE ================= */
 function statsShare(data) {
   let html = "";
   const t = (data.boxscore && data.boxscore.teams) || [];
   if (t.length === 2 && (t[0].statistics || []).length) {
-    const want = ["possessionPct", "totalShots", "shotsOnTarget", "wonCorners", "foulsCommitted", "totalYellowCards", "totalRedCards"];
-    const labs = { possessionPct: "POSSESSION %", totalShots: "SHOTS", shotsOnTarget: "ON TARGET",
-                   wonCorners: "CORNERS", foulsCommitted: "FOULS", totalYellowCards: "YELLOW", totalRedCards: "RED" };
+    const want = [["possessionPct", "POSSESSION %"], ["totalShots", "SHOTS"], ["shotsOnTarget", "ON TARGET"],
+                  ["wonCorners", "CORNERS"], ["foulsCommitted", "FOULS"], ["totalYellowCards", "YELLOW"], ["totalRedCards", "RED"]];
     const m0 = {}, m1 = {};
     (t[0].statistics || []).forEach(s => m0[s.name] = s.displayValue);
     (t[1].statistics || []).forEach(s => m1[s.name] = s.displayValue);
-    const rows = want.filter(k => m0[k] !== undefined || m1[k] !== undefined)
-      .map(k => '<div class="strow"><b>' + (m0[k] ?? "-") + '</b><div class="lab">' + labs[k] + '</div>' +
-                '<b style="text-align:right">' + (m1[k] ?? "-") + '</b></div>').join("");
-    if (rows) html += '<div style="margin-top:10px">' + rows + '</div>';
+    const num = v => parseFloat(String(v).replace("%", "")) || 0;
+    const bars = want.filter(([k]) => m0[k] !== undefined || m1[k] !== undefined).map(([k, lab]) => {
+      const a = num(m0[k]), b = num(m1[k]), tot = (a + b) || 1, ha = Math.round(a / tot * 100);
+      return '<div class="sbar"><div class="top"><span>' + esc(String(m0[k] ?? "0")) + '</span>' +
+        '<span class="lab">' + lab + '</span><span>' + esc(String(m1[k] ?? "0")) + '</span></div>' +
+        '<div class="track"><i class="h" style="width:' + ha + '%"></i><i class="a" style="width:' + (100 - ha) + '%"></i></div></div>';
+    }).join("");
+    if (bars) html += '<div class="sech">MATCH STATS</div>' + bars;
   }
   return html + '<button class="sharebtn" onclick="shareMatch(event)">SHARE THIS MATCH TO THE TEAM</button>';
 }
