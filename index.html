@@ -1033,22 +1033,52 @@ function posGroup(ab) {
   return "FWD";
 }
 function lrKey(ab) { ab = (ab || "").toUpperCase(); if (ab.indexOf("L") >= 0) return -1; if (ab.indexOf("R") >= 0) return 1; return 0; }
-function placeTeam(starters, isHome) {
-  const DEPTH = { GK: 0.06, DEF: 0.30, DM: 0.45, MID: 0.58, AM: 0.72, FWD: 0.88 };
-  const lines = {};
-  starters.forEach(p => { const g = posGroup((p.position || {}).abbreviation); (lines[g] = lines[g] || []).push(p); });
-  const out = [];
-  Object.keys(lines).forEach(g => {
-    const arr = lines[g].slice().sort((a, b) =>
-      (lrKey((a.position || {}).abbreviation) - lrKey((b.position || {}).abbreviation)) ||
+function spreadX(n) {
+  const T = { 1: [50], 2: [33, 67], 3: [22, 50, 78], 4: [11, 37.5, 62.5, 89], 5: [8, 29.5, 50, 70.5, 92] };
+  if (T[n]) return T[n];
+  return Array.from({ length: n }, (_, i) => n === 1 ? 50 : 9 + i * (82 / (n - 1)));
+}
+function depthRank(ab) {
+  ab = (ab || "").toUpperCase();
+  if (ab[0] === "G") return 0;
+  if (ab.indexOf("CD") === 0 || ab.indexOf("CB") === 0 || ab === "D" || ab === "SW") return 1;  // centre-backs deepest
+  if (ab.slice(-1) === "B") return 1.6;   // full-backs / wing-backs
+  if (ab.indexOf("DM") >= 0) return 2;
+  if (ab.indexOf("AM") >= 0) return 4;
+  if (ab.indexOf("M") >= 0) return 3;     // CM / LM / RM
+  return 5;                                // forwards / wingers
+}
+// Lay the XI out from the FORMATION STRING (e.g. "4-4-2" -> lines [4,4,2]); sort players into
+// lines by positional depth, then space each line with football-sensible widths (2 = central, 4 = wide full-backs).
+function placeTeam(starters, isHome, formation) {
+  const byPlace = starters.slice().sort((a, b) => parseInt(a.formationPlace || 99) - parseInt(b.formationPlace || 99));
+  const gk = starters.find(p => (((p.position || {}).abbreviation) || "")[0] === "G") || byPlace[0];
+  const outs = starters.filter(p => p !== gk);
+  let sizes = String(formation || "").split(/[^0-9]+/).filter(Boolean).map(Number).filter(n => n > 0);
+  if (sizes.reduce((a, b) => a + b, 0) !== outs.length) sizes = null;   // mismatch -> fallback
+  const lines = [];
+  if (sizes) {
+    outs.sort((a, b) => (depthRank((a.position || {}).abbreviation) - depthRank((b.position || {}).abbreviation)) ||
       (parseInt(a.formationPlace || 0) - parseInt(b.formationPlace || 0)));
-    const n = arr.length, frac = DEPTH[g] !== undefined ? DEPTH[g] : 0.58;
-    arr.forEach((p, i) => {
-      let x = n === 1 ? 50 : 12 + i * (76 / (n - 1));
-      if (!isHome) x = 100 - x;
-      const y = isHome ? 97 - frac * 46 : 3 + frac * 46;
-      out.push({ x, y, num: p.jersey || "", name: (p.athlete || {}).shortName || (p.athlete || {}).displayName || "" });
-    });
+    let idx = 0;
+    sizes.forEach(sz => { lines.push(outs.slice(idx, idx + sz)); idx += sz; });
+  } else {
+    const g = {}; outs.forEach(p => { const k = posGroup((p.position || {}).abbreviation); (g[k] = g[k] || []).push(p); });
+    ["DEF", "DM", "MID", "AM", "FWD"].forEach(k => { if (g[k]) lines.push(g[k]); });
+  }
+  const L = lines.length, out = [];
+  const place = (p, frac, x) => {
+    if (!isHome) x = 100 - x;
+    const y = isHome ? 97 - frac * 46 : 3 + frac * 46;
+    out.push({ x, y, num: p.jersey || "", name: (p.athlete || {}).shortName || (p.athlete || {}).displayName || "" });
+  };
+  if (gk) place(gk, 0.05, 50);
+  lines.forEach((line, li) => {
+    const frac = L <= 1 ? 0.6 : 0.26 + li * ((0.92 - 0.26) / (L - 1));
+    const arr = line.slice().sort((a, b) => (lrKey((a.position || {}).abbreviation) - lrKey((b.position || {}).abbreviation)) ||
+      (parseInt(a.formationPlace || 0) - parseInt(b.formationPlace || 0)));
+    const xs = spreadX(arr.length);
+    arr.forEach((p, i) => place(p, frac, xs[i]));
   });
   return out;
 }
@@ -1075,7 +1105,7 @@ function pitchBlock(ros, ev) {
   const c = ev.competitions[0];
   const logoOf = name => { const x = c.competitors.find(z => z.team.displayName === name); return x ? x.team.logo : ""; };
   const col = name => name === myNation() ? "#00a85a" : null;
-  const chips = (starters, isHome, fallback) => placeTeam(starters, isHome).map(pl =>
+  const chips = (starters, isHome, fallback, formation) => placeTeam(starters, isHome, formation).map(pl =>
     '<div class="pchip" style="left:' + pl.x.toFixed(1) + '%;top:' + pl.y.toFixed(1) + '%">' +
     '<div class="pnum" style="background:' + fallback + '">' + esc(String(pl.num)) + '</div>' +
     '<div class="pname">' + esc(pl.name) + '</div></div>').join("");
@@ -1088,8 +1118,8 @@ function pitchBlock(ros, ev) {
     esc(team) + '</b></span><span>' + esc(form || "") + '</span></div>';
   return '<div class="sech">STARTING XI</div>' + lbl(away.team.displayName, away.formation) +
     '<div class="pitch">' + svg +
-      chips(hs, true, col(home.team.displayName) || "var(--rust)") +
-      chips(as, false, col(away.team.displayName) || "#1577c4") + '</div>' +
+      chips(hs, true, col(home.team.displayName) || "var(--rust)", home.formation) +
+      chips(as, false, col(away.team.displayName) || "#1577c4", away.formation) + '</div>' +
     lbl(home.team.displayName, home.formation) + subsLine(home) + subsLine(away);
 }
 
