@@ -450,6 +450,7 @@ async function loadMatches() {
     });
     if (buzz && navigator.vibrate) navigator.vibrate([180, 90, 180]);
     if (flashIds.size) {
+      if (!$("paneG").classList.contains("hide")) loadStandings();  // goal → refresh table instantly
       const posts = [];
       events.forEach(e => {
         if (!flashIds.has(e.id)) return;
@@ -1164,7 +1165,11 @@ setInterval(renderHero, 300000);
 announceBreakfast();
 setInterval(announceBreakfast, 600000);
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) { loadMatches(); if (chatTimer) pollChat(); }
+  if (!document.hidden) {
+    loadMatches();
+    if (chatTimer) pollChat();
+    if (!$("paneG").classList.contains("hide")) loadStandings();  // returning to Groups → refresh now
+  }
 });
 </script>
 </body>
