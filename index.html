@@ -28,8 +28,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:
  color:var(--txt);min-height:100dvh;display:flex;flex-direction:column}
 .wrap{width:100%;max-width:760px;margin:0 auto;flex:1;display:flex;flex-direction:column}
 /* header */
-header{position:sticky;top:0;z-index:50;background:rgba(7,12,32,.92);backdrop-filter:blur(10px);
- border-bottom:1px solid var(--line);padding:max(10px,env(safe-area-inset-top)) 16px 10px}
+.topbar{position:-webkit-sticky;position:sticky;top:0;z-index:50;background:rgba(8,13,33,.97);
+ backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+header{padding:10px 16px}
 .brand{display:flex;align-items:center;gap:10px}
 .crest{width:34px;height:46px;border-radius:9px;background:#fff;flex:none;
  display:flex;align-items:center;justify-content:center;padding:3px 4px;box-shadow:0 1px 4px rgba(0,0,0,.4)}
@@ -45,7 +46,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(7,12,32,.92);backdrop-fi
 .dot.ok{background:var(--green);box-shadow:0 0 8px var(--green)}
 .dot.bad{background:var(--red)}
 /* tabs */
-nav{display:flex;background:rgba(7,12,32,.92);border-bottom:1px solid var(--line);position:sticky;top:62px;z-index:49}
+nav{display:flex;background:transparent;border-top:1px solid var(--line)}
 nav button{flex:1;background:none;border:none;color:var(--mut);font-family:'Oswald';font-weight:600;white-space:nowrap;
  font-size:11.5px;letter-spacing:.6px;padding:12px 2px 10px;cursor:pointer;border-bottom:2.5px solid transparent}
 nav button.on{color:#fff;border-bottom-color:var(--rust2)}
@@ -306,52 +307,59 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 .sttoggle{display:flex;gap:8px;margin:0 0 12px}
 .sttoggle button{flex:1;background:var(--card2);border:1px solid var(--line);color:var(--mut);font-family:'Oswald';font-weight:600;letter-spacing:1.2px;font-size:12px;padding:9px;border-radius:10px;cursor:pointer}
 .sttoggle button.on{background:var(--card);color:#fff;border-color:var(--cyan);box-shadow:inset 0 -2px 0 var(--cyan)}
-.htiles{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
-.htile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 13px;position:relative;overflow:hidden}
+.htiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.htile{background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:14px;padding:13px 14px 14px;position:relative;overflow:hidden}
 .htile::before{content:'';position:absolute;left:0;top:0;right:0;height:3px;background:var(--accent,var(--cyan))}
-.htile .n{font-family:'Oswald';font-weight:700;font-size:27px;color:#fff;line-height:1;font-variant-numeric:tabular-nums}
-.htile .c{font-family:'Oswald';font-weight:500;font-size:10px;letter-spacing:1.3px;color:var(--dim);margin-top:5px}
-.facts{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px;padding-bottom:2px}
+.htile .cap{font-family:'Oswald';font-weight:500;font-size:10.5px;letter-spacing:1.4px;color:var(--dim);margin-bottom:8px;display:flex;align-items:center;gap:6px;text-transform:uppercase}
+.htile .n{font-family:'Oswald';font-weight:700;font-size:34px;color:#f4f6fb;line-height:1;font-variant-numeric:tabular-nums}
+.htile .sub{font-family:'Oswald';font-weight:400;font-size:13.5px;color:rgba(244,246,251,.55);margin-top:6px;letter-spacing:.3px}
+.cardglyph{display:inline-block;width:11px;height:15px;border-radius:2px;vertical-align:middle;flex:none}
+.eyebrow{font-family:'Oswald';font-weight:500;font-size:10px;letter-spacing:1.7px;color:var(--dim);margin:0 2px 8px;text-transform:uppercase}
+.facts{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px;padding-bottom:2px;-webkit-overflow-scrolling:touch}
 .facts::-webkit-scrollbar{display:none}
-.fchip{flex:none;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:6px 11px;font-family:'Oswald';font-size:10.5px;letter-spacing:.6px;color:var(--mut);white-space:nowrap}
+.fchip{flex:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px;padding:6px 11px;font-family:'Oswald';font-size:10.5px;letter-spacing:.6px;color:var(--mut);white-space:nowrap}
 .fchip b{color:#fff;font-weight:700;margin-left:6px;font-variant-numeric:tabular-nums}
-.lbc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:11px}
-.lbc .h{display:flex;align-items:center;gap:7px;margin-bottom:8px}
-.lbc .h .ic{font-size:15px}
-.lbc .h .t{font-family:'Oswald';font-weight:700;font-size:12.5px;letter-spacing:1.1px;color:#fff}
-.lbc .h .hint{margin-left:auto;font-family:'Oswald';font-size:8.5px;letter-spacing:.8px;color:var(--dim)}
-.lbhero{display:flex;align-items:center;gap:11px;border-radius:11px;padding:10px 11px;margin-bottom:5px;background:radial-gradient(130% 130% at 0% 50%,rgba(255,192,46,.16),transparent 68%);border-left:3px solid var(--gold)}
-.lbhero.cyan{background:radial-gradient(130% 130% at 0% 50%,rgba(25,200,255,.14),transparent 68%);border-left-color:var(--cyan)}
-.lbhero.rust{background:radial-gradient(130% 130% at 0% 50%,rgba(224,90,43,.16),transparent 68%);border-left-color:var(--rust2)}
-.lbhero.red{background:radial-gradient(130% 130% at 0% 50%,rgba(255,59,92,.14),transparent 68%);border-left-color:var(--red)}
-.lbhero .rk{font-family:'Oswald';font-weight:700;font-size:14px;width:16px;text-align:center;color:var(--gold)}
-.lbhero img{width:44px;height:44px;object-fit:contain;flex:none}
-.lbhero .nm{flex:1;min-width:0}
-.lbhero .nm .p{font-family:'Oswald';font-weight:600;font-size:17px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lbhero .nm .tm{font-size:11.5px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lbhero .v{font-family:'Oswald';font-weight:700;font-size:32px;color:var(--gold);text-align:right;font-variant-numeric:tabular-nums;line-height:1}
-.lbhero .v small{display:block;font-size:9px;font-weight:500;letter-spacing:.8px;color:var(--dim);margin-top:2px}
-.lbhero.cyan .v,.lbhero.cyan .rk{color:var(--cyan)}
-.lbhero.rust .v,.lbhero.rust .rk{color:var(--rust2)}
-.lbhero.red .v,.lbhero.red .rk{color:var(--red)}
-.lbr{display:flex;align-items:center;gap:9px;padding:7px 3px;border-top:1px solid rgba(255,255,255,.06)}
-.lbr .rk{font-family:'Oswald';font-weight:600;font-size:13px;color:var(--dim);width:16px;text-align:center}
-.lbr img{width:26px;height:26px;object-fit:contain;flex:none}
+.lbc{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:4px 14px 6px;margin-bottom:14px}
+.lbc .h{display:flex;align-items:center;gap:10px;padding:12px 0 10px}
+.lbc .h .ic{display:flex;color:var(--bacc,var(--cyan));flex:none}
+.lbc .h .ic svg{display:block}
+.lbc .h .ht{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lbc .h .t{font-family:'Oswald';font-weight:700;font-size:15px;letter-spacing:.6px;color:#fff;line-height:1.05}
+.lbc .h .sc{font-size:10.5px;color:var(--dim);letter-spacing:.3px}
+.lbr{display:flex;align-items:center;gap:11px;min-height:52px;padding:5px 0;border-top:1px solid rgba(255,255,255,.06)}
+.lbr .rk{font-family:'Oswald';font-weight:600;font-size:14px;color:rgba(244,246,251,.5);width:18px;text-align:center;flex:none;font-variant-numeric:tabular-nums}
+.lbr img{width:28px;height:28px;object-fit:contain;flex:none}
 .lbr .nm{flex:1;min-width:0}
-.lbr .nm .p{font-family:'Oswald';font-weight:600;font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lbr .nm .tm{font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lbr .v{font-family:'Oswald';font-weight:700;font-size:18px;color:#fff;text-align:right;font-variant-numeric:tabular-nums}
-.lbhero.egy{border-left-color:var(--green)}.lbr.egy{box-shadow:inset 3px 0 0 var(--green)}
-.lbhero.egy .p,.lbr.egy .p{color:#6dffb5}
-.pips{display:flex;gap:4px;justify-content:flex-end}
-.pip{font-family:'Oswald';font-weight:700;font-size:12px;color:#04122b;border-radius:4px;padding:1px 7px;font-variant-numeric:tabular-nums}
-.pip.y{background:var(--gold)}
-.pip.r{background:var(--red);color:#fff}
+.lbr .nm .p{font-family:'Inter';font-weight:600;font-size:14.5px;color:#f4f6fb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+.lbr .nm .tm{font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.lbr .v{font-family:'Oswald';font-weight:700;font-size:17px;color:#f4f6fb;text-align:right;font-variant-numeric:tabular-nums;flex:none}
+.lbr .v .pk{font-size:.5em;color:var(--dim);font-weight:500}
+.lbr.lead .v{color:var(--bacc)}
+.lbr.egy{box-shadow:inset 3px 0 0 var(--green)}
+.lbr.egy .nm .p{color:#6dffb5}
+.lbexp{width:100%;background:none;border:none;border-top:1px solid rgba(255,255,255,.08);margin-top:2px;padding:13px 0 5px;color:var(--mut);font-family:'Oswald';font-weight:600;font-size:11px;letter-spacing:1.1px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.lbexp .chev{font-size:9px;opacity:.8}
+.lbexp:active{color:#fff}
+.lbmore{text-align:center;color:var(--dim);font-size:11px;padding:9px 0 3px;font-family:'Oswald';letter-spacing:.5px}
+.lbempty{text-align:center;color:var(--dim);font-size:12px;padding:18px 0}
+.cards2{display:flex;gap:11px;align-items:center;justify-content:flex-end}
+.cc{font-family:'Oswald';font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:4px;color:#f4f6fb}
+.cc .cardglyph{width:9px;height:13px}
+.cc.zero{color:var(--dim)}
 .stnote{text-align:center;color:var(--dim);font-size:10px;font-family:'Oswald';letter-spacing:.5px;margin-top:8px;line-height:1.7}
+/* guest-first auth */
+.guestbar{background:rgba(255,192,46,.1);border:1px solid rgba(255,192,46,.32);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--txt);margin-bottom:13px;line-height:1.55}
+.guestbar button{background:var(--gold);color:#1a1206;border:none;border-radius:7px;padding:3px 11px;font-family:'Oswald';font-weight:700;font-size:11px;letter-spacing:.5px;cursor:pointer;margin:0 1px}
+.subbtn.ghost{background:transparent;border:1.5px dashed var(--line);color:var(--mut)}
+#nameModal .authskip{background:none;color:var(--mut);font-family:'Oswald';font-weight:500;font-size:12.5px;letter-spacing:.4px;padding:11px 0 0;margin-top:4px}
+.chatbar .chatlock{display:flex;align-items:center;gap:10px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:9px 9px 9px 16px}
+.chatbar .chatlock span{flex:1;color:var(--mut);font-size:12.5px}
+.chatbar .chatlock button{width:auto;background:var(--rust);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-family:'Oswald';font-weight:600;font-size:12px;letter-spacing:.8px;cursor:pointer}
 </style>
 </head>
 <body>
 <div class="wrap">
+<div class="topbar">
 <header>
  <div class="brand">
   <div class="crest"><img src="logo.png" alt="World Cup 2026"></div>
@@ -372,6 +380,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
  <button id="tabP" onclick="showTab('P')">PREDICT</button>
  <button id="tabC" onclick="showTab('C')">CHAT</button>
 </nav>
+</div>
 <main>
  <section id="paneM">
   <div id="heroBox"></div>
@@ -381,9 +390,10 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
  <section id="paneS" class="hide">
   <div class="sttoggle"><button id="stP" class="on" onclick="setStatsView('P')">PLAYERS</button><button id="stT" onclick="setStatsView('T')">TEAMS</button></div>
   <div class="htiles" id="stHero"></div>
+  <div class="eyebrow">Tournament facts</div>
   <div class="facts" id="stFacts"></div>
-  <div id="stBody"><div class="empty">Loading stats\u2026</div></div>
-  <div class="stnote">Stats update live from match data \u00b7 assists &amp; saves fill in as finished matches are processed \u00b7 unofficial fan app</div>
+  <div id="stBody"><div class="empty">Loading stats…</div></div>
+  <div class="stnote">Stats update live from match data · assists &amp; saves fill in as finished matches are processed · unofficial fan app</div>
  </section>
  <section id="paneP" class="hide">
   <div id="brkBox"></div>
@@ -402,7 +412,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
  <section id="paneC" class="hide">
   <div class="chatnote">Shared Capriole team room · be nice, it's football 🏆</div>
   <div id="chatlog"><div class="empty">Loading chat…</div></div>
-  <div class="chatbar">
+  <div class="chatbar" id="chatbar">
    <input id="chatIn" maxlength="280" placeholder="Message the team…"
           onkeydown="if(event.key==='Enter')sendMsg()">
    <button onclick="sendMsg()">SEND</button>
@@ -415,7 +425,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 <div id="nameModal" class="hide">
  <div class="box">
   <h2 id="authTitle">JOIN WORLD CUP 2026</h2>
-  <p>One-time setup — username, password &amp; your nation</p>
+  <p id="authSub">One-time setup — username, password &amp; your nation</p>
   <div class="authtabs">
    <button id="atC" class="on" onclick="authMode('C')">CREATE ACCOUNT</button>
    <button id="atL" onclick="authMode('L')">LOG IN</button>
@@ -426,6 +436,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
   <div id="authErr"></div>
   <label class="authrem" id="authRemRow"><span>Remember me on this device</span><input type="checkbox" id="auRem" checked></label>
   <button id="authBtn" onclick="authSubmit()">LET'S GO ⚽</button>
+  <button id="authSkip" class="authskip" onclick="authSkip()">Not now — just browsing 👀</button>
   <div class="authnote">Log in once per device — that's it. Forgot your password? Ask Ahmed to reset it.</div>
  </div>
 </div>
@@ -514,11 +525,11 @@ function showTab(t) {
     $("tab" + x).classList.toggle("on", x === t);
     $("pane" + x).classList.toggle("hide", x !== t);
   });
-  if (t === "C") { ensureName(); pollChat(); chatTimer = chatTimer || setInterval(pollChat, 5000); }
+  if (t === "C") { renderChatComposer(); pollChat(); chatTimer = chatTimer || setInterval(pollChat, 5000); }
   else if (chatTimer) { clearInterval(chatTimer); chatTimer = null; }
   if (t === "G") { loadStandings(); groupsTimer = groupsTimer || setInterval(loadStandings, 20000); }
   else if (groupsTimer) { clearInterval(groupsTimer); groupsTimer = null; }
-  if (t === "P") { ensureName(); renderPredict(); }
+  if (t === "P") { renderPredict(); if (!cs_user) openAuth("C", { ctx: "predict" }); }
   if (t === "S") { renderStats(); statsTimer = statsTimer || setInterval(() => { if (!$("paneS").classList.contains("hide")) renderStats(); }, 30000); }
   else if (statsTimer) { clearInterval(statsTimer); statsTimer = null; }
 }
@@ -880,7 +891,8 @@ async function renderPredict() {
     const recent = evs.filter(e => e.status.type.state !== "pre").slice(-6).reverse();
     if (recent.length) html += '<div class="secrow" style="margin-top:14px"><span class="sect">LOCKED / FINISHED</span></div>' +
       recent.map(e => predCard(e, true)).join("");
-    $("predList").innerHTML = html;
+    const guestBanner = !cs_user ? '<div class="guestbar">👀 You’re browsing as a guest — <button onclick="openAuth(\'C\',{ctx:\'predict\'})">Sign in</button> to make predictions &amp; win breakfast.</div>' : "";
+    $("predList").innerHTML = guestBanner + html;
     loadLeaderboard(evs);
   } catch (err) {
     $("predList").innerHTML = '<div class="empty">Could not load fixtures — check connection.</div>';
@@ -903,8 +915,11 @@ function predCard(e, started) {
       '<span style="' + (done ? "color:var(--green)" : "") + '">' +
       (started ? "CLOSED" : done ? "SUBMITTED" : "OPEN") + '</span>';
   }
-  const dis = (started || done) ? "disabled" : "";
-  const action = started ? "" : done
+  const guest = !cs_user;
+  const dis = (started || done || guest) ? "disabled" : "";
+  const action = started ? "" : guest
+    ? '<button class="subbtn ghost" onclick="openAuth(\'C\',{ctx:\'predict\'})">🔒 SIGN IN TO PREDICT</button>'
+    : done
     ? '<div class="subok">YOUR FINAL ANSWER — LOCKED IN</div>'
     : '<button class="subbtn" data-id="' + e.id + '" onclick="submitPred(this,event)">SUBMIT — ONE TIME ONLY</button>';
   return '<div class="pcard' + ((started || done) ? " lock" : "") + '"><div class="pmeta">' + meta + '</div><div class="prow">' +
@@ -934,7 +949,7 @@ async function submitPred(btn, ev) {
     setTimeout(renderPredict, 1200); return;
   }
   if (h === "" || a === "" || isNaN(+h) || isNaN(+a)) { reset("ENTER BOTH SCORES FIRST", 1800); return; }
-  if (!cs_user) { ensureName(); reset("CREATE YOUR ACCOUNT, THEN SUBMIT", 2400); return; }
+  if (!cs_user) { openAuth("C", { ctx: "predict" }); reset("SIGN IN, THEN SUBMIT", 2400); return; }
   btn.disabled = true; btn.textContent = "SAVING…";
   let ok = false;
   for (let t = 0; t < 3 && !ok; t++) {
@@ -1292,7 +1307,33 @@ async function announceBreakfast() {
 
 /* ================= CHAT ================= */
 function ensureName() { if (!cs_user) openAuth("C"); }
-function openAuth(m) { $("nameModal").classList.remove("hide"); authMode(m || "C"); fillNations(); }
+function openAuth(m, opts) {
+  opts = opts || {};
+  window._authCtx = opts.ctx || null;
+  $("nameModal").classList.remove("hide");
+  authMode(m || "C");
+  fillNations();
+  const skip = $("authSkip"); if (skip) skip.style.display = (opts.skippable === false) ? "none" : "";
+  const sub = $("authSub");
+  if (sub) sub.textContent = opts.ctx === "predict"
+    ? "Sign in to make predictions, earn points & win breakfast — browsing stays free."
+    : opts.ctx === "chat"
+    ? "Sign in to post in the team chat — reading is always free."
+    : "One-time setup — username, password & your nation";
+}
+function authSkip() {
+  $("nameModal").classList.add("hide");
+  if (window._authCtx === "predict") renderPredict();
+  else if (window._authCtx === "chat") renderChatComposer();
+}
+function renderChatComposer() {
+  const bar = $("chatbar"); if (!bar) return;
+  if (cs_user) {
+    bar.innerHTML = '<input id="chatIn" maxlength="280" placeholder="Message the team…" onkeydown="if(event.key===\'Enter\')sendMsg()"><button onclick="sendMsg()">SEND</button>';
+  } else {
+    bar.innerHTML = '<div class="chatlock"><span>🔒 Sign in to chat — reading is free</span><button onclick="openAuth(\'C\',{ctx:\'chat\'})">SIGN IN</button></div>';
+  }
+}
 function authMode(m) {
   window._am = m;
   $("atC").classList.toggle("on", m === "C");
@@ -1365,7 +1406,7 @@ function finishAuth(a) {
     if (events.length) renderMatches();
     if (!$("paneP").classList.contains("hide")) renderPredict();
   });
-  renderHero(); loadStandings(); pollChat();
+  renderHero(); loadStandings(); pollChat(); renderChatComposer();
 }
 function openNation(ev) {
   if (ev) ev.stopPropagation();
@@ -1456,7 +1497,7 @@ function renderChat(msgs) {
 async function sendMsg() {
   const inp = $("chatIn"), text = inp.value.trim();
   if (!text) return;
-  if (!cs_user) { ensureName(); return; }
+  if (!cs_user) { openAuth("C", { ctx: "chat" }); return; }
   inp.value = "";
   const mine = { id: "m" + Date.now() + Math.random().toString(36).slice(2, 6),
                  uid: myId, name: cs_user.username, text, ts: Date.now() };
@@ -1477,7 +1518,7 @@ function csTeamMeta(comp, teamId) {
 async function aggInstant() {
   const evs = await seasonEvents();
   const fin = evs.filter(e => e.status.type.state === "post");
-  const T = { goals: 0, played: fin.length, total: evs.length, yellow: 0, red: 0, pens: 0, og: 0 };
+  const T = { goals: 0, played: fin.length, total: Math.max(evs.length, 104), yellow: 0, red: 0, pens: 0, og: 0, bigWin: null };
   const sc = {}, bk = {}, cs = {}, tc = {};
   const my = myNation();
   const addCS = t => { cs[t.id] = cs[t.id] || { name: t.displayName, logo: t.logo, n: 0 }; cs[t.id].n++; };
@@ -1486,6 +1527,8 @@ async function aggInstant() {
     const H = comp.competitors.find(x => x.homeAway === "home"), A = comp.competitors.find(x => x.homeAway === "away");
     const hs = +H.score || 0, as = +A.score || 0;
     T.goals += hs + as;
+    const _mar = Math.abs(hs - as);
+    if (_mar >= 1 && (!T.bigWin || _mar > T.bigWin.margin)) T.bigWin = { margin: _mar, label: Math.max(hs, as) + "–" + Math.min(hs, as) };
     if (as === 0) addCS(H.team); if (hs === 0) addCS(A.team);
     (comp.details || []).forEach(d => {
       const tm = csTeamMeta(comp, (d.team || {}).id);
@@ -1555,41 +1598,71 @@ function deepBoards() {
     Object.entries(ev.a || {}).forEach(([id, o]) => { A[id] = A[id] || { id, name: o.name, team: o.team, logo: o.logo, n: 0 }; A[id].n += o.n; });
     Object.entries(ev.s || {}).forEach(([id, o]) => { S[id] = S[id] || { id, name: o.name, team: o.team, logo: o.logo, n: 0 }; S[id].n += o.n; });
   });
-  const mk = obj => Object.values(obj).map(x => ({ ...x, isMy: x.team === my })).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name));
+  const lg = window._logoByName || {};
+  const mk = obj => Object.values(obj).map(x => ({ ...x, logo: x.logo || lg[x.team] || "", isMy: x.team === my })).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name));
   return { assists: mk(A), saves: mk(S) };
 }
 function withRanks(items, metric) { return items.map(x => ({ ...x, _rank: 1 + items.filter(y => metric(y) > metric(x)).length })); }
 function crestImg(logo) { return '<img src="' + (logo || "") + '" alt="" onerror="this.style.visibility=&#39;hidden&#39;">'; }
+const ICON = {
+  ball: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><polygon points="12,7.6 15.3,10 14.1,13.9 9.9,13.9 8.7,10" fill="currentColor" stroke="none"/></svg>',
+  assist: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18L18 6"/><path d="M9.5 6H18v8.5"/></svg>',
+  glove: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="6" y="9" width="12" height="11" rx="3"/><path d="M9 9V6.2M12 9V5M15 9V6.2"/></svg>',
+  card: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="4" width="10" height="16" rx="2"/></svg>',
+  shield: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.5-7 9-4-1.5-7-4.6-7-9V6z"/></svg>',
+  sparkle: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.4L12 17l-1.9-5.6L4.5 10l5.6-1.4z"/></svg>',
+};
+let stExpand = {};
+function toggleBoard(t) { stExpand[t] = !stExpand[t]; paintStatsBody(); }
 function board(title, icon, accent, items, opts) {
   opts = opts || {};
-  const sub = opts.sub || (x => x.team || ""), val = opts.val || ((x) => '<div class="v">' + (x.n || 0) + '</div>'), m = opts.rankMetric || (() => 0);
+  const sub = opts.sub || (x => x.team || ""), val = opts.val || (x => '<div class="v">' + (x.n || 0) + '</div>');
+  const total = items.length, expanded = !!stExpand[title];
   let body = "";
-  if (!items.length) { body = '<div style="text-align:center;color:var(--dim);font-size:12px;padding:16px 0">' + (opts.empty || "No data yet") + '</div>'; }
+  if (!total) { body = '<div class="lbempty">' + (opts.empty || "No data yet") + '</div>'; }
   else {
-    const topTie = items.length > 1 && m(items[0]) === m(items[1]);
-    items.slice(0, 5).forEach((x, i) => {
-      const egy = x.isMy ? " egy" : "", rk = x._rank !== undefined ? x._rank : (i + 1);
+    const cap = expanded ? Math.min(10, total) : Math.min(5, total);
+    let prev = null;
+    for (let i = 0; i < cap; i++) {
+      const x = items[i], egy = x.isMy ? " egy" : "";
+      const rk = x._rank !== undefined ? x._rank : (i + 1);
+      const showRk = rk !== prev ? rk : ""; prev = rk;
+      const lead = rk === 1 ? " lead" : "";
       const nm = '<div class="nm"><div class="p">' + esc(x.name) + '</div>' + (sub(x) ? '<div class="tm">' + esc(sub(x)) + '</div>' : "") + '</div>';
-      if (i === 0 && !topTie) body += '<div class="lbhero ' + accent + egy + '"><div class="rk">1</div>' + crestImg(x.logo) + nm + val(x, true) + '</div>';
-      else body += '<div class="lbr' + egy + '"><div class="rk">' + rk + '</div>' + crestImg(x.logo) + nm + val(x, false) + '</div>';
-    });
+      body += '<div class="lbr' + egy + lead + '"><div class="rk">' + showRk + '</div>' + crestImg(x.logo) + nm + val(x) + '</div>';
+    }
+    if (expanded && total > 10) body += '<div class="lbmore">+' + (total - 10) + ' more</div>';
   }
-  return '<div class="lbc"><div class="h"><span class="ic">' + icon + '</span><span class="t">' + title + '</span>' + (opts.hint ? '<span class="hint">' + opts.hint + '</span>' : "") + '</div>' + body + '</div>';
+  let ctrl = "";
+  if (total > 5) {
+    const label = expanded ? "SHOW LESS" : (total > 10 ? "SHOW TOP 10" : "SHOW ALL " + total);
+    ctrl = '<button class="lbexp" onclick="toggleBoard(\'' + title + '\')">' + label + '<span class="chev">' + (expanded ? "▴" : "▾") + '</span></button>';
+  }
+  const head = '<div class="h"><span class="ic">' + icon + '</span><div class="ht"><span class="t">' + title + '</span>' + (opts.subcap ? '<span class="sc">' + opts.subcap + '</span>' : "") + '</div></div>';
+  return '<div class="lbc" style="--bacc:' + accent + '">' + head + body + ctrl + '</div>';
 }
-const vNum = (unit) => (x, h) => '<div class="v">' + (x.n || 0) + (h ? '<small>' + unit + '</small>' : "") + '</div>';
-const vTeam = (f, unit) => (x, h) => '<div class="v">' + (x[f] || 0) + (h ? '<small>' + unit + '</small>' : "") + '</div>';
-function vScorer(x, h) { return '<div class="v">' + x.goals + (x.pens ? '<span style="font-size:.45em;color:var(--dim)"> (' + x.pens + 'P)</span>' : "") + (h ? '<small>goals</small>' : "") + '</div>'; }
-function vPips(x) { return '<div class="pips">' + (x.y ? '<span class="pip y">' + x.y + '</span>' : "") + (x.r ? '<span class="pip r">' + x.r + '</span>' : "") + '</div>'; }
+const vNum = () => (x) => '<div class="v">' + (x.n || 0) + '</div>';
+const vTeam = (f) => (x) => '<div class="v">' + (x[f] || 0) + '</div>';
+function vScorer(x) { return '<div class="v">' + x.goals + (x.pens ? '<span class="pk"> (' + x.pens + 'P)</span>' : "") + '</div>'; }
+function vCards(x) {
+  const g = c => '<span class="cardglyph" style="background:' + c + '"></span>';
+  return '<div class="cards2"><span class="cc' + (x.y ? '' : ' zero') + '">' + g('#f4c20d') + (x.y || 0) + '</span><span class="cc' + (x.r ? '' : ' zero') + '">' + g('#ff3b5c') + (x.r || 0) + '</span></div>';
+}
 function heroTiles(T) {
-  const tile = (n, c, acc) => '<div class="htile" style="--accent:' + acc + '"><div class="n">' + n + '</div><div class="c">' + c + '</div></div>';
   const avg = T.played ? (T.goals / T.played).toFixed(1) : "—";
-  return tile(T.goals, "GOALS", "var(--gold)") + tile(T.played + " / " + T.total, "MATCHES", "var(--cyan)") +
-    tile(avg, "AVG / GAME", "var(--rust2)") + tile(T.yellow + " / " + T.red, "CARDS Y / R", "var(--red)");
+  const tile = (cap, n, acc, sub) => '<div class="htile" style="--accent:' + acc + '"><div class="cap">' + cap + '</div><div class="n">' + n + '</div>' + (sub ? '<div class="sub">' + sub + '</div>' : "") + '</div>';
+  const glyph = c => '<span class="cardglyph" style="background:' + c + '"></span>';
+  return tile("Goals", T.goals, "var(--gold)", avg + " per game") +
+         tile("Matches played", T.played, "var(--cyan)", "of " + T.total) +
+         tile(glyph("#f4c20d") + "Yellow", T.yellow, "#f4c20d") +
+         tile(glyph("#ff3b5c") + "Red", T.red, "var(--red)");
 }
 function factsStrip(T, cs) {
   const totalCS = cs.reduce((a, b) => a + b.n, 0);
   const f = (l, v) => '<div class="fchip">' + l + '<b>' + v + '</b></div>';
-  return f("PENALTIES", T.pens) + f("OWN GOALS", T.og) + f("RED CARDS", T.red) + f("CLEAN SHEETS", totalCS);
+  let html = f("PENALTIES", T.pens) + f("OWN GOALS", T.og) + f("CLEAN SHEETS", totalCS);
+  if (T.bigWin) html += f("BIGGEST WIN", T.bigWin.label);
+  return html;
 }
 function progHint(p) { return (p && p[1] && p[0] < p[1]) ? ("PROCESSING " + p[0] + "/" + p[1]) : ""; }
 function progEmpty(p) { if (!p || !p[1]) return "Fills in once matches finish"; return p[0] < p[1] ? ("Crunching match data… " + p[0] + "/" + p[1]) : "No data yet"; }
@@ -1598,20 +1671,20 @@ function paintStatsBody() {
   if (statsView === "P") {
     const deep = deepBoards(), p = window._deepProg || [0, 0];
     $("stBody").innerHTML =
-      board("GOLDEN BOOT", "⚽", "gold", withRanks(inst.scorers, x => x.goals), { rankMetric: x => x.goals, val: vScorer, hint: "TOP SCORERS" }) +
-      board("ASSISTS", "🎯", "cyan", withRanks(deep.assists, x => x.n), { rankMetric: x => x.n, val: vNum("assists"), hint: progHint(p), empty: progEmpty(p) }) +
-      board("SAVES", "🧤", "cyan", withRanks(deep.saves, x => x.n), { rankMetric: x => x.n, val: vNum("saves"), hint: progHint(p), empty: progEmpty(p) }) +
-      board("MOST BOOKED", "🟨", "red", withRanks(inst.booked, x => x.y + x.r * 3), { rankMetric: x => x.y + x.r * 3, val: vPips, hint: "DISCIPLINE" });
+      board("GOLDEN BOOT", ICON.ball, "var(--gold)", withRanks(inst.scorers, x => x.goals), { val: vScorer, subcap: "Top scorers" }) +
+      board("ASSISTS", ICON.assist, "var(--cyan)", withRanks(deep.assists, x => x.n), { val: vNum(), subcap: progHint(p), empty: progEmpty(p) }) +
+      board("SAVES", ICON.glove, "var(--cyan)", withRanks(deep.saves, x => x.n), { val: vNum(), subcap: progHint(p), empty: progEmpty(p) }) +
+      board("MOST BOOKED", ICON.card, "#f4c20d", withRanks(inst.booked, x => x.y + x.r * 3), { val: vCards });
   } else {
-    const teams = window._statsTeams || [];
+    const teams = (window._statsTeams || []).filter(t => t.pl >= 1);
     const attack = withRanks(teams.slice().sort((a, b) => b.gf - a.gf), x => x.gf);
     const defence = withRanks(teams.slice().sort((a, b) => a.ga - b.ga || a.gf - b.gf), x => -x.ga);
     const tsub = x => "Played " + x.pl;
     $("stBody").innerHTML =
-      board("BEST ATTACK", "⚽", "rust", attack, { rankMetric: x => x.gf, val: vTeam("gf", "scored"), sub: tsub, hint: "GOALS FOR" }) +
-      board("BEST DEFENCE", "🛡️", "cyan", defence, { rankMetric: x => -x.ga, val: vTeam("ga", "conceded"), sub: tsub, hint: "FEWEST CONCEDED" }) +
-      board("CLEAN SHEETS", "✨", "cyan", withRanks(inst.cleanSheets, x => x.n), { rankMetric: x => x.n, val: vNum("clean sheets"), sub: () => "", hint: "SHUTOUTS" }) +
-      board("MOST CARDS", "🟥", "red", withRanks(inst.teamCards, x => x.y + x.r * 3), { rankMetric: x => x.y + x.r * 3, val: vPips, sub: () => "", hint: "FAIR PLAY" });
+      board("BEST ATTACK", ICON.ball, "var(--gold)", attack, { val: vTeam("gf"), sub: tsub, subcap: "Goals scored" }) +
+      board("BEST DEFENCE", ICON.shield, "var(--cyan)", defence, { val: vTeam("ga"), sub: tsub, subcap: "Fewest conceded" }) +
+      board("CLEAN SHEETS", ICON.sparkle, "var(--cyan)", withRanks(inst.cleanSheets, x => x.n), { val: vNum(), sub: () => "" }) +
+      board("MOST CARDS", ICON.card, "#f4c20d", withRanks(inst.teamCards, x => x.y + x.r * 3), { val: vCards, sub: () => "" });
   }
 }
 function setStatsView(v) {
@@ -1623,6 +1696,7 @@ function setStatsView(v) {
 async function renderStats() {
   try {
     window._statsInst = await aggInstant();
+    try { const evs = await seasonEvents(); window._logoByName = window._logoByName || {}; evs.forEach(e => (e.competitions[0].competitors || []).forEach(c => { if (c.team && c.team.displayName && c.team.logo) window._logoByName[c.team.displayName] = c.team.logo; })); } catch (_) {}
     $("stHero").innerHTML = heroTiles(window._statsInst.totals);
     $("stFacts").innerHTML = factsStrip(window._statsInst.totals, window._statsInst.cleanSheets);
     if (!window._statsTeams) { try { window._statsTeams = await aggTeams(); } catch (_) { window._statsTeams = []; } }
@@ -1632,7 +1706,7 @@ async function renderStats() {
 }
 setCon(null, "CONNECTING");
 buildStrip();
-if (!cs_user) setTimeout(() => openAuth("C"), 700);
+renderChatComposer();
 if (cs_user) {
   localStorage.setItem("cs_name", cs_user.username);
   syncMyPreds().then(() => { if (events.length) renderMatches(); });
