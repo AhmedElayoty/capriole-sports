@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#0a1230">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Capriole">
+<meta name="apple-mobile-web-app-title" content="World Cup 2026">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>Capriole Sports — World Cup 26 Live</title>
+<title>World Cup 2026 — Live</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -31,8 +31,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:
 header{position:sticky;top:0;z-index:50;background:rgba(7,12,32,.92);backdrop-filter:blur(10px);
  border-bottom:1px solid var(--line);padding:max(10px,env(safe-area-inset-top)) 16px 10px}
 .brand{display:flex;align-items:center;gap:10px}
-.crest{width:38px;height:38px;border-radius:10px;background:linear-gradient(150deg,var(--rust),#8f3315);
- display:flex;align-items:center;justify-content:center;font-size:20px}
+.crest{width:34px;height:46px;border-radius:9px;background:#fff;flex:none;
+ display:flex;align-items:center;justify-content:center;padding:3px 4px;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.crest img{height:100%;width:auto;max-width:100%;object-fit:contain;display:block}
 .bname{font-family:'Oswald';font-weight:700;font-size:21px;letter-spacing:1px;line-height:1}
 .bname b{color:var(--rust2);font-weight:700}
 .bsub{font-family:'Oswald';font-weight:500;font-size:10.5px;letter-spacing:2.4px;color:var(--mut);margin-top:3px}
@@ -308,10 +309,10 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 <div class="wrap">
 <header>
  <div class="brand">
-  <div class="crest">⚽</div>
+  <div class="crest"><img src="logo.png" alt="World Cup 2026"></div>
   <div>
-   <div class="bname">CAPRIOLE <b>SPORTS</b></div>
-   <div class="bsub">WORLD CUP 26 · ALL TIMES UAE</div>
+   <div class="bname">WORLD CUP <b>2026</b></div>
+   <div class="bsub">ALL TIMES UAE · GST (UTC+4)</div>
   </div>
   <div class="hright">
    <div class="uaeclock" id="clock">--:--</div>
@@ -354,13 +355,13 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
    <button onclick="sendMsg()">SEND</button>
   </div>
  </section>
- <footer>CAPRIOLE SPORTS · UNOFFICIAL FAN APP · DATA: ESPN PUBLIC API</footer>
+ <footer>WORLD CUP 2026 · UNOFFICIAL FAN APP · DATA: ESPN PUBLIC API</footer>
 </main>
 </div>
 
 <div id="nameModal" class="hide">
  <div class="box">
-  <h2 id="authTitle">JOIN CAPRIOLE SPORTS</h2>
+  <h2 id="authTitle">JOIN WORLD CUP 2026</h2>
   <p>One-time setup — username, password &amp; your nation</p>
   <div class="authtabs">
    <button id="atC" class="on" onclick="authMode('C')">CREATE ACCOUNT</button>
@@ -1157,7 +1158,7 @@ function shareMatch(ev) {
   const c = e.competitions[0];
   const H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
   const pre = e.status.type.state === "pre";
-  const txt = "Capriole Sports: " + H.team.displayName + " " +
+  const txt = "World Cup 2026: " + H.team.displayName + " " +
     (pre ? "v " + A.team.displayName + " — " + fmt(new Date(e.date), { weekday: "short", day: "2-digit", month: "short" }) +
            " " + fmt(new Date(e.date), { hour: "2-digit", minute: "2-digit" }) + " UAE"
          : (H.score ?? 0) + "–" + (A.score ?? 0) + " " + A.team.displayName) +
@@ -1234,7 +1235,7 @@ function authMode(m) {
   $("auUser").style.display = ""; $("auPass").style.display = "";
   $("authRemRow").style.display = "";
   $("auNation").style.display = m === "C" ? "" : "none";
-  $("authTitle").textContent = m === "C" ? "JOIN CAPRIOLE SPORTS" : "WELCOME BACK";
+  $("authTitle").textContent = m === "C" ? "JOIN WORLD CUP 2026" : "WELCOME BACK";
   $("authBtn").textContent = "LET'S GO ⚽";
   $("authErr").textContent = "";
 }
