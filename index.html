@@ -46,8 +46,8 @@ header{position:sticky;top:0;z-index:50;background:rgba(7,12,32,.92);backdrop-fi
 .dot.bad{background:var(--red)}
 /* tabs */
 nav{display:flex;background:rgba(7,12,32,.92);border-bottom:1px solid var(--line);position:sticky;top:62px;z-index:49}
-nav button{flex:1;background:none;border:none;color:var(--mut);font-family:'Oswald';font-weight:600;
- font-size:12.5px;letter-spacing:1.4px;padding:12px 0 10px;cursor:pointer;border-bottom:2.5px solid transparent}
+nav button{flex:1;background:none;border:none;color:var(--mut);font-family:'Oswald';font-weight:600;white-space:nowrap;
+ font-size:11.5px;letter-spacing:.6px;padding:12px 2px 10px;cursor:pointer;border-bottom:2.5px solid transparent}
 nav button.on{color:#fff;border-bottom-color:var(--rust2)}
 main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-x:hidden}
 .hide{display:none!important}
@@ -303,6 +303,51 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 .statshead .vs{flex:0 0 auto;font-family:'Oswald';font-size:10px;letter-spacing:1.5px;color:var(--dim);align-self:flex-end;padding-bottom:5px}
 .tlmark{position:relative;z-index:1;text-align:center;font-family:'Oswald';font-weight:600;font-size:9.5px;letter-spacing:1.6px;color:var(--mut);margin:5px auto;padding:3px 12px;background:var(--card2);border:1px solid var(--line);border-radius:11px;width:fit-content}
 .tlmark.top{color:#fff;border-color:#2b3a6e}
+.sttoggle{display:flex;gap:8px;margin:0 0 12px}
+.sttoggle button{flex:1;background:var(--card2);border:1px solid var(--line);color:var(--mut);font-family:'Oswald';font-weight:600;letter-spacing:1.2px;font-size:12px;padding:9px;border-radius:10px;cursor:pointer}
+.sttoggle button.on{background:var(--card);color:#fff;border-color:var(--cyan);box-shadow:inset 0 -2px 0 var(--cyan)}
+.htiles{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.htile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 13px;position:relative;overflow:hidden}
+.htile::before{content:'';position:absolute;left:0;top:0;right:0;height:3px;background:var(--accent,var(--cyan))}
+.htile .n{font-family:'Oswald';font-weight:700;font-size:27px;color:#fff;line-height:1;font-variant-numeric:tabular-nums}
+.htile .c{font-family:'Oswald';font-weight:500;font-size:10px;letter-spacing:1.3px;color:var(--dim);margin-top:5px}
+.facts{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px;padding-bottom:2px}
+.facts::-webkit-scrollbar{display:none}
+.fchip{flex:none;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:6px 11px;font-family:'Oswald';font-size:10.5px;letter-spacing:.6px;color:var(--mut);white-space:nowrap}
+.fchip b{color:#fff;font-weight:700;margin-left:6px;font-variant-numeric:tabular-nums}
+.lbc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:11px}
+.lbc .h{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.lbc .h .ic{font-size:15px}
+.lbc .h .t{font-family:'Oswald';font-weight:700;font-size:12.5px;letter-spacing:1.1px;color:#fff}
+.lbc .h .hint{margin-left:auto;font-family:'Oswald';font-size:8.5px;letter-spacing:.8px;color:var(--dim)}
+.lbhero{display:flex;align-items:center;gap:11px;border-radius:11px;padding:10px 11px;margin-bottom:5px;background:radial-gradient(130% 130% at 0% 50%,rgba(255,192,46,.16),transparent 68%);border-left:3px solid var(--gold)}
+.lbhero.cyan{background:radial-gradient(130% 130% at 0% 50%,rgba(25,200,255,.14),transparent 68%);border-left-color:var(--cyan)}
+.lbhero.rust{background:radial-gradient(130% 130% at 0% 50%,rgba(224,90,43,.16),transparent 68%);border-left-color:var(--rust2)}
+.lbhero.red{background:radial-gradient(130% 130% at 0% 50%,rgba(255,59,92,.14),transparent 68%);border-left-color:var(--red)}
+.lbhero .rk{font-family:'Oswald';font-weight:700;font-size:14px;width:16px;text-align:center;color:var(--gold)}
+.lbhero img{width:44px;height:44px;object-fit:contain;flex:none}
+.lbhero .nm{flex:1;min-width:0}
+.lbhero .nm .p{font-family:'Oswald';font-weight:600;font-size:17px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbhero .nm .tm{font-size:11.5px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbhero .v{font-family:'Oswald';font-weight:700;font-size:32px;color:var(--gold);text-align:right;font-variant-numeric:tabular-nums;line-height:1}
+.lbhero .v small{display:block;font-size:9px;font-weight:500;letter-spacing:.8px;color:var(--dim);margin-top:2px}
+.lbhero.cyan .v,.lbhero.cyan .rk{color:var(--cyan)}
+.lbhero.rust .v,.lbhero.rust .rk{color:var(--rust2)}
+.lbhero.red .v,.lbhero.red .rk{color:var(--red)}
+.lbr{display:flex;align-items:center;gap:9px;padding:7px 3px;border-top:1px solid rgba(255,255,255,.06)}
+.lbr .rk{font-family:'Oswald';font-weight:600;font-size:13px;color:var(--dim);width:16px;text-align:center}
+.lbr img{width:26px;height:26px;object-fit:contain;flex:none}
+.lbr .nm{flex:1;min-width:0}
+.lbr .nm .p{font-family:'Oswald';font-weight:600;font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbr .nm .tm{font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbr .v{font-family:'Oswald';font-weight:700;font-size:18px;color:#fff;text-align:right;font-variant-numeric:tabular-nums}
+.lbhero.egy{border-left-color:var(--green)}.lbr.egy{box-shadow:inset 3px 0 0 var(--green)}
+.lbhero.egy .p,.lbr.egy .p{color:#6dffb5}
+.pips{display:flex;gap:4px;justify-content:flex-end}
+.pip{font-family:'Oswald';font-weight:700;font-size:12px;color:#04122b;border-radius:4px;padding:1px 7px;font-variant-numeric:tabular-nums}
+.pip.y{background:var(--gold)}
+.pip.r{background:var(--red);color:#fff}
+.stnote{text-align:center;color:var(--dim);font-size:10px;font-family:'Oswald';letter-spacing:.5px;margin-top:8px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -322,8 +367,9 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 </header>
 <nav>
  <button id="tabM" class="on" onclick="showTab('M')">MATCHES</button>
- <button id="tabP" onclick="showTab('P')">PREDICT</button>
  <button id="tabG" onclick="showTab('G')">GROUPS</button>
+ <button id="tabS" onclick="showTab('S')">STATS</button>
+ <button id="tabP" onclick="showTab('P')">PREDICT</button>
  <button id="tabC" onclick="showTab('C')">CHAT</button>
 </nav>
 <main>
@@ -331,6 +377,13 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
   <div id="heroBox"></div>
   <div class="dstrip" id="dstrip"></div>
   <div id="mlist"><div class="empty"><div class="big">⚽</div>Loading matches…</div></div>
+ </section>
+ <section id="paneS" class="hide">
+  <div class="sttoggle"><button id="stP" class="on" onclick="setStatsView('P')">PLAYERS</button><button id="stT" onclick="setStatsView('T')">TEAMS</button></div>
+  <div class="htiles" id="stHero"></div>
+  <div class="facts" id="stFacts"></div>
+  <div id="stBody"><div class="empty">Loading stats\u2026</div></div>
+  <div class="stnote">Stats update live from match data \u00b7 assists &amp; saves fill in as finished matches are processed \u00b7 unofficial fan app</div>
  </section>
  <section id="paneP" class="hide">
   <div id="brkBox"></div>
@@ -457,7 +510,7 @@ setInterval(() => {
 
 /* ================= TABS ================= */
 function showTab(t) {
-  ["M", "P", "G", "C"].forEach(x => {
+  ["M", "G", "S", "P", "C"].forEach(x => {
     $("tab" + x).classList.toggle("on", x === t);
     $("pane" + x).classList.toggle("hide", x !== t);
   });
@@ -466,6 +519,8 @@ function showTab(t) {
   if (t === "G") { loadStandings(); groupsTimer = groupsTimer || setInterval(loadStandings, 20000); }
   else if (groupsTimer) { clearInterval(groupsTimer); groupsTimer = null; }
   if (t === "P") { ensureName(); renderPredict(); }
+  if (t === "S") { renderStats(); statsTimer = statsTimer || setInterval(() => { if (!$("paneS").classList.contains("hide")) renderStats(); }, 30000); }
+  else if (statsTimer) { clearInterval(statsTimer); statsTimer = null; }
 }
 
 /* ================= DATE STRIP ================= */
@@ -1410,6 +1465,169 @@ async function sendMsg() {
 }
 
 /* ================= BOOT ================= */
+/* ================= STATS TAB ================= */
+let statsView = "P", statsTimer = null, deepRunning = false;
+let deepCache = {}; try { deepCache = JSON.parse(localStorage.getItem("cs_deep") || "{}"); } catch (_) {}
+function csTeamMeta(comp, teamId) {
+  const c = comp.competitors.find(x => String(x.team.id) === String(teamId));
+  return c ? { id: c.team.id, name: c.team.displayName, logo: c.team.logo } : {};
+}
+async function aggInstant() {
+  const evs = await seasonEvents();
+  const fin = evs.filter(e => e.status.type.state === "post");
+  const T = { goals: 0, played: fin.length, total: evs.length, yellow: 0, red: 0, pens: 0, og: 0 };
+  const sc = {}, bk = {}, cs = {}, tc = {};
+  const my = myNation();
+  const addCS = t => { cs[t.id] = cs[t.id] || { name: t.displayName, logo: t.logo, n: 0 }; cs[t.id].n++; };
+  fin.forEach(e => {
+    const comp = e.competitions[0];
+    const H = comp.competitors.find(x => x.homeAway === "home"), A = comp.competitors.find(x => x.homeAway === "away");
+    const hs = +H.score || 0, as = +A.score || 0;
+    T.goals += hs + as;
+    if (as === 0) addCS(H.team); if (hs === 0) addCS(A.team);
+    (comp.details || []).forEach(d => {
+      const tm = csTeamMeta(comp, (d.team || {}).id);
+      const a = (d.athletesInvolved || [])[0];
+      if (d.scoringPlay && !d.shootout) {
+        if (d.ownGoal) { T.og++; }
+        else { if (d.penaltyKick) T.pens++;
+          if (a) { const k = a.id || a.displayName; sc[k] = sc[k] || { id: k, name: a.displayName, team: tm.name, logo: tm.logo, goals: 0, pens: 0 }; sc[k].goals++; if (d.penaltyKick) sc[k].pens++; } }
+      }
+      if (d.yellowCard || d.redCard) {
+        if (d.yellowCard) T.yellow++; if (d.redCard) T.red++;
+        if (a) { const k = a.id || a.displayName; bk[k] = bk[k] || { id: k, name: a.displayName, team: tm.name, logo: tm.logo, y: 0, r: 0 }; if (d.yellowCard) bk[k].y++; if (d.redCard) bk[k].r++; }
+        if (tm.id) { tc[tm.id] = tc[tm.id] || { name: tm.name, logo: tm.logo, y: 0, r: 0 }; if (d.yellowCard) tc[tm.id].y++; if (d.redCard) tc[tm.id].r++; }
+      }
+    });
+  });
+  const fin2 = (arr, key) => arr.map(x => ({ ...x, isMy: x.team ? x.team === my : x.name === my })).sort(key);
+  return {
+    totals: T,
+    scorers: fin2(Object.values(sc), (a, b) => b.goals - a.goals || a.pens - b.pens || a.name.localeCompare(b.name)),
+    booked: fin2(Object.values(bk), (a, b) => (b.y + b.r * 3) - (a.y + a.r * 3) || b.r - a.r || a.name.localeCompare(b.name)),
+    cleanSheets: fin2(Object.values(cs), (a, b) => b.n - a.n || a.name.localeCompare(b.name)),
+    teamCards: fin2(Object.values(tc), (a, b) => (b.y + b.r * 3) - (a.y + a.r * 3) || b.r - a.r || a.name.localeCompare(b.name)),
+  };
+}
+async function aggTeams() {
+  const d = await getJSON(STAND);
+  const my = myNation(), rows = [];
+  (d.children || []).forEach(g => ((g.standings && g.standings.entries) || []).forEach(r => {
+    const s = statmap(r);
+    rows.push({ name: r.team.displayName, logo: (r.team.logos && r.team.logos[0]) ? r.team.logos[0].href : "", gf: s.pointsFor || 0, ga: s.pointsAgainst || 0, pl: s.gamesPlayed || 0, isMy: r.team.displayName === my });
+  }));
+  return rows;
+}
+async function ensureDeep(onProgress) {
+  const evs = await seasonEvents();
+  const fin = evs.filter(e => e.status.type.state === "post");
+  const have = fin.filter(e => deepCache[e.id]).length;
+  onProgress(have, fin.length);
+  if (deepRunning) return;
+  deepRunning = true;
+  for (const e of fin) {
+    if (deepCache[e.id]) continue;
+    if ($("paneS").classList.contains("hide")) break;
+    try {
+      const s = lineups[e.id] || (lineups[e.id] = await getJSON(API + "/summary?event=" + e.id));
+      const a = {}, sv = {};
+      (s.rosters || []).forEach(r => { const tm = { name: r.team.displayName, logo: r.team.logo };
+        (r.roster || []).forEach(p => {
+          const st = {}; (p.stats || []).forEach(x => st[x.name] = parseFloat(x.value) || 0);
+          const id = (p.athlete || {}).id || (p.athlete || {}).displayName, nm = (p.athlete || {}).displayName;
+          if (st.goalAssists > 0) a[id] = { n: st.goalAssists, name: nm, team: tm.name, logo: tm.logo };
+          if (st.saves > 0) sv[id] = { n: st.saves, name: nm, team: tm.name, logo: tm.logo };
+        });
+      });
+      deepCache[e.id] = { a, s: sv };
+      try { localStorage.setItem("cs_deep", JSON.stringify(deepCache)); } catch (_) {}
+    } catch (_) {}
+    onProgress(fin.filter(x => deepCache[x.id]).length, fin.length);
+    await new Promise(r => setTimeout(r, 220));
+  }
+  deepRunning = false;
+}
+function deepBoards() {
+  const A = {}, S = {}, my = myNation();
+  Object.values(deepCache).forEach(ev => {
+    Object.entries(ev.a || {}).forEach(([id, o]) => { A[id] = A[id] || { id, name: o.name, team: o.team, logo: o.logo, n: 0 }; A[id].n += o.n; });
+    Object.entries(ev.s || {}).forEach(([id, o]) => { S[id] = S[id] || { id, name: o.name, team: o.team, logo: o.logo, n: 0 }; S[id].n += o.n; });
+  });
+  const mk = obj => Object.values(obj).map(x => ({ ...x, isMy: x.team === my })).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name));
+  return { assists: mk(A), saves: mk(S) };
+}
+function withRanks(items, metric) { return items.map(x => ({ ...x, _rank: 1 + items.filter(y => metric(y) > metric(x)).length })); }
+function crestImg(logo) { return '<img src="' + (logo || "") + '" alt="" onerror="this.style.visibility=&#39;hidden&#39;">'; }
+function board(title, icon, accent, items, opts) {
+  opts = opts || {};
+  const sub = opts.sub || (x => x.team || ""), val = opts.val || ((x) => '<div class="v">' + (x.n || 0) + '</div>'), m = opts.rankMetric || (() => 0);
+  let body = "";
+  if (!items.length) { body = '<div style="text-align:center;color:var(--dim);font-size:12px;padding:16px 0">' + (opts.empty || "No data yet") + '</div>'; }
+  else {
+    const topTie = items.length > 1 && m(items[0]) === m(items[1]);
+    items.slice(0, 5).forEach((x, i) => {
+      const egy = x.isMy ? " egy" : "", rk = x._rank !== undefined ? x._rank : (i + 1);
+      const nm = '<div class="nm"><div class="p">' + esc(x.name) + '</div>' + (sub(x) ? '<div class="tm">' + esc(sub(x)) + '</div>' : "") + '</div>';
+      if (i === 0 && !topTie) body += '<div class="lbhero ' + accent + egy + '"><div class="rk">1</div>' + crestImg(x.logo) + nm + val(x, true) + '</div>';
+      else body += '<div class="lbr' + egy + '"><div class="rk">' + rk + '</div>' + crestImg(x.logo) + nm + val(x, false) + '</div>';
+    });
+  }
+  return '<div class="lbc"><div class="h"><span class="ic">' + icon + '</span><span class="t">' + title + '</span>' + (opts.hint ? '<span class="hint">' + opts.hint + '</span>' : "") + '</div>' + body + '</div>';
+}
+const vNum = (unit) => (x, h) => '<div class="v">' + (x.n || 0) + (h ? '<small>' + unit + '</small>' : "") + '</div>';
+const vTeam = (f, unit) => (x, h) => '<div class="v">' + (x[f] || 0) + (h ? '<small>' + unit + '</small>' : "") + '</div>';
+function vScorer(x, h) { return '<div class="v">' + x.goals + (x.pens ? '<span style="font-size:.45em;color:var(--dim)"> (' + x.pens + 'P)</span>' : "") + (h ? '<small>goals</small>' : "") + '</div>'; }
+function vPips(x) { return '<div class="pips">' + (x.y ? '<span class="pip y">' + x.y + '</span>' : "") + (x.r ? '<span class="pip r">' + x.r + '</span>' : "") + '</div>'; }
+function heroTiles(T) {
+  const tile = (n, c, acc) => '<div class="htile" style="--accent:' + acc + '"><div class="n">' + n + '</div><div class="c">' + c + '</div></div>';
+  const avg = T.played ? (T.goals / T.played).toFixed(1) : "—";
+  return tile(T.goals, "GOALS", "var(--gold)") + tile(T.played + " / " + T.total, "MATCHES", "var(--cyan)") +
+    tile(avg, "AVG / GAME", "var(--rust2)") + tile(T.yellow + " / " + T.red, "CARDS Y / R", "var(--red)");
+}
+function factsStrip(T, cs) {
+  const totalCS = cs.reduce((a, b) => a + b.n, 0);
+  const f = (l, v) => '<div class="fchip">' + l + '<b>' + v + '</b></div>';
+  return f("PENALTIES", T.pens) + f("OWN GOALS", T.og) + f("RED CARDS", T.red) + f("CLEAN SHEETS", totalCS);
+}
+function progHint(p) { return (p && p[1] && p[0] < p[1]) ? ("PROCESSING " + p[0] + "/" + p[1]) : ""; }
+function progEmpty(p) { if (!p || !p[1]) return "Fills in once matches finish"; return p[0] < p[1] ? ("Crunching match data… " + p[0] + "/" + p[1]) : "No data yet"; }
+function paintStatsBody() {
+  const inst = window._statsInst; if (!inst) return;
+  if (statsView === "P") {
+    const deep = deepBoards(), p = window._deepProg || [0, 0];
+    $("stBody").innerHTML =
+      board("GOLDEN BOOT", "⚽", "gold", withRanks(inst.scorers, x => x.goals), { rankMetric: x => x.goals, val: vScorer, hint: "TOP SCORERS" }) +
+      board("ASSISTS", "🎯", "cyan", withRanks(deep.assists, x => x.n), { rankMetric: x => x.n, val: vNum("assists"), hint: progHint(p), empty: progEmpty(p) }) +
+      board("SAVES", "🧤", "cyan", withRanks(deep.saves, x => x.n), { rankMetric: x => x.n, val: vNum("saves"), hint: progHint(p), empty: progEmpty(p) }) +
+      board("MOST BOOKED", "🟨", "red", withRanks(inst.booked, x => x.y + x.r * 3), { rankMetric: x => x.y + x.r * 3, val: vPips, hint: "DISCIPLINE" });
+  } else {
+    const teams = window._statsTeams || [];
+    const attack = withRanks(teams.slice().sort((a, b) => b.gf - a.gf), x => x.gf);
+    const defence = withRanks(teams.slice().sort((a, b) => a.ga - b.ga || a.gf - b.gf), x => -x.ga);
+    const tsub = x => "Played " + x.pl;
+    $("stBody").innerHTML =
+      board("BEST ATTACK", "⚽", "rust", attack, { rankMetric: x => x.gf, val: vTeam("gf", "scored"), sub: tsub, hint: "GOALS FOR" }) +
+      board("BEST DEFENCE", "🛡️", "cyan", defence, { rankMetric: x => -x.ga, val: vTeam("ga", "conceded"), sub: tsub, hint: "FEWEST CONCEDED" }) +
+      board("CLEAN SHEETS", "✨", "cyan", withRanks(inst.cleanSheets, x => x.n), { rankMetric: x => x.n, val: vNum("clean sheets"), sub: () => "", hint: "SHUTOUTS" }) +
+      board("MOST CARDS", "🟥", "red", withRanks(inst.teamCards, x => x.y + x.r * 3), { rankMetric: x => x.y + x.r * 3, val: vPips, sub: () => "", hint: "FAIR PLAY" });
+  }
+}
+function setStatsView(v) {
+  statsView = v;
+  $("stP").classList.toggle("on", v === "P");
+  $("stT").classList.toggle("on", v === "T");
+  paintStatsBody();
+}
+async function renderStats() {
+  try {
+    window._statsInst = await aggInstant();
+    $("stHero").innerHTML = heroTiles(window._statsInst.totals);
+    $("stFacts").innerHTML = factsStrip(window._statsInst.totals, window._statsInst.cleanSheets);
+    if (!window._statsTeams) { try { window._statsTeams = await aggTeams(); } catch (_) { window._statsTeams = []; } }
+    paintStatsBody();
+    ensureDeep((d, t) => { window._deepProg = [d, t]; if (statsView === "P" && !$("paneS").classList.contains("hide")) paintStatsBody(); });
+  } catch (e) { $("stBody").innerHTML = '<div class="empty">Couldn\'t load stats — retrying.</div>'; }
+}
 setCon(null, "CONNECTING");
 buildStrip();
 if (!cs_user) setTimeout(() => openAuth("C"), 700);
