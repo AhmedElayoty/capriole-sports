@@ -1094,8 +1094,10 @@ function laneKey(ab) {
   ab = (ab || "").toUpperCase();
   const side = ab.indexOf("L") >= 0 ? -1 : ab.indexOf("R") >= 0 ? 1 : 0;
   if (!side) return 0;
-  const wide = (ab.slice(-1) === "B" || ab.indexOf("W") >= 0) ? 2 : 1;
-  return side * wide;
+  // flank roles sit widest (±2): backs (LB/RB/WB), wingers (LW/RW), and bare wide mids/forwards (LM/RM/LF/RF).
+  // hyphenated inner roles (CD-L, CM-R, AM-L) stay inner (±1).
+  const wide = ab.slice(-1) === "B" || ab.indexOf("W") >= 0 || ab.indexOf("-") < 0;
+  return side * (wide ? 2 : 1);
 }
 function spreadX(n) {
   const T = { 1: [50], 2: [33, 67], 3: [22, 50, 78], 4: [11, 37.5, 62.5, 89], 5: [8, 29.5, 50, 70.5, 92] };
