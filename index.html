@@ -272,7 +272,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
  </section>
  <section id="paneG" class="hide">
   <div class="secrow"><span class="sect">GROUP STANDINGS</span>
-   <span style="margin-left:auto;font-size:10px;color:var(--dim);font-family:'Oswald';letter-spacing:1px">AUTO-UPDATING</span></div>
+   <span style="margin-left:auto;font-size:10px;color:var(--dim);font-family:'Oswald';letter-spacing:1px">&#9679; LIVE &#183; UPDATES EVERY 20s</span></div>
   <div class="ggrid" id="ggrid"><div class="empty">Loading standings…</div></div>
   <div id="thirdsBox"></div>
  </section>
@@ -393,7 +393,7 @@ function showTab(t) {
   });
   if (t === "C") { ensureName(); pollChat(); chatTimer = chatTimer || setInterval(pollChat, 5000); }
   else if (chatTimer) { clearInterval(chatTimer); chatTimer = null; }
-  if (t === "G") { loadStandings(); groupsTimer = groupsTimer || setInterval(loadStandings, 90000); }
+  if (t === "G") { loadStandings(); groupsTimer = groupsTimer || setInterval(loadStandings, 20000); }
   else if (groupsTimer) { clearInterval(groupsTimer); groupsTimer = null; }
   if (t === "P") { ensureName(); renderPredict(); }
 }
@@ -703,6 +703,14 @@ function weekStartKey(d) {
   t.setUTCDate(t.getUTCDate() - ((t.getUTCDay() + 6) % 7));
   return t.toISOString().slice(0, 10).replace(/-/g, "");
 }
+function weekKeyAddDays(key, n) {
+  const d = new Date(Date.UTC(+key.slice(0, 4), +key.slice(4, 6) - 1, +key.slice(6, 8)));
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10).replace(/-/g, "");
+}
+function weekStartMs(key) {
+  return Date.UTC(+key.slice(0, 4), +key.slice(4, 6) - 1, +key.slice(6, 8)) - 4 * 3600000;
+}
 async function syncMyPreds() {
   try {
     const all = await readKey(PRED_KEY, {});
@@ -719,27 +727,35 @@ async function renderPredict() {
     const evs = await seasonEvents();
     const now = Date.now();
     const up = evs.filter(e => e.status.type.state === "pre" && new Date(e.date) > now);
-    const thisWk = weekStartKey(new Date());
-    let pool = up.filter(e => weekStartKey(new Date(e.date)) === thisWk);
-    let wkLabel = "THIS WEEK";
-    if (!pool.length && up.length) {
+    const curWk = weekStartKey(new Date());
+    const nextWk = weekKeyAddDays(curWk, 7);
+    const nextOpen = now >= weekStartMs(nextWk) - 2 * 86400000;  // next week opens 2 days early
+    const allowed = new Set([curWk]);
+    if (nextOpen) allowed.add(nextWk);
+    let pool = up.filter(e => allowed.has(weekStartKey(new Date(e.date))));
+    if (!pool.length && up.length) {                            // nothing in allowed weeks — show soonest
       const nxt = weekStartKey(new Date(up[0].date));
       pool = up.filter(e => weekStartKey(new Date(e.date)) === nxt);
-      wkLabel = "NEXT WEEK";
     }
-    const rangeLab = pool.length
-      ? (fmt(new Date(pool[0].date), { day: "2-digit", month: "short" }) + " – " +
-         fmt(new Date(pool[pool.length - 1].date), { day: "2-digit", month: "short" })).toUpperCase()
-      : "";
+    const byWeek = {};
+    pool.forEach(e => { const w = weekStartKey(new Date(e.date)); (byWeek[w] = byWeek[w] || []).push(e); });
+    const note = '<span style="margin-left:auto;font-size:10px;color:var(--dim);font-family:Oswald;letter-spacing:1px">ONE SUBMISSION · CLOSES 30 MIN BEFORE KICK-OFF</span>';
+    let html = "";
+    Object.keys(byWeek).sort().forEach(w => {
+      const ms = byWeek[w];
+      const range = (fmt(new Date(ms[0].date), { day: "2-digit", month: "short" }) + " – " +
+                     fmt(new Date(ms[ms.length - 1].date), { day: "2-digit", month: "short" })).toUpperCase();
+      const label = w === curWk ? "THIS WEEK" : "NEXT WEEK — PREDICT EARLY";
+      html += '<div class="secrow" style="margin-top:' + (html ? "14px" : "2px") + '">' +
+        '<span class="sect" style="color:var(--gold)">' + label + ' · ' + range + '</span>' +
+        (html ? "" : note) + '</div>' +
+        ms.map(e => predCard(e, new Date(e.date) - now < 1800000)).join("");
+    });
+    if (!html) html = '<div class="empty">No matches open yet — next week\u2019s fixtures open 2 days before it starts.</div>';
     const recent = evs.filter(e => e.status.type.state !== "pre").slice(-6).reverse();
-    $("predList").innerHTML =
-      '<div class="secrow" style="margin-top:2px"><span class="sect" style="color:var(--gold)">' +
-      wkLabel + (rangeLab ? " · " + rangeLab : "") + '</span>' +
-      '<span style="margin-left:auto;font-size:10px;color:var(--dim);font-family:Oswald;letter-spacing:1px">ONE SUBMISSION · CLOSES 30 MIN BEFORE KICK-OFF</span></div>' +
-      (pool.length ? pool.map(e => predCard(e, new Date(e.date) - Date.now() < 1800000)).join("")
-                   : '<div class="empty">No more matches to predict this week — new week opens Monday.</div>') +
-      (recent.length ? '<div class="secrow" style="margin-top:12px"><span class="sect">LOCKED / FINISHED</span></div>' +
-        recent.map(e => predCard(e, true)).join("") : "");
+    if (recent.length) html += '<div class="secrow" style="margin-top:14px"><span class="sect">LOCKED / FINISHED</span></div>' +
+      recent.map(e => predCard(e, true)).join("");
+    $("predList").innerHTML = html;
     loadLeaderboard(evs);
   } catch (err) {
     $("predList").innerHTML = '<div class="empty">Could not load fixtures — check connection.</div>';
@@ -823,7 +839,13 @@ async function submitPred(btn, ev) {
 async function loadLeaderboard(evs) {
   try {
     const all = await readKey(PRED_KEY, {});
-    const done = evs.filter(e => e.status.type.state === "post");
+    const curWk = weekStartKey(new Date());
+    const done = evs.filter(e => e.status.type.state === "post" && weekStartKey(new Date(e.date)) === curWk);
+    const wkAll = evs.filter(e => weekStartKey(new Date(e.date)) === curWk);
+    const wkRange = wkAll.length
+      ? (fmt(new Date(wkAll[0].date), { day: "2-digit", month: "short" }) + " – " +
+         fmt(new Date(wkAll[wkAll.length - 1].date), { day: "2-digit", month: "short" })).toUpperCase()
+      : "";
     const rows = Object.entries(all).map(([uid, u]) => {
       let pts = 0, exact = 0, played = 0;
       done.forEach(e => {
@@ -847,11 +869,15 @@ async function loadLeaderboard(evs) {
           ' (' + sc[0].pts + ' pts) — eating free all this week</div>'
         : '<div class="lbchamp">&#127859; LAST WEEK: no points scored — jackpot rolls over</div>';
     }
-    $("lbBody").innerHTML = champ + (rows.length
-      ? rows.map((r, i) => '<div class="lbrow' + (r.uid === myId ? " me" : "") + '"><div class="rk">' + (i + 1) + '</div>' +
+    const wkHead = '<div style="font-family:Oswald;font-size:11px;letter-spacing:1px;color:var(--cyan);margin-bottom:8px">THIS WEEK' +
+      (wkRange ? " · " + wkRange : "") + ' · POINTS RESET EVERY MONDAY</div>';
+    const scored = rows.filter(r => r.played > 0);
+    const board = scored.length ? scored : rows;
+    $("lbBody").innerHTML = champ + wkHead + (board.length && (scored.length || done.length === 0)
+      ? board.map((r, i) => '<div class="lbrow' + (r.uid === myId ? " me" : "") + '"><div class="rk">' + (i + 1) + '</div>' +
           '<div class="nm">' + esc(r.name) + '</div><div class="ex">' + r.exact + ' exact · ' + r.played + ' played</div>' +
           '<div class="sc2">' + r.pts + '</div></div>').join("")
-      : '<div class="empty" style="padding:12px">No predictions yet — be the first! Points appear once matches finish.</div>');
+      : '<div class="empty" style="padding:12px">No points yet this week — the board fills as this week\u2019s matches finish.</div>');
   } catch (_) {
     $("lbBody").innerHTML = '<div class="empty" style="padding:12px">Leaderboard unreachable.</div>';
   }
