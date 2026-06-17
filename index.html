@@ -41,7 +41,11 @@ header{padding:10px 16px}
 #tzSel{background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--gold);border-radius:6px;font-family:'Oswald';font-weight:600;font-size:10.5px;letter-spacing:.8px;padding:2px 6px;cursor:pointer}
 #tzSel option,#tzSel optgroup{background:#0d1838;color:#eef2ff}
 #tzOff{color:var(--gold);font-family:'Oswald';font-weight:600;letter-spacing:1px}
-#fmtTog{background:var(--gold);color:#16110a;border:none;border-radius:6px;font-family:'Oswald';font-weight:700;font-size:10px;letter-spacing:.6px;padding:3px 8px;cursor:pointer;margin-left:4px}
+.fmtseg{display:inline-flex;border:1px solid var(--gold);border-radius:6px;overflow:hidden;margin-left:6px;vertical-align:middle;box-shadow:0 0 0 2px rgba(212,175,55,.12)}
+.fmtseg .fseg{background:transparent;color:var(--gold);border:none;font-family:'Oswald';font-weight:700;font-size:10px;letter-spacing:.6px;padding:3px 9px;cursor:pointer;line-height:1.5;transition:background .15s,color .15s}
+.fmtseg .fseg+.fseg{border-left:1px solid var(--gold)}
+.fmtseg .fseg.on{background:var(--gold);color:#16110a}
+.fmtseg .fseg:not(.on):hover{background:rgba(212,175,55,.18)}
 .hright{margin-left:auto;text-align:right}
 .uaeclock{font-family:'Oswald';font-weight:600;font-size:17px;letter-spacing:.5px}
 .constate{display:flex;align-items:center;gap:5px;justify-content:flex-end;font-family:'Oswald';
@@ -398,7 +402,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
   <div class="crest" onclick="goHome()" style="cursor:pointer" title="Home — today's matches"><img src="logo.png" alt="World Cup 2026"></div>
   <div>
    <div class="bname" onclick="goHome()" style="cursor:pointer" title="Home — today's matches">WORLD CUP <b>2026</b></div>
-   <div class="bsub">ALL TIMES <select id="tzSel" onchange="setTZ(this.value)" aria-label="Time zone"></select><span id="tzOff"></span><button id="fmtTog" onclick="toggleHour12()" aria-label="Time format"></button></div>
+   <div class="bsub">ALL TIMES <select id="tzSel" onchange="setTZ(this.value)" aria-label="Time zone"></select><span id="tzOff"></span><span id="fmtTog" class="fmtseg" role="group" aria-label="Time format" title="Tap to switch between AM·PM and 24-hour clock"><button type="button" class="fseg" data-h12="1" onclick="setHour12(true)">AM·PM</button><button type="button" class="fseg" data-h12="0" onclick="setHour12(false)">24H</button></span></div>
   </div>
   <div class="hright">
    <div class="uaeclock" id="clock">--:--</div>
@@ -562,7 +566,8 @@ setInterval(() => {
 const ZONES = [
   ["Gulf", [["Asia/Dubai","UAE","UAE"],["Asia/Riyadh","Saudi Arabia","KSA"],["Asia/Qatar","Qatar","QAT"],["Asia/Kuwait","Kuwait","KWT"],["Asia/Bahrain","Bahrain","BHR"],["Asia/Muscat","Oman","OMN"],["Asia/Baghdad","Iraq","IRQ"]]],
   ["North Africa", [["Africa/Cairo","Egypt","EGY"],["Africa/Casablanca","Morocco","MAR"],["Africa/Algiers","Algeria","ALG"],["Africa/Tunis","Tunisia","TUN"],["Africa/Tripoli","Libya","LBY"],["Africa/Khartoum","Sudan","SDN"]]],
-  ["Levant", [["Asia/Amman","Jordan","JOR"],["Asia/Beirut","Lebanon","LBN"]]]
+  ["Levant", [["Asia/Amman","Jordan","JOR"],["Asia/Beirut","Lebanon","LBN"]]],
+  ["Host Nations 🌎", [["America/New_York","USA — East","USA-E"],["America/Chicago","USA — Central","USA-C"],["America/Los_Angeles","USA — West","USA-W"],["America/Toronto","Canada — East","CAN-E"],["America/Vancouver","Canada — West","CAN-W"],["America/Mexico_City","Mexico","MEX"]]]
 ];
 function tzAbbr() { for (const g of ZONES) for (const z of g[1]) if (z[0] === TZ) return z[2]; return "UAE"; }
 function tzOffset(tz) { try { const p = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "shortOffset" }).formatToParts(new Date()).find(x => x.type === "timeZoneName"); return p ? p.value.replace("GMT", "UTC") : ""; } catch (_) { return ""; } }
@@ -579,8 +584,9 @@ function setTZ(v) {
   const s = $("tzSel"); if (s) s.value = v;
   updateTzLabel(); reRenderTimes();
 }
-function updateFmtTog() { const b = $("fmtTog"); if (b) b.textContent = HOUR12 ? "AM·PM" : "24H"; }
-function toggleHour12() { HOUR12 = !HOUR12; try { localStorage.setItem("cs_h12", HOUR12 ? "1" : "0"); } catch (_) {} updateFmtTog(); reRenderTimes(); }
+function updateFmtTog() { const seg = $("fmtTog"); if (!seg) return; const cur = HOUR12 ? "1" : "0"; seg.querySelectorAll(".fseg").forEach(b => b.classList.toggle("on", b.dataset.h12 === cur)); }
+function setHour12(v) { if (HOUR12 === v) return; HOUR12 = v; try { localStorage.setItem("cs_h12", v ? "1" : "0"); } catch (_) {} updateFmtTog(); reRenderTimes(); }
+function toggleHour12() { setHour12(!HOUR12); }
 
 /* ================= TABS ================= */
 function showTab(t) {
@@ -993,6 +999,15 @@ function bpMergeConn(p, pos){
 }
 function bpSideConn(childN, toX, toY, pos){ const c=pos[childN], left=c.side==="L", cE=left?c.x+c.w:c.x, dir=left?1:-1; const w=bpWinTeam(childN); const ac=(w&&w.name===myNation())?BPC.nat:(bpDecided(childN)?BPC.gold:"#4A5560");
   return '<path d="M'+cE+' '+c.y+' H'+(toX-dir*8)+'" fill="none" stroke="'+ac+'" stroke-width="'+(ac===BPC.nat?3:2.4)+'" marker-end="url(#'+bpArw(ac)+')"'+(ac===BPC.nat?' filter="url(#bpNat)"':"")+'/>'; }
+function bpSlotGlyph(slot){
+  if(!slot) return {g:"·", c:BPC.meta};
+  if(slot.t==="W") return {g:slot.g, c:BPC.win};
+  if(slot.t==="R") return {g:slot.g, c:BPC.plat};
+  if(slot.t==="3") return {g:"3", c:BPC.bronze};
+  if(slot.t==="WM") return {g:""+slot.m, c:BPC.plat};
+  if(slot.t==="LM") return {g:""+slot.m, c:BPC.lose};
+  return {g:"·", c:BPC.meta};
+}
 function bpSlotR(node, side, x, top, w, sh, scale){
   const team=bpSlotTeam(node,side), r=bpRes(node.n), s=scale||1, tileW=30*s, tileH=22*s, fx=x+11, fy=top+(sh-tileH)/2, nameX=fx+tileW+11, cy=top+sh/2;
   const ns=(scale&&scale>1.2)?22:16, score=r?(side==="h"?r.hs:r.as):null, win=r&&r.hs!=null?(r.hs>=r.as?"h":"a"):null, isWin=win===side;
@@ -1009,9 +1024,16 @@ function bpSlotR(node, side, x, top, w, sh, scale){
       if(isWin) o+='<rect x="'+(sx-24)+'" y="'+(cy-12)+'" width="24" height="24" rx="5" fill="url(#bpGold)"/><text x="'+(sx-12)+'" y="'+cy+'" text-anchor="middle" dominant-baseline="central" font-family="Oswald" font-weight="700" font-size="17" fill="#2A1622">'+score+'</text>';
       else o+='<text x="'+sx+'" y="'+cy+'" text-anchor="end" dominant-baseline="central" font-family="Oswald" font-weight="700" font-size="16" fill="'+BPC.lose+'">'+score+'</text>'; }
   } else {
-    const L=slotLabel(side==="h"?node.h:node.a);
-    o+='<rect x="'+fx+'" y="'+fy+'" width="'+tileW+'" height="'+tileH+'" rx="3" fill="none" stroke="'+BPC.hair+'" stroke-width="1" stroke-dasharray="2 2"/>';
-    o+='<text x="'+nameX+'" y="'+cy+'" dominant-baseline="central" font-family="Oswald" font-style="italic" font-weight="400" font-size="'+(ns-1.5)+'" fill="'+BPC.ph+'">'+esc(bpTrunc(L.main,20))+'</text>';
+    const slot=side==="h"?node.h:node.a, L=slotLabel(slot), gl=bpSlotGlyph(slot);
+    const gfs=(""+gl.g).length>=3?tileH*0.42:tileH*0.56;
+    o+='<rect x="'+fx+'" y="'+fy+'" width="'+tileW+'" height="'+tileH+'" rx="4" fill="#2A1C32" stroke="'+BPC.hair+'" stroke-width="0.7"/>';
+    o+='<text x="'+(fx+tileW/2)+'" y="'+(fy+tileH/2)+'" text-anchor="middle" dominant-baseline="central" font-family="Oswald" font-weight="700" font-size="'+gfs.toFixed(1)+'" fill="'+gl.c+'">'+esc(gl.g)+'</text>';
+    if(slot&&slot.t==="3"){
+      o+='<text x="'+nameX+'" y="'+(cy-ns*0.34)+'" dominant-baseline="central" font-family="Oswald" font-weight="500" font-size="'+(ns-2)+'" fill="'+BPC.ph+'">'+esc(bpTrunc(L.main,18))+'</text>';
+      o+='<text x="'+nameX+'" y="'+(cy+ns*0.56)+'" dominant-baseline="central" font-family="Inter" font-weight="500" font-size="'+(ns*0.62).toFixed(1)+'" letter-spacing="0.3" fill="'+BPC.meta+'">'+esc(bpTrunc(L.sub,22))+'</text>';
+    } else {
+      o+='<text x="'+nameX+'" y="'+cy+'" dominant-baseline="central" font-family="Oswald" font-weight="500" font-size="'+(ns-1.5)+'" fill="'+BPC.ph+'">'+esc(bpTrunc(L.main,20))+'</text>';
+    }
   }
   return o;
 }
