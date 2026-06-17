@@ -1905,7 +1905,7 @@ function statsShare(data) {
       html += '<div class="sech">MATCH STATS</div>' + hd + bars;
     }
   }
-  return html + '<button class="sharebtn" onclick="shareMatch(event)">SHARE THIS MATCH TO THE TEAM</button>';
+  return html + '<button class="sharebtn" onclick="shareMatch(event)">SHARE THIS MATCH DETAILS</button>';
 }
 function shareMatch(ev) {
   ev.stopPropagation();
@@ -1974,13 +1974,7 @@ async function announceChampion() {
     $("brkBox").innerHTML = '<div class="brk">&#127942; <b>PREDICTION CHAMPION' + (plural ? "S" : "") + '</b> — ' +
       esc(names) + ' topped last week (' + w.lab + ') with ' + top + ' pts.' +
       '<span>CHAMPION OF THE WEEK!</span></div>';
-    const ck = "cs_champ_" + w.wk; let _ann = false; try { _ann = localStorage.getItem(ck) === "1"; } catch (_) {}
-    if (!_ann) {   // champion announcement lives in the chat (per user); shown in chat log + counts toward unread, no toast
-      try { localStorage.setItem(ck, "1"); } catch (_) {}
-      postRoom([{ id: "brkfst-w" + w.wk, uid: "brkbot", name: "🏆 PREDICTIONS",
-        text: names + (plural ? " share" : " takes") + " the crown — Prediction Champion" + (plural ? "s" : "") + " for " + w.lab + " with " + top + " pts! 🏆",
-        ts: Date.now() }]).catch(() => {});
-    }
+    // last week's winner is shown in the Predict banner above ONLY — not posted to chat (already announced there)
   } catch (_) {}
 }
 
@@ -2147,7 +2141,7 @@ async function seasonEvents(force) {
   seasonCache = { t: Date.now(), events: (d.events || []).sort((a, b) => new Date(a.date) - new Date(b.date)) };
   return seasonCache.events;
 }
-function isBot(m) { return !m.uid || m.uid === "goalbot"; }   // champion (brkbot) DOES show in chat now
+function isBot(m) { return !m.uid || m.uid === "goalbot" || m.uid === "brkbot"; }   // hide goal + champion/breakfast bots from chat
 function chatSeenTs() { try { return +(localStorage.getItem("cs_chat_seen") || 0); } catch (_) { return 0; } }
 function setChatSeen(ts) { try { localStorage.setItem("cs_chat_seen", String(ts)); } catch (_) {} }
 function updateChatBadge(human) {
