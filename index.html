@@ -188,6 +188,14 @@ main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-
  letter-spacing:1px;font-size:11px;border-radius:20px;padding:6px 14px;cursor:pointer;margin-left:auto;flex:none}
 .secrow{display:flex;align-items:center;gap:8px;margin:2px 0 12px}
 .sect{font-family:'Oswald';font-weight:600;font-size:13px;letter-spacing:2px;color:var(--mut)}
+.scorekey{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:-4px 0 13px;font-family:'Oswald'}
+.scorekey .sklbl{font-size:10px;letter-spacing:1.4px;color:var(--mut);font-weight:600}
+.skpill{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.6px;color:var(--txt);background:var(--card2);border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-weight:500}
+.skpill b{font-weight:700;font-size:12.5px;letter-spacing:.3px}
+.skpill.gold{border-color:var(--gold);background:#1c1605}
+.skpill.gold b{color:var(--gold)}
+.skpill.cyan{border-color:#1a4a63}
+.skpill.cyan b{color:var(--cyan)}
 footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px;letter-spacing:1.6px;color:#3d4a72}
 .hero{background:linear-gradient(150deg,#0a2e1d,#0c3a24);border:1px solid var(--green);border-radius:16px;
  padding:13px 15px;margin-bottom:12px;cursor:pointer}
@@ -443,8 +451,8 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
   <div id="brkBox"></div>
   <div class="lb"><h3>&#127942; LEADERBOARD</h3>
   <div class="brknote">&#127942; Weekly top predictor is crowned the <b>Prediction Champion</b></div><div id="lbBody"><div class="empty">Loading…</div></div></div>
-  <div class="secrow"><span class="sect">YOUR PREDICTIONS</span>
-   <span style="margin-left:auto;font-size:10px;color:var(--dim);font-family:'Oswald';letter-spacing:1px">EXACT = 3 PTS · RESULT = 1 PT</span></div>
+  <div class="secrow"><span class="sect">YOUR PREDICTIONS</span></div>
+  <div class="scorekey"><span class="sklbl">HOW POINTS WORK</span><span class="skpill gold"><b>3 PTS</b> EXACT SCORE</span><span class="skpill cyan"><b>1 PT</b> RIGHT RESULT</span></div>
   <div id="predList"><div class="empty">Loading…</div></div>
  </section>
  <section id="paneG" class="hide">
