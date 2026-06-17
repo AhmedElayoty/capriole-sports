@@ -38,9 +38,10 @@ header{padding:10px 16px}
 .bname{font-family:'Oswald';font-weight:700;font-size:21px;letter-spacing:1px;line-height:1}
 .bname b{color:var(--rust2);font-weight:700}
 .bsub{font-family:'Oswald';font-weight:500;font-size:10.5px;letter-spacing:2px;color:var(--mut);margin-top:3px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-#tzSel{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line);border-radius:6px;font-family:'Oswald';font-weight:600;font-size:10.5px;letter-spacing:.8px;padding:2px 4px;cursor:pointer}
+#tzSel{background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--gold);border-radius:6px;font-family:'Oswald';font-weight:600;font-size:10.5px;letter-spacing:.8px;padding:2px 6px;cursor:pointer}
+#tzSel option,#tzSel optgroup{background:#0d1838;color:#eef2ff}
 #tzOff{color:var(--gold);font-family:'Oswald';font-weight:600;letter-spacing:1px}
-#fmtTog{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line);border-radius:6px;font-family:'Oswald';font-weight:600;font-size:10px;letter-spacing:.6px;padding:2px 6px;cursor:pointer;margin-left:2px}
+#fmtTog{background:var(--gold);color:#16110a;border:none;border-radius:6px;font-family:'Oswald';font-weight:700;font-size:10px;letter-spacing:.6px;padding:3px 8px;cursor:pointer;margin-left:4px}
 .hright{margin-left:auto;text-align:right}
 .uaeclock{font-family:'Oswald';font-weight:600;font-size:17px;letter-spacing:.5px}
 .constate{display:flex;align-items:center;gap:5px;justify-content:flex-end;font-family:'Oswald';
@@ -394,9 +395,9 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 <div class="topbar">
 <header>
  <div class="brand">
-  <div class="crest"><img src="logo.png" alt="World Cup 2026"></div>
+  <div class="crest" onclick="goHome()" style="cursor:pointer" title="Home — today's matches"><img src="logo.png" alt="World Cup 2026"></div>
   <div>
-   <div class="bname">WORLD CUP <b>2026</b></div>
+   <div class="bname" onclick="goHome()" style="cursor:pointer" title="Home — today's matches">WORLD CUP <b>2026</b></div>
    <div class="bsub">ALL TIMES <select id="tzSel" onchange="setTZ(this.value)" aria-label="Time zone"></select><span id="tzOff"></span><button id="fmtTog" onclick="toggleHour12()" aria-label="Time format"></button></div>
   </div>
   <div class="hright">
@@ -596,6 +597,13 @@ function showTab(t) {
   else if (statsTimer) { clearInterval(statsTimer); statsTimer = null; }
 }
 
+function goHome() {
+  showTab("M");
+  const t = uaeYMD(new Date());
+  if ($("dc" + t)) pickDate(t, true);
+  else { const f = document.querySelector("#dstrip .dchip"); if (f) pickDate(f.dataset.d, true); }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 /* ================= DATE STRIP ================= */
 function buildStrip() {
   const today = uaeYMD(new Date());
