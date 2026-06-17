@@ -366,18 +366,24 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 .fp.l{background:linear-gradient(160deg,#e0563c,#a82f1f)}
 .fp.none{background:#141d3e;color:var(--dim);font-weight:600;box-shadow:inset 0 0 0 1px var(--line);text-shadow:none}
 .fp.now{width:24px;height:24px;font-size:12px;box-shadow:0 0 0 2px rgba(255,192,46,.55),0 2px 5px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.22)}
-.h2hagg{display:flex;align-items:center;gap:9px;margin-bottom:2px}
-.aggside{display:flex;align-items:center;gap:7px;flex:0 0 auto}
-.aggflag{width:22px;height:22px;border-radius:5px;object-fit:cover;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.5)}
-.aggn{font-family:'Oswald';font-weight:700;font-size:18px;line-height:1;min-width:14px;text-align:center}
-.aggside.l .aggn{color:var(--rust2)}
-.aggside.r .aggn{color:var(--cyan)}
-.aggbar{flex:1 1 auto;height:7px;border-radius:5px;overflow:hidden;display:flex;background:#1a2548;box-shadow:inset 0 1px 2px rgba(0,0,0,.45)}
+.h2hagg{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.aggcol{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.aggcol .aggnum{display:flex;flex-direction:column;align-items:center;gap:0}
+.aggflag{width:24px;height:24px;border-radius:6px;object-fit:cover;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.aggn{font-family:'Oswald';font-weight:700;font-size:22px;line-height:1;text-align:center}
+.aggcol.l .aggn{color:var(--rust2)}
+.aggcol.r .aggn{color:var(--cyan)}
+.agglbl{font-family:'Oswald';font-weight:600;font-size:8px;letter-spacing:1.3px;text-transform:uppercase;color:var(--dim);margin-top:2px}
+.aggcol.mid{flex-direction:column;gap:0;background:#283355;border:1px solid #3f4f82;border-radius:11px;padding:5px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 8px rgba(0,0,0,.25)}
+.aggcol.mid .aggn{color:#dbe4ff;font-size:21px}
+.aggcol.mid .agglbl{color:#aab9ee}
+.aggcol.mid.zero{background:none;border:none;box-shadow:none;opacity:.5;padding:5px 6px}
+.aggcol.mid.zero .aggn{color:var(--dim)}
+.aggbar{height:8px;border-radius:5px;overflow:hidden;display:flex;background:#1a2548;box-shadow:inset 0 1px 2px rgba(0,0,0,.45);margin-bottom:11px}
 .aggbar .seg{height:100%}
 .aggbar .seg.h{background:linear-gradient(180deg,#ff7a45,#cf5a26)}
-.aggbar .seg.d{background:#4a5680}
+.aggbar .seg.d{background:#5a6aa0}
 .aggbar .seg.a{background:linear-gradient(180deg,#3fd0ff,#0f9fce)}
-.aggdraws{display:block;text-align:center;margin:5px 0 9px;font-family:'Oswald';font-weight:600;font-size:8.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--dim)}
 .h2hr{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:9px;background:var(--card2);border:1px solid var(--line)}
 .h2hr + .h2hr{margin-top:6px}
 .h2side{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
@@ -390,7 +396,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 .h2hsc.win-l{color:var(--rust2);border-color:rgba(255,122,69,.40)}
 .h2hsc.win-r{color:var(--cyan);border-color:rgba(25,200,255,.40)}
 .h2hsc.draw{color:#cdd9ff;background:#243056;border-color:#3a4a7a}
-.h2drawtag{display:block;font-family:'Oswald';font-weight:700;font-size:7px;letter-spacing:1.6px;color:#9fb0e0;margin-top:1px;line-height:1}
+.h2drawtag{display:block;font-family:'Oswald';font-weight:700;font-size:8.5px;letter-spacing:1.6px;color:#b9c6f0;margin-top:1px;line-height:1}
 .h2hr.win-l .h2side.r,.h2hr.win-r .h2side.l{opacity:.45}
 .h2hr.win-l .h2side.l .h2ab{color:var(--rust2)}
 .h2hr.win-r .h2side.r .h2ab{color:var(--cyan)}
@@ -616,7 +622,9 @@ const T0 = Date.UTC(2026, 5, 11), T1 = Date.UTC(2026, 6, 19);
 let selDate = null;          // 'YYYYMMDD' in UAE calendar
 let events = [];             // merged events for selected UAE day
 let openId = null;           // expanded match id
+let _openState = null;       // state of the open match at last render (to detect kick-off / full-time)
 let lineups = {};            // eventId -> summary data
+let lineupsTs = {};          // eventId -> when it was fetched (re-pull stale form/H2H on reopen)
 let chatTimer = null, matchTimer = null, lastChatJson = "", _chatKnownIds = null;
 let lastFetch = 0, lastScores = {}, flashIds = new Set();
 let seasonCache = { t: 0, events: [] };
@@ -808,7 +816,7 @@ function renderMatches() {
     $("mlist").innerHTML = `<div class="empty"><div class="big">🗓️</div>No matches this day (${tzAbbr()} time).<br>Pick another date above.</div>`;
     return;
   }
-  $("mlist").innerHTML = events.map(e => {
+  const _mhtml = events.map(e => {
     const c = e.competitions[0];
     const H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
     const st = e.status, state = st.type.state;
@@ -884,14 +892,28 @@ function renderMatches() {
       <div class="mdetail" id="det${e.id}"><div class="dnote">Loading line-ups…</div></div>
     </div>`;
   }).join("");
-  // the live poll rebuilds this list every 15s — repaint the open match's detail from cache
-  // so the stats/line-ups the user is reading don't blank back to "Loading…"
-  if (openId) {
-    const oe = events.find(x => x.id === openId);
-    if (oe && lineups[openId]) {
-      const box = document.getElementById("det" + openId);
-      if (box) box.innerHTML = matchDetail(lineups[openId], oe);
-    }
+  // The live poll rebuilds this whole list (every ~15s while a match is live). For a STATIC open match
+  // (pre / full-time) whose detail is already rendered, preserve that detail's DOM node verbatim across the
+  // rebuild instead of recreating it — otherwise a desktop click on a Recent-Form pill gets cancelled when
+  // its element is swapped out between mousedown and mouseup (touch never hit this — it clicks on touchend).
+  const _oe = openId ? events.find(x => x.id === openId) : null;
+  const _oSt = _oe ? _oe.status.type.state : null;
+  const _stChanged = openId ? (_oSt !== _openState) : false;
+  let _keepDet = null;
+  if (openId && _oe && _oSt !== "in" && !_stChanged) {
+    const b = document.getElementById("det" + openId);
+    if (b && b.querySelector(".md2")) _keepDet = b;     // detail is fully rendered (not the "Loading…" placeholder)
+  }
+  _openState = _oSt;
+  $("mlist").innerHTML = _mhtml;
+  if (_keepDet) {
+    const slot = document.getElementById("det" + openId);
+    if (slot) slot.replaceWith(_keepDet);               // drop the preserved node back in, untouched → click survives
+  } else if (_oe && lineups[openId]) {
+    // live match, or the state just flipped (kick-off / full-time) → repaint from cache so it doesn't blank
+    const box = document.getElementById("det" + openId);
+    if (box) box.innerHTML = matchDetail(lineups[openId], _oe);
+    if (_stChanged) fillDetail(openId, true);            // pull fresh data once on a state change
   }
   // card TV comes straight from the scoreboard — no per-card /summary fetch (keeps the matches list light)
 }
@@ -899,8 +921,11 @@ const logo = c => `<img src="${c.team.logo || ""}" alt="" onerror="this.style.vi
 async function fillDetail(id, force) {
   if (!$("det" + id)) return;
   try {
-    if (force) delete lineups[id];
-    const data = lineups[id] || (lineups[id] = await getJSON(API + "/summary?event=" + id));
+    // re-pull if forced, or if the cached summary is older than 2 min — recent form / H2H change as
+    // other matches finish (e.g. once Egypt's group opener ends, its result joins the form for later games)
+    if (force || (lineupsTs[id] && Date.now() - lineupsTs[id] > 120000)) delete lineups[id];
+    let data = lineups[id];
+    if (!data) { data = await getJSON(API + "/summary?event=" + id); lineups[id] = data; lineupsTs[id] = Date.now(); }
     if (openId !== id) return;                      // user closed it / opened another while fetching
     const box = $("det" + id);
     if (box) box.innerHTML = matchDetail(data, events.find(x => x.id === id));
@@ -1784,7 +1809,7 @@ function formH2H(data, ev) {
       const dt = e.gameDate ? esc(fmt(new Date(e.gameDate), { month: "short", year: "numeric" })) : "";
       return '<div class="h2hr ' + res + '"><span class="h2side l"><span class="h2ab">' + esc(ab[String(H.team.id)] || "") + '</span><img class="h2flag" src="' + esc(H.team.logo || "") + '" alt=""' + ferr + '></span><span class="h2hsc ' + res + '">' + hs + '<i>&#8211;</i>' + as + (res === "draw" ? '<b class="h2drawtag">DRAW</b>' : '') + '</span><span class="h2side r"><img class="h2flag" src="' + esc(A.team.logo || "") + '" alt=""' + ferr + '><span class="h2ab">' + esc(ab[String(A.team.id)] || "") + '</span></span><span class="h2dt">' + dt + '</span></div>';
     }).join("");
-    h2hSec = '<section class="fhsec h2hsec"><header class="fhhead"><span class="fhico fhico--h2h"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path fill="currentColor" d="M4 7h6v2H4zM4 11h6v2H4zM14 7h6v2h-6zM14 11h6v2h-6zM11 4h2v16h-2z"/></svg></span><span class="fhttl">HEAD-TO-HEAD</span><span class="fhrule"></span><span class="fhmeta">' + tot + ' MET</span></header><div class="h2hagg"><span class="aggside l"><img class="aggflag" src="' + esc(H.team.logo || "") + '" alt=""' + ferr + '><b class="aggn">' + hw + '</b></span><span class="aggbar">' + seg("h", hw) + seg("d", dr) + seg("a", aw) + '</span><span class="aggside r"><b class="aggn">' + aw + '</b><img class="aggflag" src="' + esc(A.team.logo || "") + '" alt=""' + ferr + '></span></div><span class="aggdraws">' + dr + ' DRAWN</span>' + rows + '</section>';
+    h2hSec = '<section class="fhsec h2hsec"><header class="fhhead"><span class="fhico fhico--h2h"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path fill="currentColor" d="M4 7h6v2H4zM4 11h6v2H4zM14 7h6v2h-6zM14 11h6v2h-6zM11 4h2v16h-2z"/></svg></span><span class="fhttl">HEAD-TO-HEAD</span><span class="fhrule"></span><span class="fhmeta">' + tot + ' MET</span></header><div class="h2hagg"><div class="aggcol l"><img class="aggflag" src="' + esc(H.team.logo || "") + '" alt=""' + ferr + '><div class="aggnum"><b class="aggn">' + hw + '</b><i class="agglbl">WON</i></div></div><div class="aggcol mid' + (dr ? "" : " zero") + '"><b class="aggn">' + dr + '</b><i class="agglbl">' + (dr === 1 ? "DRAW" : "DRAWS") + '</i></div><div class="aggcol r"><div class="aggnum"><b class="aggn">' + aw + '</b><i class="agglbl">WON</i></div><img class="aggflag" src="' + esc(A.team.logo || "") + '" alt=""' + ferr + '></div></div><div class="aggbar">' + seg("h", hw) + seg("d", dr) + seg("a", aw) + '</div>' + rows + '</section>';
   }
   return formSec + h2hSec;
 }
