@@ -59,8 +59,18 @@ header{padding:10px 16px}
 /* tabs */
 nav{display:flex;background:transparent;border-top:1px solid var(--line)}
 nav button{flex:1;background:none;border:none;color:var(--mut);font-family:'Oswald';font-weight:600;white-space:nowrap;
- font-size:11.5px;letter-spacing:.6px;padding:12px 2px 10px;cursor:pointer;border-bottom:2.5px solid transparent}
+ font-size:11.5px;letter-spacing:.6px;padding:12px 2px 10px;cursor:pointer;border-bottom:2.5px solid transparent;position:relative}
 nav button.on{color:#fff;border-bottom-color:var(--rust2)}
+.navbadge{position:absolute;top:5px;left:calc(50% + 13px);min-width:16px;height:16px;padding:0 4px;border-radius:9px;background:var(--rust2);color:#fff;font-family:'Inter';font-weight:700;font-size:9.5px;line-height:16px;text-align:center;display:none;box-shadow:0 0 0 2px var(--navy)}
+#toastWrap{position:fixed;top:calc(8px + env(safe-area-inset-top));left:0;right:0;z-index:200;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 10px}
+.ctoast{pointer-events:auto;width:100%;max-width:430px;background:rgba(16,26,60,.97);border:1px solid var(--line);border-left:3px solid var(--rust2);border-radius:14px;box-shadow:0 10px 34px rgba(0,0,0,.55);padding:10px 11px;display:flex;align-items:center;gap:10px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:toastIn .26s cubic-bezier(.2,.9,.3,1)}
+.ctoast .ic{width:34px;height:34px;border-radius:50%;background:var(--rust);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Oswald';font-weight:700;font-size:15px;flex:none}
+.ctoast .body{flex:1;min-width:0;cursor:pointer}
+.ctoast .nm{font-family:'Oswald';font-weight:600;font-size:12.5px;color:#fff;letter-spacing:.3px}
+.ctoast .tx{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.ctoast .tx .chatflag{height:11px;vertical-align:-1px}
+.ctoast .x{flex:none;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:var(--mut);font-size:16px;cursor:pointer;line-height:1;padding:0}
+@keyframes toastIn{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
 main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-x:hidden}
 .hide{display:none!important}
 /* date strip */
@@ -451,7 +461,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
  <button id="tabG" onclick="showTab('G')">GROUPS</button>
  <button id="tabS" onclick="showTab('S')">STATS</button>
  <button id="tabP" onclick="showTab('P')">PREDICT</button>
- <button id="tabC" onclick="showTab('C')">CHAT</button>
+ <button id="tabC" onclick="showTab('C')">CHAT<span class="navbadge" id="chatBadge"></span></button>
 </nav>
 </div>
 <main>
@@ -540,7 +550,7 @@ let selDate = null;          // 'YYYYMMDD' in UAE calendar
 let events = [];             // merged events for selected UAE day
 let openId = null;           // expanded match id
 let lineups = {};            // eventId -> summary data
-let chatTimer = null, matchTimer = null, lastChatJson = "";
+let chatTimer = null, matchTimer = null, lastChatJson = "", _chatKnownIds = null;
 let lastFetch = 0, lastScores = {}, flashIds = new Set();
 let seasonCache = { t: 0, events: [] };
 let myPreds = JSON.parse(localStorage.getItem("cs_preds") || "{}");
@@ -631,8 +641,7 @@ function showTab(t) {
     $("tab" + x).classList.toggle("on", x === t);
     $("pane" + x).classList.toggle("hide", x !== t);
   });
-  if (t === "C") { renderChatComposer(); pollChat(); chatTimer = chatTimer || setInterval(pollChat, 5000); }
-  else if (chatTimer) { clearInterval(chatTimer); chatTimer = null; }
+  if (t === "C") { renderChatComposer(); pollChat(); }
   if (t === "G") { loadStandings(); groupsTimer = groupsTimer || setInterval(loadStandings, 20000); }
   else if (groupsTimer) { clearInterval(groupsTimer); groupsTimer = null; }
   if (t === "P") { renderPredict(); if (!cs_user && !window._predSkipped) openAuth("C", { ctx: "predict" }); }
@@ -698,19 +707,7 @@ async function loadMatches() {
       lastScores[e.id] = sc;
     });
     if (buzz && navigator.vibrate) navigator.vibrate([180, 90, 180]);
-    if (flashIds.size) {
-      if (!$("paneG").classList.contains("hide")) loadStandings();  // goal → refresh table instantly
-      const posts = [];
-      events.forEach(e => {
-        if (!flashIds.has(e.id)) return;
-        const c = e.competitions[0];
-        const H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
-        posts.push({ id: "g" + e.id + "-" + (H.score ?? 0) + (A.score ?? 0), uid: "goalbot", name: "\u26BD GOAL FLASH",
-          text: (e.status.displayClock || "") + " \u2014 " + H.team.displayName + " " + (H.score ?? 0) +
-                "\u2013" + (A.score ?? 0) + " " + A.team.displayName, ts: Date.now() });
-      });
-      if (posts.length) postRoom(posts).catch(() => {});
-    }
+    if (flashIds.size && !$("paneG").classList.contains("hide")) loadStandings();  // goal → refresh standings; chat stays human-only (no goal bot)
     renderMatches();
     if (openId) {                                   // open match is live → its cached detail is stale, refresh it
       const oe = events.find(x => x.id === openId);
@@ -1893,13 +1890,7 @@ async function announceChampion() {
     $("brkBox").innerHTML = '<div class="brk">&#127942; <b>PREDICTION CHAMPION' + (plural ? "S" : "") + '</b> — ' +
       esc(names) + ' topped last week (' + w.lab + ') with ' + top + ' pts.' +
       '<span>CHAMPION OF THE WEEK!</span></div>';
-    const ck = "cs_champ_" + w.wk; let _ann = false; try { _ann = localStorage.getItem(ck) === "1"; } catch (_) {}
-    if (!_ann) {
-      try { localStorage.setItem(ck, "1"); } catch (_) {}
-      postRoom([{ id: "brkfst-w" + w.wk, uid: "brkbot", name: "\uD83C\uDFC6 PREDICTIONS",
-        text: names + (plural ? " share" : " takes") + " the crown — Prediction Champion" + (plural ? "s" : "") + " for " + w.lab + " with " + top + " pts! \uD83C\uDFC6",
-        ts: Date.now() }]).catch(() => {});
-    }
+    // champion is shown in the banner above; NOT posted to chat — chat stays purely between people
   } catch (_) {}
 }
 
@@ -2066,15 +2057,53 @@ async function seasonEvents(force) {
   seasonCache = { t: Date.now(), events: (d.events || []).sort((a, b) => new Date(a.date) - new Date(b.date)) };
   return seasonCache.events;
 }
+function isBot(m) { return !m.uid || m.uid === "goalbot" || m.uid === "brkbot"; }
+function chatSeenTs() { try { return +(localStorage.getItem("cs_chat_seen") || 0); } catch (_) { return 0; } }
+function setChatSeen(ts) { try { localStorage.setItem("cs_chat_seen", String(ts)); } catch (_) {} }
+function updateChatBadge(human) {
+  const b = $("chatBadge"); if (!b) return;
+  const seen = chatSeenTs(), n = human.filter(m => (m.ts || 0) > seen && m.uid !== myId).length;
+  if (n > 0) { b.textContent = n > 99 ? "99+" : String(n); b.style.display = "inline-block"; }
+  else b.style.display = "none";
+}
+function showChatToast(m) {
+  let wrap = $("toastWrap");
+  if (!wrap) { wrap = document.createElement("div"); wrap.id = "toastWrap"; document.body.appendChild(wrap); }
+  while (wrap.children.length >= 3) wrap.removeChild(wrap.firstChild);
+  const init = (((m.name || "?").trim()[0]) || "?").toUpperCase();
+  const el = document.createElement("div"); el.className = "ctoast";
+  el.innerHTML = '<div class="ic">' + esc(init) + '</div>' +
+    '<div class="body"><div class="nm">' + esc(m.name || "Someone") + '</div>' +
+    '<div class="tx">' + emojiFlags(esc(m.text || "")) + '</div></div>' +
+    '<button class="x" aria-label="Dismiss">&#215;</button>';
+  el.querySelector(".body").onclick = () => { el.remove(); showTab("C"); window.scrollTo(0, document.body.scrollHeight); };
+  el.querySelector(".x").onclick = e => { e.stopPropagation(); el.remove(); };
+  wrap.appendChild(el);
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 8000);
+}
 async function pollChat() {
-  try {
-    const msgs = await readRoom();
-    const j = JSON.stringify(msgs);
-    if (j !== lastChatJson) { lastChatJson = j; renderChat(msgs); }
-  } catch (e) {
-    $("chatlog").innerHTML = `<div class="empty">Chat room unreachable.<br>
-      <span style="font-size:11px">${esc(String(e.message || e))}</span></div>`;
+  let msgs;
+  try { msgs = await readRoom(); }
+  catch (e) {
+    if (!$("paneC").classList.contains("hide"))
+      $("chatlog").innerHTML = '<div class="empty">Chat room unreachable.<br><span style="font-size:11px">' + esc(String(e.message || e)) + '</span></div>';
+    return;
   }
+  const human = msgs.filter(m => !isBot(m));
+  const onChat = !$("paneC").classList.contains("hide");
+  const latest = human.reduce((mx, m) => Math.max(mx, m.ts || 0), 0);
+  if (localStorage.getItem("cs_chat_seen") == null) setChatSeen(latest);         // first run → no backlog of unread
+  if (_chatKnownIds && !onChat) {                                                // new since last poll, not mine → phone-style toast
+    human.filter(m => !_chatKnownIds.has(m.id) && m.uid !== myId && (m.ts || 0) > chatSeenTs())
+         .slice(-3).forEach(showChatToast);
+  }
+  _chatKnownIds = new Set(human.map(m => m.id));
+  if (onChat) {
+    const j = JSON.stringify(human);
+    if (j !== lastChatJson) { lastChatJson = j; renderChat(human); }
+    setChatSeen(latest);                                                         // viewing chat = caught up
+  }
+  updateChatBadge(human);
 }
 function emojiFlags(s) {
   return s.replace(/[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/g, pair => {
@@ -2339,6 +2368,7 @@ fillTZ();
 updateFmtTog();
 buildStrip();
 renderChatComposer();
+pollChat(); chatTimer = setInterval(pollChat, 7000);   // always-on chat poll → unread badge + new-message toasts everywhere
 if (cs_user) {
   localStorage.setItem("cs_name", cs_user.username);
   syncMyPreds().then(() => { if (events.length) renderMatches(); });
