@@ -135,7 +135,11 @@ main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-
 @media(min-width:640px){.ggrid{grid-template-columns:1fr 1fr}}
 .gcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 13px}
 .gcard.egy{background:#0a2e1d;border-color:var(--green)}
-.gcard h3{font-family:'Oswald';font-weight:700;font-size:15px;letter-spacing:1.6px;color:var(--gold);margin-bottom:8px}
+.gcard h3{font-family:'Oswald';font-weight:700;font-size:15px;letter-spacing:1.6px;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.gstat{font-family:'Oswald';font-weight:700;font-size:9px;letter-spacing:.8px;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.gstat.ok{background:rgba(25,200,255,.12);color:var(--cyan);border:1px solid #1a4a63}
+.gstat.live{background:rgba(255,192,46,.13);color:var(--gold);border:1px solid #5a4a1a}
+.gstat.live .dotp{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);margin-right:5px;vertical-align:middle;animation:pulse 1.4s infinite}
 .gt{width:100%;border-collapse:collapse;font-size:12.5px}
 .gt th{font-family:'Oswald';font-weight:500;font-size:10px;letter-spacing:1px;color:var(--dim);
  text-align:center;padding:3px 2px;border-bottom:1px solid var(--line)}
@@ -834,14 +838,16 @@ async function toggleM(id) {
 function applyLiveStats(groups, evs) {
   const tg = {};                                   // teamId -> group index
   groups.forEach((g, gi) => ((g.standings && g.standings.entries) || []).forEach(e => { tg[e.team.id] = gi; }));
-  const acc = {}, get = id => acc[id] || (acc[id] = { gp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 });
+  const acc = {}, live = {}, get = id => acc[id] || (acc[id] = { gp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 });
   (evs || []).forEach(e => {
     try {
       const comp = e.competitions && e.competitions[0]; if (!comp) return;
       const cs = comp.competitors || [], H = cs.find(x => x.homeAway === "home"), A = cs.find(x => x.homeAway === "away");
       if (!H || !A || !H.team || !A.team) return;
       const gi = tg[H.team.id]; if (gi == null || tg[A.team.id] !== gi) return;   // same-group match only
-      if (!e.status || !e.status.type || e.status.type.state !== "post") return;  // finished only
+      const stt = e.status && e.status.type && e.status.type.state;
+      if (stt === "in") live[gi] = true;                                          // a group match is in progress
+      if (stt !== "post") return;                                                 // count finished only
       const hs = parseInt(H.score, 10), as = parseInt(A.score, 10); if (isNaN(hs) || isNaN(as)) return;
       const sh = get(H.team.id), sa = get(A.team.id);
       sh.gp++; sa.gp++; sh.gf += hs; sh.ga += as; sa.gf += as; sa.ga += hs;
@@ -850,7 +856,7 @@ function applyLiveStats(groups, evs) {
       else { sh.d++; sa.d++; sh.pts++; sa.pts++; }
     } catch (_) {}
   });
-  groups.forEach(g => {
+  groups.forEach((g, gi) => {
     const entries = (g.standings && g.standings.entries) || [];
     // ESPN's own numbers (still in e.stats here) — used to decide if ESPN has caught up with the live results
     const esp = {};
@@ -858,6 +864,7 @@ function applyLiveStats(groups, evs) {
     // "in sync" = ESPN agrees on games-played AND points for every team → its official order (incl. head-to-head
     // + disciplinary/fair-play tiebreaks) is trustworthy. Until then we order by the live pts→GD→GF.
     const inSync = entries.length > 0 && entries.every(e => { const a = acc[e.team.id] || { gp: 0, pts: 0 }, s = esp[e.team.id] || {}; return (s.gamesPlayed || 0) === a.gp && (s.points || 0) === a.pts; });
+    g._inSync = inSync; g._played = entries.some(e => (acc[e.team.id] || {}).gp > 0); g._liveMatch = !!live[gi];
     entries.forEach(e => {
       const a = acc[e.team.id] || { gp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 }, gd = a.gf - a.ga;
       const stats = [                               // live numbers (always accurate; cards don't affect these)
@@ -884,7 +891,11 @@ async function loadStandings() {
     $("ggrid").innerHTML = groups.map(g => {
       const rows = rankRows((g.standings && g.standings.entries) || []);
       const hasEgy = rows.some(r => r.team.displayName === myNation());
-      return `<div class="gcard${hasEgy ? " egy" : ""}"><h3>${esc(g.name || "")}</h3>
+      const _show = g._played || g._liveMatch, _prov = g._liveMatch || (g._played && !g._inSync);
+      const badge = !_show ? "" : (_prov
+        ? '<span class="gstat live" title="Live from match results — order confirms once the official table settles"><span class="dotp"></span>LIVE</span>'
+        : '<span class="gstat ok" title="Order confirmed against the official table (incl. cards/head-to-head)">&#10003; CONFIRMED</span>');
+      return `<div class="gcard${hasEgy ? " egy" : ""}"><h3>${esc(g.name || "")}${badge}</h3>
         <table class="gt"><tr><th>#</th><th>TEAM</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>PTS</th></tr>` +
         rows.map((r, i) => {
           const s = {}; (r.stats || []).forEach(x => s[x.name] = x.displayValue);
