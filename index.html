@@ -348,7 +348,16 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 .fflag{width:26px;height:26px;object-fit:cover;border-radius:5px;display:block}
 .fname{flex:1;min-width:0;font-family:'Oswald';font-weight:600;font-size:13.5px;color:var(--txt);text-transform:uppercase;letter-spacing:.4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fpills{flex:0 0 auto;display:flex;gap:4px;align-items:center}
-.fp{width:21px;height:21px;border-radius:6px;font-family:'Oswald';font-weight:700;font-size:11px;color:#fff;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.18);text-shadow:0 1px 1px rgba(0,0,0,.4)}
+.fp{width:21px;height:21px;border-radius:6px;font-family:'Oswald';font-weight:700;font-size:11px;color:#fff;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.18);text-shadow:0 1px 1px rgba(0,0,0,.4);cursor:pointer}
+.fp:not(.none):active{transform:scale(.9)}
+#fpop{position:fixed;inset:0;z-index:300;background:rgba(4,8,20,.6);display:flex;align-items:center;justify-content:center;padding:24px;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.fpopcard{position:relative;background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:16px;padding:20px 20px 16px;max-width:300px;width:100%;text-align:center;box-shadow:0 16px 44px rgba(0,0,0,.6);animation:toastIn .22s ease}
+.fpopx{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:var(--mut);font-size:17px;cursor:pointer;line-height:1;padding:0}
+.fpoptag{display:inline-block;font-family:'Oswald';font-weight:700;font-size:10px;letter-spacing:1.5px;padding:3px 13px;border-radius:20px;color:#fff;margin-bottom:11px}
+.fpoptag.w{background:linear-gradient(160deg,#27b768,#11824f)}.fpoptag.d{background:#5a6688}.fpoptag.l{background:linear-gradient(160deg,#e0563c,#a82f1f)}
+.fpopsc{font-family:'Oswald';font-weight:600;font-size:16px;color:var(--txt);line-height:1.3}
+.fpopsc b{font-size:21px;color:#fff;margin:0 5px;font-variant-numeric:tabular-nums}
+.fpopdt{font-family:'Inter';font-size:11.5px;color:var(--dim);margin-top:7px;letter-spacing:.5px}
 .fp.w{background:linear-gradient(160deg,#27b768,#11824f)}
 .fp.d{background:linear-gradient(160deg,#66739a,#3f4a6e);color:#eef2ff}
 .fp.l{background:linear-gradient(160deg,#e0563c,#a82f1f)}
@@ -552,7 +561,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
   <div id="gPaneBracket" class="hide"></div>
  </section>
  <section id="paneC" class="hide">
-  <div class="chatnote">Shared Capriole team room · be nice, it's football 🏆</div>
+  <div class="chatnote">Shared team room · be nice, it's football 🏆</div>
   <div id="chatlog"><div class="empty">Loading chat…</div></div>
   <div class="chatbar" id="chatbar">
    <input id="chatIn" maxlength="280" placeholder="Message the team…"
@@ -572,7 +581,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
    <button id="atC" class="on" onclick="authMode('C')">CREATE ACCOUNT</button>
    <button id="atL" onclick="authMode('L')">LOG IN</button>
   </div>
-  <input id="auUser" maxlength="15" placeholder="Username" autocomplete="username">
+  <input id="auUser" maxlength="15" placeholder="Username — letters, numbers, _" autocomplete="username">
   <input id="auPass" type="password" maxlength="30" placeholder="Password" autocomplete="current-password">
   <select id="auNation"><option value="">Choose your nation…</option></select>
   <div id="authErr"></div>
@@ -630,7 +639,7 @@ const NATIONS_FALLBACK = ["Algeria","Argentina","Australia","Austria","Belgium",
  "Morocco","Netherlands","New Zealand","Norway","Panama","Paraguay","Portugal","Qatar","Saudi Arabia",
  "Scotland","Senegal","South Africa","South Korea","Spain","Sweden","Switzerland","Tunisia",
  "Türkiye","United States","Uruguay","Uzbekistan"];
-function myNation() { return (cs_user && cs_user.nation) || "Egypt"; }
+function myNation() { try { return (cs_user && cs_user.nation) || localStorage.getItem("cs_guest_nation") || "Egypt"; } catch (_) { return (cs_user && cs_user.nation) || "Egypt"; } }
 
 /* ================= HELPERS ================= */
 const $ = id => document.getElementById(id);
@@ -881,7 +890,7 @@ function renderMatches() {
       if (box) box.innerHTML = matchDetail(lineups[openId], oe);
     }
   }
-  enrichCardMeta();   // lazily fill each card's TV + referee (reuses the summary cache)
+  // card TV comes straight from the scoreboard — no per-card /summary fetch (keeps the matches list light)
 }
 const logo = c => `<img src="${c.team.logo || ""}" alt="" onerror="this.style.visibility='hidden'">`;
 async function fillDetail(id, force) {
@@ -1683,9 +1692,9 @@ function cardTV(e) {
   return null;
 }
 function cardRef(e) { const s = lineups[e.id], o = s && s.gameInfo && (s.gameInfo.officials || [])[0]; return (o && o.displayName) || ""; }
-function cardMetaHTML(e) {
-  const tv = cardTV(e), ref = cardRef(e);
-  return (tv ? '<span class="cmchip tv"><i>TV</i>' + esc(tv) + '</span>' : '') + (ref ? '<span class="cmchip ref"><i>REF</i>' + esc(ref) + '</span>' : '');
+function cardMetaHTML(e) {   // card shows TV only (from the scoreboard — no per-card fetch); referee lives in the expanded detail
+  const tv = cardTV(e);
+  return tv ? '<span class="cmchip tv"><i>TV</i>' + esc(tv) + '</span>' : '';
 }
 function paintCardMeta(e) { const el = $("cmeta" + e.id); if (el) el.innerHTML = cardMetaHTML(e); }
 let _enriching = false;
@@ -1707,10 +1716,24 @@ async function enrichCardMeta() {
   } finally { _enriching = false; }
 }
 // attendance stays in the expanded detail (it's a post-match figure)
-function matchMeta(data, ev) {
-  const gi = data.gameInfo || {};
-  if (!gi.attendance) return "";
-  return '<div class="minforow"><span><i>ATT</i>' + Number(gi.attendance).toLocaleString() + '</span></div>';
+function matchMeta(data, ev) {   // referee + attendance, in the expanded detail (summary is already loaded here)
+  const gi = data.gameInfo || {}, bits = [];
+  const ref = (gi.officials || [])[0];
+  if (ref && ref.displayName) bits.push('<span><i>REF</i>' + esc(ref.displayName) + '</span>');
+  if (gi.attendance) bits.push('<span><i>ATT</i>' + Number(gi.attendance).toLocaleString() + '</span>');
+  return bits.length ? '<div class="minforow">' + bits.join("") + '</div>' : "";
+}
+function formPop(el, ev) {   // tap a Recent-Form pill → popup with that match (team, opponent, score, date)
+  if (ev) ev.stopPropagation();
+  const t = el.dataset.team || "", opp = el.dataset.opp || "", score = el.dataset.score || "", date = el.dataset.date || "", res = el.dataset.res || "";
+  const cls = res === "WIN" ? "w" : res === "LOSS" ? "l" : "d";
+  let pop = $("fpop"); if (!pop) { pop = document.createElement("div"); pop.id = "fpop"; document.body.appendChild(pop); }
+  pop.innerHTML = '<div class="fpopcard"><button class="fpopx" aria-label="Close">&#215;</button>' +
+    '<div class="fpoptag ' + cls + '">' + esc(res) + '</div>' +
+    '<div class="fpopsc">' + esc(t) + ' <b>' + esc(score || "–") + '</b> ' + esc(opp) + '</div>' +
+    (date ? '<div class="fpopdt">' + esc(date) + '</div>' : "") + '</div>';
+  pop.querySelector(".fpopx").onclick = () => pop.remove();
+  pop.onclick = e => { if (e.target === pop) pop.remove(); };
 }
 function formH2H(data, ev) {
   const c = ev.competitions[0];
@@ -1724,8 +1747,9 @@ function formH2H(data, ev) {
     let pills = "";
     if (f) pills = (f.events || []).filter(e => String(e.id) !== String(ev.id)).slice().reverse().slice(0, 5).map((e, i) => {   // ESPN lastFiveGames is oldest-first → reverse so index 0 (gold ".now") is the most recent
       const r = String(e.gameResult || "").toUpperCase(), cl = r === "W" ? "w" : r === "L" ? "l" : "d";
-      const ti = esc(r + " " + (e.score || "") + (e.opponent ? " v " + (e.opponent.abbreviation || e.opponent.displayName || "") : "") + (e.gameDate ? " &#183; " + fmt(new Date(e.gameDate), { day: "2-digit", month: "short" }) : ""));
-      return '<span class="fp ' + cl + (i === 0 ? " now" : "") + '" title="' + ti + '">' + (r || "?") + '</span>';
+      const opp = e.opponent ? (e.opponent.displayName || e.opponent.abbreviation || "") : "";
+      const dt = e.gameDate ? fmt(new Date(e.gameDate), { day: "2-digit", month: "short", year: "numeric" }) : "";
+      return '<span class="fp ' + cl + (i === 0 ? " now" : "") + '" onclick="formPop(this,event)" data-team="' + esc(team.displayName) + '" data-opp="' + esc(opp) + '" data-score="' + esc(e.score || "") + '" data-date="' + esc(dt) + '" data-res="' + (r === "W" ? "WIN" : r === "L" ? "LOSS" : "DRAW") + '">' + (r || "?") + '</span>';
     }).join("");
     if (!pills) pills = '<span class="fp none">&#8211;</span>'.repeat(5);
     return '<div class="frow' + me + '"><span class="fbadge"><img class="fflag" src="' + esc(team.logo || "") + '" alt=""' + ferr + '></span><span class="fname">' + esc(team.displayName) + '</span><span class="fpills">' + pills + '</span></div>';
@@ -2120,7 +2144,8 @@ function authSubmit() { if (window._am === "N") saveNation(); else authGo(); }
 async function authGo() {
   const u = ($("auUser").value || "").trim(), p = $("auPass").value || "";
   const err = t => { $("authErr").textContent = t; };
-  if (!/^[A-Za-z0-9_]{3,15}$/.test(u)) return err("Username: 3–15 letters, numbers or _");
+  if (/\s/.test(u)) return err("No spaces in the username — letters, numbers or _ only");
+  if (!/^[A-Za-z0-9_]{3,15}$/.test(u)) return err("Username: 3–15 characters — letters, numbers or _ only (no spaces or symbols)");
   if (p.length < 4) return err("Password: at least 4 characters");
   let accts = {};
   try { accts = await readKey(ACCT_KEY, {}); } catch (_) { return err("Can't reach the club server — try again"); }
@@ -2174,23 +2199,31 @@ function signOut() {   // shared-device safety: fully clear the signed-in identi
 }
 function openNation(ev) {
   if (ev) ev.stopPropagation();
-  if (!cs_user) { openAuth("C"); return; }
   $("nameModal").classList.remove("hide");
   window._am = "N";
+  const guest = !cs_user;   // guests can pick a favourite nation too (saved locally)
   $("atC").classList.remove("on"); $("atL").classList.remove("on");
-  $("authTitle").textContent = "CHANGE MY NATION";
+  $("authTitle").textContent = guest ? "PICK YOUR TEAM" : "CHANGE MY NATION";
+  if ($("authSub")) $("authSub").textContent = guest ? "Follow a nation — no account needed" : "Update your favourite nation";
   $("auUser").style.display = "none"; $("auPass").style.display = "none";
   $("authRemRow").style.display = "none";
-  $("authOut").style.display = "";
+  $("authOut").style.display = guest ? "none" : "";
   $("auNation").style.display = "";
-  $("authBtn").textContent = "SAVE NATION";
+  $("authBtn").textContent = "SAVE TEAM";
   $("authErr").textContent = "";
   const _sk = $("authSkip"); if (_sk) _sk.style.display = "none"; window._authCtx = null;
   fillNations();
+  const _ns = $("auNation"); if (_ns) _ns.value = myNation();   // preselect current nation
 }
 async function saveNation() {
   const nation = $("auNation").value;
   if (!nation) { $("authErr").textContent = "Choose a nation"; return; }
+  if (!cs_user) {   // guest — store favourite nation locally, no account needed
+    try { localStorage.setItem("cs_guest_nation", nation); } catch (_) {}
+    $("nameModal").classList.add("hide");
+    renderHero(); loadStandings(); if (events.length) renderMatches();
+    return;
+  }
   try {
     const accts = await readKey(ACCT_KEY, {});
     const k = cs_user.username.toLowerCase();
@@ -2217,15 +2250,21 @@ async function writeKey(key, value) {
 }
 const readRoom = () => readKey(CHAT_KEY, []);
 async function postRoom(newMsgs) {
-  let msgs = [];
-  try { msgs = await readRoom(); } catch (_) {}
-  const existing = new Set(msgs.map(m => m.id));
-  if (newMsgs.every(m => existing.has(m.id))) return msgs;
-  msgs.push(...newMsgs);
-  const dedup = [...new Map(msgs.map(m => [m.id, m])).values()]
-    .sort((a, b) => (a.ts || 0) - (b.ts || 0)).slice(-80);
-  await writeKey(CHAT_KEY, dedup);
-  return dedup;
+  // read-merge-write with verify+retry — if a concurrent writer clobbered us, re-merge so no message is lost
+  let last = [];
+  for (let t = 0; t < 3; t++) {
+    let msgs = [];
+    try { msgs = await readRoom(); } catch (_) {}
+    const existing = new Set(msgs.map(m => m.id));
+    if (newMsgs.every(m => existing.has(m.id))) return msgs;   // already present
+    msgs.push(...newMsgs.filter(m => !existing.has(m.id)));
+    last = [...new Map(msgs.map(m => [m.id, m])).values()].sort((a, b) => (a.ts || 0) - (b.ts || 0)).slice(-80);
+    await writeKey(CHAT_KEY, last);
+    await new Promise(r => setTimeout(r, 220 + Math.random() * 320));
+    let back = []; try { back = await readRoom(); } catch (_) { return last; }
+    if (newMsgs.every(m => back.some(x => x.id === m.id))) return back;   // confirmed landed
+  }
+  return last;
 }
 async function seasonEvents(force) {
   if (!force && Date.now() - seasonCache.t < 600000 && seasonCache.events.length) return seasonCache.events;
