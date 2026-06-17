@@ -965,7 +965,7 @@ const bpTrunc = (s, m) => { s = String(s == null ? "" : s); return s.length > m 
 const BPC = { txt:"#EAD9EE", win:"#F4D27A", lose:"#7A6A72", ph:"#9A8AA0", meta:"#9A8AA0", plat:"#BFC6D8", hair:"#4A3550", div:"#38263E", ember:"#FF5C3B", nat:"#00E08A", bronze:"#B07A3A", gold:"#E7B85A" };
 const BPCW = 216, BPHW = 108;
 const bpcxL = { R32:176, R16:424, QF:672, SF:920 }, bpcxR = { R32:2224, R16:1976, QF:1728, SF:1480 };
-const bpYs = [232,352,472,592,712,832,952,1072];
+const bpYs = [246,366,486,606,726,846,966,1086];
 const bpDimH = { R32:92, R16:92, QF:100, SF:108 };
 function bpRes(n){ return _nodeResult[n] || null; }
 function bpDecided(n){ const r=_nodeResult[n]; return !!(r && r.hs!=null && r.as!=null); }
@@ -980,8 +980,8 @@ function bpBuildPos(){
   [89,90,93,94].forEach(n=>add(n,"L","R16")); [91,92,95,96].forEach(n=>add(n,"R","R16"));
   [97,98].forEach(n=>add(n,"L","QF")); [99,100].forEach(n=>add(n,"R","QF"));
   add(101,"L","SF"); add(102,"R","SF");
-  pos[104]={n:104,y:652,side:"C",round:"FINAL",w:280,h:150,x:1060};
-  pos[103]={n:103,y:858,side:"C",round:"BRONZE",w:240,h:84,x:1080};
+  pos[104]={n:104,y:666,side:"C",round:"FINAL",w:280,h:150,x:1060};
+  pos[103]={n:103,y:872,side:"C",round:"BRONZE",w:240,h:84,x:1080};
   return pos;
 }
 function bpStateCol(n){ const w=bpWinTeam(n); if(w&&w.name===myNation()) return BPC.nat; if(bpDecided(n)) return BPC.gold; return "#4A3550"; }
@@ -1066,12 +1066,12 @@ function bpHeader(){
 }
 function bpRoundHeaders(){
   const cols=[[176,"ROUND OF 32","28 JUN – 1 JUL",BPC.plat],[424,"ROUND OF 16","4 – 8 JUL",BPC.plat],[672,"QUARTER-FINAL","10 – 12 JUL","g"],[920,"SEMI-FINAL","14 – 15 JUL","g"],[2224,"ROUND OF 32","28 JUN – 1 JUL",BPC.plat],[1976,"ROUND OF 16","4 – 8 JUL",BPC.plat],[1728,"QUARTER-FINAL","10 – 12 JUL","g"],[1480,"SEMI-FINAL","14 – 15 JUL","g"]];
-  let o=""; cols.forEach(c=>{ const fill=c[3]==="g"?"url(#bpGold)":c[3]; o+='<text x="'+c[0]+'" y="186" text-anchor="middle" font-family="Oswald" font-weight="600" font-size="13" letter-spacing="2" fill="'+fill+'">'+c[1]+'</text><text x="'+c[0]+'" y="204" text-anchor="middle" font-family="Inter" font-weight="500" font-size="8.5" fill="'+BPC.meta+'">'+c[2]+'</text>'; });
-  o+='<text x="1200" y="186" text-anchor="middle" font-family="Oswald" font-weight="700" font-size="14" letter-spacing="3" fill="url(#bpGold)">FINAL</text><text x="1200" y="204" text-anchor="middle" font-family="Inter" font-weight="500" font-size="8.5" fill="'+BPC.meta+'">19 JUL</text>';
+  let o=""; cols.forEach(c=>{ const fill=c[3]==="g"?"url(#bpGold)":c[3]; o+='<text x="'+c[0]+'" y="174" text-anchor="middle" font-family="Oswald" font-weight="600" font-size="13" letter-spacing="2" fill="'+fill+'">'+c[1]+'</text><text x="'+c[0]+'" y="190" text-anchor="middle" font-family="Inter" font-weight="500" font-size="8.5" fill="'+BPC.meta+'">'+c[2]+'</text>'; });
+  o+='<text x="1200" y="174" text-anchor="middle" font-family="Oswald" font-weight="700" font-size="14" letter-spacing="3" fill="url(#bpGold)">FINAL</text><text x="1200" y="190" text-anchor="middle" font-family="Inter" font-weight="500" font-size="8.5" fill="'+BPC.meta+'">19 JUL</text>';
   return o;
 }
 function bpTrophyBlock(tro){
-  const cx=1200, cy=410, tw=246, th=Math.round(tw/0.648);
+  const cx=1200, cy=424, tw=246, th=Math.round(tw/0.648);
   let o='<polygon points="'+(cx-70)+','+(cy+150)+' '+(cx-26)+','+(cy-120)+' '+(cx+26)+','+(cy-120)+' '+(cx+70)+','+(cy+150)+'" fill="#FFE9A8" opacity="0.07" filter="url(#bpShaft)"/>';
   for(let i=0;i<16;i++){ const a=i*22.5*Math.PI/180,x1=cx+Math.cos(a)*70,y1=cy+Math.sin(a)*70,x2=cx+Math.cos(a)*150,y2=cy+Math.sin(a)*150; o+='<line x1="'+x1.toFixed(0)+'" y1="'+y1.toFixed(0)+'" x2="'+x2.toFixed(0)+'" y2="'+y2.toFixed(0)+'" stroke="'+BPC.gold+'" stroke-width="1" opacity="0.10"/>'; }
   o+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="170" ry="190" fill="rgba(255,210,130,0.13)" filter="url(#bpShaft)"/>';
@@ -1080,7 +1080,7 @@ function bpTrophyBlock(tro){
   return o;
 }
 function bpFinalBlock(pos){
-  const x=pos[104].x, w=pos[104].w, top=652-75, node=bpBR(104);
+  const x=pos[104].x, w=pos[104].w, top=666-75, node=bpBR(104);
   let o=bpSideConn(101,x,top+58,pos)+bpSideConn(102,x+w,top+58,pos);
   o+='<rect x="'+x+'" y="'+top+'" width="'+w+'" height="150" rx="14" fill="url(#bpCard)" filter="url(#bpSoft)"/>';
   o+='<rect x="'+x+'" y="'+top+'" width="'+w+'" height="150" rx="14" fill="none" stroke="url(#bpGold)" stroke-width="2.5" filter="url(#bpGoldGlow)"/>';
