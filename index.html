@@ -207,7 +207,7 @@ main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-
  align-items:center;justify-content:center;padding:24px}
 #nameModal .box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 22px;
  width:100%;max-width:380px;text-align:center;position:relative}
-.modalx{position:absolute;top:10px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.07);border:none;color:var(--mut);font-size:19px;line-height:1;cursor:pointer;padding:0}
+#nameModal .modalx{position:absolute;top:10px;right:10px;width:30px;height:30px;min-width:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:var(--mut);font-size:18px;line-height:1;cursor:pointer;padding:0;z-index:3;display:flex;align-items:center;justify-content:center}
 #nameModal h2{font-family:'Oswald';font-weight:700;letter-spacing:1px;font-size:20px;margin-bottom:4px}
 #nameModal p{color:var(--mut);font-size:12.5px;margin-bottom:16px}
 #nameModal input{width:100%;background:var(--navy2);border:1px solid var(--line);border-radius:12px;
@@ -1474,7 +1474,7 @@ async function renderHero() {
   } catch (_) { $("heroBox").innerHTML = ""; }
 }
 function heroBtns() {   // CHANGE + SIGN OUT, kept together on one right-aligned line (own row → never wraps)
-  return '<div class="herobtns" onclick="event.stopPropagation()"><span class="heroChange" onclick="openNation(event)">CHANGE ⚙</span>' +
+  return '<div class="herobtns" onclick="event.stopPropagation()"><span class="heroChange" onclick="openNation(event)">CHANGE NATION ⚙</span>' +
     (cs_user ? '<span class="heroChange so" onclick="signOut()">SIGN OUT</span>' : '') + '</div>';
 }
 function drawHero() {
@@ -1760,12 +1760,13 @@ function formH2H(data, ev) {
     const f = forms.find(x => String((x.team || {}).id) === String(team.id));
     const me = team.displayName === myNation() ? " me" : "";
     let pills = "";
-    if (f) pills = (f.events || []).filter(e => String(e.id) !== String(ev.id)).slice().reverse().slice(0, 5).map((e, i) => {   // ESPN lastFiveGames is oldest-first → reverse so index 0 (gold ".now") is the most recent
+    if (f) { const fe = (f.events || []).filter(e => String(e.id) !== String(ev.id)).slice(-5);   // ESPN lastFiveGames is oldest-first → keep chronological: oldest on the LEFT, most recent (gold ".now") on the RIGHT
+    pills = fe.map((e, i) => {
       const r = String(e.gameResult || "").toUpperCase(), cl = r === "W" ? "w" : r === "L" ? "l" : "d";
       const opp = e.opponent ? (e.opponent.displayName || e.opponent.abbreviation || "") : "";
       const dt = e.gameDate ? fmt(new Date(e.gameDate), { day: "2-digit", month: "short", year: "numeric" }) : "";
-      return '<span class="fp ' + cl + (i === 0 ? " now" : "") + '" onclick="formPop(this,event)" data-team="' + esc(team.displayName) + '" data-opp="' + esc(opp) + '" data-score="' + esc(e.score || "") + '" data-date="' + esc(dt) + '" data-res="' + (r === "W" ? "WIN" : r === "L" ? "LOSS" : "DRAW") + '">' + (r || "?") + '</span>';
-    }).join("");
+      return '<span class="fp ' + cl + (i === fe.length - 1 ? " now" : "") + '" onclick="formPop(this,event)" data-team="' + esc(team.displayName) + '" data-opp="' + esc(opp) + '" data-score="' + esc(e.score || "") + '" data-date="' + esc(dt) + '" data-res="' + (r === "W" ? "WIN" : r === "L" ? "LOSS" : "DRAW") + '">' + (r || "?") + '</span>';
+    }).join(""); }
     if (!pills) pills = '<span class="fp none">&#8211;</span>'.repeat(5);
     return '<div class="frow' + me + '"><span class="fbadge"><img class="fflag" src="' + esc(team.logo || "") + '" alt=""' + ferr + '></span><span class="fname">' + esc(team.displayName) + '</span><span class="fpills">' + pills + '</span></div>';
   }
