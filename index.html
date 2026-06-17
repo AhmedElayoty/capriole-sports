@@ -323,17 +323,61 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
 .tlrow.sub .ev.sub{color:var(--cyan);font-size:13px}
 .tlrow.sub .si{color:#6dffb5;font-weight:600}
 .tlrow.sub .subo{color:#9a7777;font-size:11px}
-.fh{display:flex;flex-direction:column;gap:8px}
-.formrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.formrow .ft{font-family:'Oswald';font-weight:600;font-size:12.5px;color:var(--txt);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fpills{display:flex;gap:4px;flex:none}
-.fp{width:18px;height:18px;border-radius:5px;font-family:'Oswald';font-weight:700;font-size:10px;color:#fff;display:inline-flex;align-items:center;justify-content:center}
-.fp.w{background:#1f9d57}.fp.d{background:#5a6688}.fp.l{background:#c0392b}
-.fdim{color:var(--dim);font-size:11px;font-family:'Inter'}
-.h2hwrap{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
-.h2ht{font-family:'Oswald';font-size:9.5px;letter-spacing:1.2px;color:var(--dim);margin-bottom:5px}
-.h2hr{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--mut);padding:2px 0}
-.h2hr .h2s b{color:#fff}
+/* card TV + referee chips (above prediction) */
+.cardmeta{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.cardmeta:empty{display:none}
+.cmchip{display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-family:'Oswald';font-size:11px;font-weight:600;color:var(--txt)}
+.cmchip i{font-style:normal;font-size:8.5px;font-weight:700;letter-spacing:.8px;color:var(--dim)}
+.cmchip.tv i{color:var(--cyan)}
+.cmchip.ref i{color:var(--gold)}
+/* ===== RECENT FORM + HEAD-TO-HEAD — premium broadcast match-detail (design panel) ===== */
+.fhsec{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:14px;padding:12px 12px 11px;margin-top:12px;box-shadow:0 4px 14px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.04)}
+.fhhead{display:flex;align-items:center;gap:8px;margin-bottom:11px}
+.fhico{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:6px;background:rgba(255,192,46,.14);border:1px solid rgba(255,192,46,.34);color:var(--gold);filter:drop-shadow(0 0 5px rgba(255,192,46,.30))}
+.fhico--h2h{background:rgba(25,200,255,.13);border-color:rgba(25,200,255,.32);color:var(--cyan);filter:drop-shadow(0 0 5px rgba(25,200,255,.30))}
+.fhttl{flex:0 0 auto;font-family:'Oswald';font-weight:700;font-size:12.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--txt);text-shadow:0 1px 2px rgba(0,0,0,.5);line-height:1}
+.fhrule{flex:1 1 auto;height:2px;border-radius:1px;background:linear-gradient(90deg,rgba(255,192,46,.55),var(--line) 55%,transparent)}
+.h2hsec .fhrule{background:linear-gradient(90deg,rgba(25,200,255,.5),var(--line) 55%,transparent)}
+.fhmeta{flex:0 0 auto;font-family:'Oswald';font-weight:600;font-size:9px;letter-spacing:1.4px;color:var(--gold);text-transform:uppercase;padding:2px 7px;border-radius:999px;background:rgba(255,192,46,.10);border:1px solid rgba(255,192,46,.30);white-space:nowrap}
+.h2hsec .fhmeta{color:var(--cyan);background:rgba(25,200,255,.10);border-color:rgba(25,200,255,.30)}
+.frow{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:11px;background:rgba(255,255,255,.022);border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.frow + .frow{margin-top:7px}
+.frow.me{border-color:rgba(0,224,138,.40);background:linear-gradient(90deg,rgba(109,255,181,.10),var(--card2) 60%);box-shadow:inset 3px 0 0 0 #6dffb5}
+.frow.me .fname{color:#bfffe0}
+.fbadge{flex:0 0 auto;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#0a1230;border:1px solid var(--line);box-shadow:0 2px 5px rgba(0,0,0,.40),inset 0 1px 0 rgba(255,255,255,.07);overflow:hidden}
+.fflag{width:26px;height:26px;object-fit:cover;border-radius:5px;display:block}
+.fname{flex:1;min-width:0;font-family:'Oswald';font-weight:600;font-size:13.5px;color:var(--txt);text-transform:uppercase;letter-spacing:.4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fpills{flex:0 0 auto;display:flex;gap:4px;align-items:center}
+.fp{width:21px;height:21px;border-radius:6px;font-family:'Oswald';font-weight:700;font-size:11px;color:#fff;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.18);text-shadow:0 1px 1px rgba(0,0,0,.4)}
+.fp.w{background:linear-gradient(160deg,#27b768,#11824f)}
+.fp.d{background:linear-gradient(160deg,#66739a,#3f4a6e);color:#eef2ff}
+.fp.l{background:linear-gradient(160deg,#e0563c,#a82f1f)}
+.fp.none{background:#141d3e;color:var(--dim);font-weight:600;box-shadow:inset 0 0 0 1px var(--line);text-shadow:none}
+.fp.now{width:24px;height:24px;font-size:12px;box-shadow:0 0 0 2px rgba(255,192,46,.55),0 2px 5px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.22)}
+.h2hagg{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+.aggside{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.aggflag{width:22px;height:22px;border-radius:5px;object-fit:cover;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.aggn{font-family:'Oswald';font-weight:700;font-size:18px;line-height:1;min-width:14px;text-align:center}
+.aggside.l .aggn{color:var(--rust2)}
+.aggside.r .aggn{color:var(--cyan)}
+.aggbar{flex:1 1 auto;height:7px;border-radius:5px;overflow:hidden;display:flex;background:#1a2548;box-shadow:inset 0 1px 2px rgba(0,0,0,.45)}
+.aggbar .seg{height:100%}
+.aggbar .seg.h{background:linear-gradient(180deg,#ff7a45,#cf5a26)}
+.aggbar .seg.d{background:#4a5680}
+.aggbar .seg.a{background:linear-gradient(180deg,#3fd0ff,#0f9fce)}
+.aggdraws{display:block;text-align:center;margin:5px 0 9px;font-family:'Oswald';font-weight:600;font-size:8.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--dim)}
+.h2hr{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:9px;background:var(--card2);border:1px solid var(--line)}
+.h2hr + .h2hr{margin-top:6px}
+.h2side{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
+.h2side.l{justify-content:flex-end}
+.h2side.r{justify-content:flex-start}
+.h2flag{width:19px;height:19px;border-radius:4px;object-fit:cover;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.5)}
+.h2ab{font-family:'Oswald';font-weight:600;font-size:11.5px;letter-spacing:.5px;color:var(--mut)}
+.h2hsc{flex:0 0 auto;font-family:'Oswald';font-weight:700;font-size:15px;color:var(--txt);font-variant-numeric:tabular-nums;padding:1px 9px;border-radius:7px;background:#0c1330;border:1px solid var(--line);line-height:1.2}
+.h2hsc i{font-style:normal;color:var(--dim);margin:0 1px;font-weight:600}
+.h2hsc.win-l{color:var(--rust2);border-color:rgba(255,122,69,.40)}
+.h2hsc.win-r{color:var(--cyan);border-color:rgba(25,200,255,.40)}
+.h2dt{flex:0 0 50px;text-align:right;font-family:'Oswald';font-weight:500;font-size:9.5px;letter-spacing:.6px;color:var(--dim);text-transform:uppercase}
 .flabel{display:flex;align-items:center;justify-content:space-between;font-family:'Oswald';font-size:11px;letter-spacing:1px;color:var(--mut);margin:8px 2px 5px}
 .flabel b{color:#fff;font-weight:600}
 .flabel img{width:16px;height:16px;object-fit:contain;vertical-align:-3px;margin-right:3px}
@@ -809,6 +853,7 @@ function renderMatches() {
       </div>
       ${goalSummary}
       <div class="mven"><span>🏟️ ${esc(c.venue ? c.venue.fullName : "")}</span><b>${esc(c.venue && c.venue.address ? (c.venue.address.city || "") : "")}</b></div>
+      <div class="cardmeta" id="cmeta${e.id}">${cardMetaHTML(e)}</div>
       ${predStrip}
       ${detailHint}
       <div class="mdetail" id="det${e.id}"><div class="dnote">Loading line-ups…</div></div>
@@ -823,6 +868,7 @@ function renderMatches() {
       if (box) box.innerHTML = matchDetail(lineups[openId], oe);
     }
   }
+  enrichCardMeta();   // lazily fill each card's TV + referee (reuses the summary cache)
 }
 const logo = c => `<img src="${c.team.logo || ""}" alt="" onerror="this.style.visibility='hidden'">`;
 async function fillDetail(id, force) {
@@ -1571,41 +1617,79 @@ function broadcastFor(data) {
   }
   return null;   // CA / MX / unknown → no broadcast line (don't show channels that don't serve the region)
 }
+// TV + REFEREE live on the match CARD (static info, not live data) — TV from the scoreboard (region-aware),
+// referee from the summary (lazily fetched + cached in `lineups`, which also makes expanding instant).
+function cardTV(e) {
+  const reg = bcRegion();
+  if (reg === "MENA") return "beIN SPORTS";
+  if (reg === "US") {
+    const gb = ((e.competitions[0] || {}).geoBroadcasts) || [];
+    const names = [...new Set(gb.filter(g => g.region === "us" && ((g.type || {}).shortName === "TV")).map(g => { const n = (g.media || {}).shortName || ""; return n === "Tele" ? "Telemundo" : n; }).filter(Boolean))];
+    return names.length ? names.join(" · ") : null;
+  }
+  return null;
+}
+function cardRef(e) { const s = lineups[e.id], o = s && s.gameInfo && (s.gameInfo.officials || [])[0]; return (o && o.displayName) || ""; }
+function cardMetaHTML(e) {
+  const tv = cardTV(e), ref = cardRef(e);
+  return (tv ? '<span class="cmchip tv"><i>TV</i>' + esc(tv) + '</span>' : '') + (ref ? '<span class="cmchip ref"><i>REF</i>' + esc(ref) + '</span>' : '');
+}
+function paintCardMeta(e) { const el = $("cmeta" + e.id); if (el) el.innerHTML = cardMetaHTML(e); }
+async function enrichCardMeta() {
+  const now = Date.now();
+  for (const e of events.slice()) {
+    if (lineups[e.id]) { paintCardMeta(e); continue; }
+    const st = e.status.type.state;
+    if (!(st === "in" || st === "post" || (new Date(e.date) - now < 3 * 86400000))) continue;   // skip far-future (referee not assigned yet)
+    try { lineups[e.id] = await getJSON(API + "/summary?event=" + e.id); } catch (_) { continue; }
+    paintCardMeta(e);
+    await new Promise(r => setTimeout(r, 120));
+  }
+}
+// attendance stays in the expanded detail (it's a post-match figure)
 function matchMeta(data, ev) {
-  const gi = data.gameInfo || {}, bits = [];
-  if (gi.attendance) bits.push('<span><i>ATT</i>' + Number(gi.attendance).toLocaleString() + '</span>');
-  const ref = (gi.officials || [])[0];
-  if (ref && ref.displayName) bits.push('<span><i>REF</i>' + esc(ref.displayName) + '</span>');
-  const bc = broadcastFor(data);
-  if (bc) bits.push('<span><i>TV</i>' + esc(bc) + '</span>');
-  return bits.length ? '<div class="minforow">' + bits.join("") + '</div>' : "";
+  const gi = data.gameInfo || {};
+  if (!gi.attendance) return "";
+  return '<div class="minforow"><span><i>ATT</i>' + Number(gi.attendance).toLocaleString() + '</span></div>';
 }
 function formH2H(data, ev) {
   const c = ev.competitions[0];
   const H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
+  const flagOf = id => String((H.team || {}).id) === String(id) ? (H.team.logo || "") : String((A.team || {}).id) === String(id) ? (A.team.logo || "") : "";
+  const ferr = ' onerror="this.style.visibility=&#39;hidden&#39;"';
   const forms = (data.lastFiveGames && data.lastFiveGames.length ? data.lastFiveGames : (data.boxscore || {}).form) || [];
-  const pill = r => '<span class="fp ' + (r === "W" ? "w" : r === "L" ? "l" : "d") + '">' + esc(r || "?") + '</span>';
-  const formFor = id => {
-    const f = forms.find(x => String((x.team || {}).id) === String(id));
-    return f ? (f.events || []).filter(e => String(e.id) !== String(ev.id)).slice(0, 5).map(e => pill(e.gameResult)).join("") : "";
-  };
-  const hF = formFor(H.team.id), aF = formFor(A.team.id);
-  let h2h = "";
+  function formRow(team) {
+    const f = forms.find(x => String((x.team || {}).id) === String(team.id));
+    const me = team.displayName === myNation() ? " me" : "";
+    let pills = "";
+    if (f) pills = (f.events || []).filter(e => String(e.id) !== String(ev.id)).slice(0, 5).map((e, i) => {
+      const r = String(e.gameResult || "").toUpperCase(), cl = r === "W" ? "w" : r === "L" ? "l" : "d";
+      const ti = esc(r + " " + (e.score || "") + (e.opponent ? " v " + (e.opponent.abbreviation || e.opponent.displayName || "") : "") + (e.gameDate ? " &#183; " + fmt(new Date(e.gameDate), { day: "2-digit", month: "short" }) : ""));
+      return '<span class="fp ' + cl + (i === 0 ? " now" : "") + '" title="' + ti + '">' + (r || "?") + '</span>';
+    }).join("");
+    if (!pills) pills = '<span class="fp none">&#8211;</span>'.repeat(5);
+    return '<div class="frow' + me + '"><span class="fbadge"><img class="fflag" src="' + esc(team.logo || "") + '" alt=""' + ferr + '></span><span class="fname">' + esc(team.displayName) + '</span><span class="fpills">' + pills + '</span></div>';
+  }
+  const formSec = forms.length
+    ? '<section class="fhsec"><header class="fhhead"><span class="fhico fhico--form"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path fill="currentColor" d="M3 17l5-6 4 4 5-7 4 5v4H3z"/></svg></span><span class="fhttl">RECENT FORM</span><span class="fhrule"></span><span class="fhmeta">LAST 5</span></header>' + formRow(H.team) + formRow(A.team) + '</section>'
+    : "";
+  let h2hSec = "";
   const hg = data.headToHeadGames || [];
-  if (hg.length) {
+  const meet = (hg.length ? ((hg[0] || {}).events || []) : []).filter(e => String(e.id) !== String(ev.id) && e.homeTeamScore != null && e.awayTeamScore != null);
+  if (meet.length) {
     const ab = {}; ab[String(H.team.id)] = H.team.abbreviation || H.team.displayName; ab[String(A.team.id)] = A.team.abbreviation || A.team.displayName;
-    const evs = ((hg[0] || {}).events || []).filter(e => String(e.id) !== String(ev.id)).slice(0, 4);
-    if (evs.length) h2h = '<div class="h2hwrap"><div class="h2ht">PREVIOUS MEETINGS</div>' +
-      evs.map(e => '<div class="h2hr"><span class="h2d">' + esc(fmt(new Date(e.gameDate), { month: "short", year: "numeric" })) +
-        '</span><span class="h2s">' + esc(ab[String(e.homeTeamId)] || "") + ' <b>' + esc((e.homeTeamScore != null ? e.homeTeamScore : "") + "–" + (e.awayTeamScore != null ? e.awayTeamScore : "")) + '</b> ' + esc(ab[String(e.awayTeamId)] || "") + '</span></div>').join("") + '</div>';
+    let hw = 0, aw = 0, dr = 0;
+    meet.forEach(e => { const hHome = String(e.homeTeamId) === String(H.team.id), hs = +(hHome ? e.homeTeamScore : e.awayTeamScore), as = +(hHome ? e.awayTeamScore : e.homeTeamScore); if (hs > as) hw++; else if (as > hs) aw++; else dr++; });
+    const tot = hw + aw + dr || 1;
+    const seg = (cl, n) => n > 0 ? '<i class="seg ' + cl + '" style="width:' + (n / tot * 100).toFixed(1) + '%"></i>' : "";
+    const rows = meet.slice(0, 4).map(e => {
+      const win = (+e.homeTeamScore > +e.awayTeamScore) ? " win-l" : (+e.awayTeamScore > +e.homeTeamScore) ? " win-r" : "";
+      const dt = e.gameDate ? esc(fmt(new Date(e.gameDate), { month: "short", year: "numeric" })) : "";
+      return '<div class="h2hr"><span class="h2side l"><span class="h2ab">' + esc(ab[String(e.homeTeamId)] || "") + '</span><img class="h2flag" src="' + esc(flagOf(e.homeTeamId)) + '" alt=""' + ferr + '></span><span class="h2hsc' + win + '">' + esc(e.homeTeamScore) + '<i>&#8211;</i>' + esc(e.awayTeamScore) + '</span><span class="h2side r"><img class="h2flag" src="' + esc(flagOf(e.awayTeamId)) + '" alt=""' + ferr + '><span class="h2ab">' + esc(ab[String(e.awayTeamId)] || "") + '</span></span><span class="h2dt">' + dt + '</span></div>';
+    }).join("");
+    h2hSec = '<section class="fhsec h2hsec"><header class="fhhead"><span class="fhico fhico--h2h"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path fill="currentColor" d="M4 7h6v2H4zM4 11h6v2H4zM14 7h6v2h-6zM14 11h6v2h-6zM11 4h2v16h-2z"/></svg></span><span class="fhttl">HEAD-TO-HEAD</span><span class="fhrule"></span><span class="fhmeta">' + tot + ' MET</span></header><div class="h2hagg"><span class="aggside l"><img class="aggflag" src="' + esc(H.team.logo || "") + '" alt=""' + ferr + '><b class="aggn">' + hw + '</b></span><span class="aggbar">' + seg("h", hw) + seg("d", dr) + seg("a", aw) + '</span><span class="aggside r"><b class="aggn">' + aw + '</b><img class="aggflag" src="' + esc(A.team.logo || "") + '" alt=""' + ferr + '></span></div><span class="aggdraws">' + dr + ' DRAWN</span>' + rows + '</section>';
   }
-  if (!hF && !aF && !h2h) return "";
-  let o = '<div class="sech">FORM &amp; HEAD-TO-HEAD</div><div class="fh">';
-  if (hF || aF) {
-    o += '<div class="formrow"><span class="ft">' + esc(H.team.displayName) + '</span><span class="fpills">' + (hF || '<span class="fdim">no recent data</span>') + '</span></div>';
-    o += '<div class="formrow"><span class="ft">' + esc(A.team.displayName) + '</span><span class="fpills">' + (aF || '<span class="fdim">no recent data</span>') + '</span></div>';
-  }
-  return o + h2h + '</div>';
+  return formSec + h2hSec;
 }
 function matchDetail(data, ev) {
   if (!ev) return statsShare(data);
@@ -1890,7 +1974,13 @@ async function announceChampion() {
     $("brkBox").innerHTML = '<div class="brk">&#127942; <b>PREDICTION CHAMPION' + (plural ? "S" : "") + '</b> — ' +
       esc(names) + ' topped last week (' + w.lab + ') with ' + top + ' pts.' +
       '<span>CHAMPION OF THE WEEK!</span></div>';
-    // champion is shown in the banner above; NOT posted to chat — chat stays purely between people
+    const ck = "cs_champ_" + w.wk; let _ann = false; try { _ann = localStorage.getItem(ck) === "1"; } catch (_) {}
+    if (!_ann) {   // champion announcement lives in the chat (per user); shown in chat log + counts toward unread, no toast
+      try { localStorage.setItem(ck, "1"); } catch (_) {}
+      postRoom([{ id: "brkfst-w" + w.wk, uid: "brkbot", name: "🏆 PREDICTIONS",
+        text: names + (plural ? " share" : " takes") + " the crown — Prediction Champion" + (plural ? "s" : "") + " for " + w.lab + " with " + top + " pts! 🏆",
+        ts: Date.now() }]).catch(() => {});
+    }
   } catch (_) {}
 }
 
@@ -2057,7 +2147,7 @@ async function seasonEvents(force) {
   seasonCache = { t: Date.now(), events: (d.events || []).sort((a, b) => new Date(a.date) - new Date(b.date)) };
   return seasonCache.events;
 }
-function isBot(m) { return !m.uid || m.uid === "goalbot" || m.uid === "brkbot"; }
+function isBot(m) { return !m.uid || m.uid === "goalbot"; }   // champion (brkbot) DOES show in chat now
 function chatSeenTs() { try { return +(localStorage.getItem("cs_chat_seen") || 0); } catch (_) { return 0; } }
 function setChatSeen(ts) { try { localStorage.setItem("cs_chat_seen", String(ts)); } catch (_) {} }
 function updateChatBadge(human) {
@@ -2094,7 +2184,7 @@ async function pollChat() {
   const latest = human.reduce((mx, m) => Math.max(mx, m.ts || 0), 0);
   if (localStorage.getItem("cs_chat_seen") == null) setChatSeen(latest);         // first run → no backlog of unread
   if (_chatKnownIds && !onChat) {                                                // new since last poll, not mine → phone-style toast
-    human.filter(m => !_chatKnownIds.has(m.id) && m.uid !== myId && (m.ts || 0) > chatSeenTs())
+    human.filter(m => !_chatKnownIds.has(m.id) && m.uid !== myId && m.uid !== "brkbot" && (m.ts || 0) > chatSeenTs())
          .slice(-3).forEach(showChatToast);
   }
   _chatKnownIds = new Set(human.map(m => m.id));
