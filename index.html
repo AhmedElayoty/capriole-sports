@@ -105,6 +105,11 @@ main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-
 .tname{font-family:'Oswald';font-weight:600;font-size:15.5px;letter-spacing:.4px;white-space:nowrap;
  overflow:hidden;text-overflow:ellipsis}
 .tname.egy{color:#6dffb5}
+.tcol{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.team.away .tcol{align-items:flex-end}
+.frank{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;font-family:'Oswald';font-weight:700;font-size:9px;letter-spacing:.5px;color:var(--gold);background:linear-gradient(180deg,rgba(255,192,46,.17),rgba(255,192,46,.05));border:1px solid rgba(255,192,46,.32);border-radius:6px;padding:1px 6px;line-height:1.55;white-space:nowrap}
+.team.away .frank{align-self:flex-end}
+.frank i{font-style:normal;font-weight:600;font-size:7.5px;letter-spacing:1px;color:var(--mut)}
 .score{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:1px;min-width:74px;text-align:center}
 .score small{display:block;font-size:10px;font-weight:500;letter-spacing:1.6px;color:var(--cyan);margin-top:1px}
 .mven{margin-top:9px;font-size:11px;color:var(--dim);display:flex;justify-content:space-between;gap:8px}
@@ -158,6 +163,7 @@ main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-
 .gt tr:last-child td{border-bottom:none}
 .gt .tm{display:flex;align-items:center;gap:7px;text-align:left;color:var(--txt);font-weight:600;font-size:12.5px}
 .gt .tm img{width:20px;height:20px;object-fit:contain}
+.grank{flex:none;font-family:'Oswald';font-weight:600;font-size:9px;color:var(--gold);background:rgba(255,192,46,.1);border:1px solid rgba(255,192,46,.26);border-radius:5px;padding:0 4px;letter-spacing:.3px;line-height:1.5}
 .gt .pts{font-family:'Oswald';font-weight:700;color:#fff}
 .gt td{font-variant-numeric:tabular-nums}
 .gt td.pos{font-family:'Oswald';font-weight:700;color:var(--dim);width:20px;text-align:center}
@@ -663,6 +669,23 @@ const NATIONS_FALLBACK = ["Algeria","Argentina","Australia","Austria","Belgium",
  "Morocco","Netherlands","New Zealand","Norway","Panama","Paraguay","Portugal","Qatar","Saudi Arabia",
  "Scotland","Senegal","South Africa","South Korea","Spain","Sweden","Switzerland","Tunisia",
  "Türkiye","United States","Uruguay","Uzbekistan"];
+// ===== FIFA WORLD RANKING (men) — snapshot, UPDATE when FIFA publishes a new list (≈ every 1–2 months). =====
+// Keys MUST match ESPN displayNames exactly. FIFA_RANK_ASOF is shown to users so they know how current it is.
+const FIFA_RANK_ASOF = "Dec 2025";
+const FIFA_RANK = {
+  "Argentina":1,"Spain":2,"France":3,"England":4,"Brazil":5,"Portugal":6,"Netherlands":7,"Belgium":8,
+  "Germany":9,"Croatia":10,"Morocco":11,"Colombia":13,"Mexico":14,"Uruguay":15,"United States":16,
+  "Senegal":17,"Japan":18,"Switzerland":19,"Iran":20,"Austria":22,"South Korea":23,"Ecuador":24,
+  "Australia":26,"Türkiye":27,"Canada":28,"Norway":32,"Panama":33,"Egypt":35,"Qatar":36,"Algeria":37,
+  "Scotland":39,"Sweden":40,"Ivory Coast":41,"Tunisia":42,"Czechia":43,"Paraguay":49,"Uzbekistan":54,
+  "Congo DR":56,"Iraq":58,"Saudi Arabia":60,"South Africa":61,"Jordan":64,"Cape Verde":70,"Ghana":73,
+  "Bosnia-Herzegovina":74,"Haiti":83,"New Zealand":86,"Curaçao":90
+};
+function fifaRank(name) { return FIFA_RANK[name] || null; }
+// match-card badge (under each nation): gold "FIFA #n" pill; nothing for placeholder/unranked teams
+function frankBadge(name) { const r = fifaRank(name); return r ? '<span class="frank" title="FIFA World Ranking · as of ' + FIFA_RANK_ASOF + '"><i>FIFA</i>#' + r + '</span>' : ''; }
+// standings chip (after team name): compact "#n"
+function grankBadge(name) { const r = fifaRank(name); return r ? '<span class="grank" title="FIFA World Ranking · as of ' + FIFA_RANK_ASOF + '">#' + r + '</span>' : ''; }
 function myNation() { try { return (cs_user && cs_user.nation) || localStorage.getItem("cs_guest_nation") || ""; } catch (_) { return (cs_user && cs_user.nation) || ""; } }
 
 /* ================= HELPERS ================= */
@@ -892,9 +915,9 @@ function renderMatches() {
     return `<div class="mcard${egy ? " egy" : ""}${flashIds.has(e.id) ? " goal" : ""}${openId === e.id ? " open" : ""}${liveCls}" onclick="toggleM('${e.id}')">
       <div class="mtop">${badge}<span>${esc(note)}</span><span style="margin-left:auto">${dayw}</span></div>
       <div class="mrow">
-        <div class="${hCls}">${logo(H)}<span class="tname${H.team.displayName === myNation() ? " egy" : ""}">${esc(H.team.displayName)}</span></div>
+        <div class="${hCls}">${logo(H)}<div class="tcol"><span class="tname${H.team.displayName === myNation() ? " egy" : ""}">${esc(H.team.displayName)}</span>${frankBadge(H.team.displayName)}</div></div>
         ${mid}
-        <div class="${aCls}">${logo(A)}<span class="tname${A.team.displayName === myNation() ? " egy" : ""}">${esc(A.team.displayName)}</span></div>
+        <div class="${aCls}">${logo(A)}<div class="tcol"><span class="tname${A.team.displayName === myNation() ? " egy" : ""}">${esc(A.team.displayName)}</span>${frankBadge(A.team.displayName)}</div></div>
       </div>
       ${goalSummary}
       <div class="mven"><span>🏟️ ${esc(c.venue ? c.venue.fullName : "")}</span><b>${esc(c.venue && c.venue.address ? (c.venue.address.city || "") : "")}</b></div>
@@ -1026,7 +1049,7 @@ async function loadStandings() {
           const zone = _show ? (i < 2 ? "q1" : i === 2 ? "q3" : "qo") : "";   // no qualify coloring until the group has started
           return `<tr class="${zone}${(_show && i === 1) ? " cutline" : ""}${egy ? " egy" : ""}">
             <td class="pos">${i + 1}</td>
-            <td><span class="tm"><img src="${esc(r.team.logos && r.team.logos[0] ? r.team.logos[0].href : "")}" alt="">${esc(r.team.displayName)}</span></td>
+            <td><span class="tm"><img src="${esc(r.team.logos && r.team.logos[0] ? r.team.logos[0].href : "")}" alt="">${esc(r.team.displayName)}${grankBadge(r.team.displayName)}</span></td>
             <td>${s.gamesPlayed || 0}</td><td>${s.wins || 0}</td><td>${s.ties || 0}</td><td>${s.losses || 0}</td>
             <td>${s.pointDifferential || s.pointsDiff || 0}</td><td class="pts">${s.points || 0}</td></tr>`;
         }).join("") + `</table></div>`;
