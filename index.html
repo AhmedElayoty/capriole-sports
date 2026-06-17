@@ -506,6 +506,7 @@ const API = "https://site.api.espn.com/apis/site/v2/sports/soccer/" + LG;
 const STAND = "https://site.api.espn.com/apis/v2/sports/soccer/" + LG + "/standings?season=2026";
 const CHAT_KEY  = "capriole_wc26_room_8842";
 const PRED_KEY  = "capriole_wc26_predictions";
+const STATS_KEY = "capriole_wc26_analytics";   // internal visitor counter (aggregate only: country + opaque random id, NO IPs)
 const SEASON_RANGE = "20260611-20260719";
 const CHAT_READ = "https://textdb.online/" + CHAT_KEY;
 const CHAT_WRITE = "https://api.textdb.online/update/";
@@ -2143,6 +2144,39 @@ async function renderStats() {
     ensureDeep((d, t) => { window._deepProg = [d, t]; if (statsView === "P" && !$("paneS").classList.contains("hide")) paintStatsBody(); });
   } catch (e) { $("stBody").innerHTML = '<div class="empty">Couldn\'t load stats — retrying.</div>'; }
 }
+/* ===== INTERNAL VISITOR COUNTER (aggregate analytics, no PII) =====
+   Stores ONLY: an opaque random per-device id, coarse country (from a free
+   IP-geo lookup), and visit timestamps/counts. No IP address is ever stored.
+   Read-merge-write into its own STATS_KEY — never touches accounts/preds/chat. */
+async function geoLookup() {
+  try { const j = await getJSON("https://get.geojs.io/v1/ip/country.json");
+        if (j && j.name) return { c: j.name, cc: j.country || "" }; } catch (_) {}
+  try { const j = await getJSON("https://ipapi.co/json/");
+        if (j && j.country_name) return { c: j.country_name, cc: j.country_code || "" }; } catch (_) {}
+  return null;
+}
+async function trackVisit() {
+  try {
+    let vid = localStorage.getItem("cs_vid");
+    if (!vid) { vid = "v" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); localStorage.setItem("cs_vid", vid); }
+    const now = Date.now();
+    const newSession = (now - (+(localStorage.getItem("cs_visit_ts") || 0))) > 21600000;  // count 1 visit per 6h
+    let geo = null; try { geo = JSON.parse(localStorage.getItem("cs_geo") || "null"); } catch (_) {}
+    if (!geo || (now - (+(localStorage.getItem("cs_geo_ts") || 0))) > 604800000) {        // refresh geo ~weekly
+      const g = await geoLookup();
+      if (g) { geo = g; localStorage.setItem("cs_geo", JSON.stringify(g)); localStorage.setItem("cs_geo_ts", String(now)); }
+    }
+    if (!geo) geo = { c: "Unknown", cc: "" };
+    const a = await readKey(STATS_KEY, {});
+    a.v = a.v || {};
+    const r = a.v[vid] || { c: geo.c, cc: geo.cc, f: now, n: 0 };
+    r.c = geo.c; r.cc = geo.cc; r.l = now;
+    if (newSession || !a.v[vid]) { r.n = (r.n || 0) + 1; a.views = (a.views || 0) + 1; }
+    a.v[vid] = r;
+    await writeKey(STATS_KEY, a);
+    localStorage.setItem("cs_visit_ts", String(now));
+  } catch (_) {}
+}
 setCon(null, "CONNECTING");
 fillTZ();
 updateFmtTog();
@@ -2156,6 +2190,7 @@ renderHero();
 setInterval(renderHero, 300000);
 announceChampion();
 setInterval(announceChampion, 600000);
+setTimeout(trackVisit, 1800);
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
     loadMatches();
