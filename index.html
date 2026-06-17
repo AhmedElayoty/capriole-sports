@@ -850,19 +850,31 @@ function applyLiveStats(groups, evs) {
       else { sh.d++; sa.d++; sh.pts++; sa.pts++; }
     } catch (_) {}
   });
-  groups.forEach(g => ((g.standings && g.standings.entries) || []).forEach(e => {
-    const a = acc[e.team.id] || { gp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 }, gd = a.gf - a.ga;
-    e.stats = [                                     // overwrite with live numbers (no rank → ranks by pts→GD→GF)
-      { name: "gamesPlayed", value: a.gp, displayValue: String(a.gp) },
-      { name: "wins", value: a.w, displayValue: String(a.w) },
-      { name: "ties", value: a.d, displayValue: String(a.d) },
-      { name: "losses", value: a.l, displayValue: String(a.l) },
-      { name: "pointsFor", value: a.gf, displayValue: String(a.gf) },
-      { name: "pointsAgainst", value: a.ga, displayValue: String(a.ga) },
-      { name: "pointDifferential", value: gd, displayValue: (gd > 0 ? "+" : "") + gd },
-      { name: "points", value: a.pts, displayValue: String(a.pts) }
-    ];
-  }));
+  groups.forEach(g => {
+    const entries = (g.standings && g.standings.entries) || [];
+    // ESPN's own numbers (still in e.stats here) — used to decide if ESPN has caught up with the live results
+    const esp = {};
+    entries.forEach(e => { const s = {}; (e.stats || []).forEach(x => s[x.name] = parseFloat(x.value !== undefined ? x.value : x.displayValue) || 0); esp[e.team.id] = s; });
+    // "in sync" = ESPN agrees on games-played AND points for every team → its official order (incl. head-to-head
+    // + disciplinary/fair-play tiebreaks) is trustworthy. Until then we order by the live pts→GD→GF.
+    const inSync = entries.length > 0 && entries.every(e => { const a = acc[e.team.id] || { gp: 0, pts: 0 }, s = esp[e.team.id] || {}; return (s.gamesPlayed || 0) === a.gp && (s.points || 0) === a.pts; });
+    entries.forEach(e => {
+      const a = acc[e.team.id] || { gp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 }, gd = a.gf - a.ga;
+      const stats = [                               // live numbers (always accurate; cards don't affect these)
+        { name: "gamesPlayed", value: a.gp, displayValue: String(a.gp) },
+        { name: "wins", value: a.w, displayValue: String(a.w) },
+        { name: "ties", value: a.d, displayValue: String(a.d) },
+        { name: "losses", value: a.l, displayValue: String(a.l) },
+        { name: "pointsFor", value: a.gf, displayValue: String(a.gf) },
+        { name: "pointsAgainst", value: a.ga, displayValue: String(a.ga) },
+        { name: "pointDifferential", value: gd, displayValue: (gd > 0 ? "+" : "") + gd },
+        { name: "points", value: a.pts, displayValue: String(a.pts) }
+      ];
+      const er = esp[e.team.id] && esp[e.team.id].rank;
+      if (inSync && er) stats.push({ name: "rank", value: er, displayValue: String(er) });  // ESPN caught up → use its official order
+      e.stats = stats;
+    });
+  });
   return groups;
 }
 async function loadStandings() {
