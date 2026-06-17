@@ -1974,7 +1974,20 @@ async function announceChampion() {
     $("brkBox").innerHTML = '<div class="brk">&#127942; <b>PREDICTION CHAMPION' + (plural ? "S" : "") + '</b> — ' +
       esc(names) + ' topped last week (' + w.lab + ') with ' + top + ' pts.' +
       '<span>CHAMPION OF THE WEEK!</span></div>';
-    // last week's winner is shown in the Predict banner above ONLY — not posted to chat (already announced there)
+    // weekly champion → posted to chat ONCE per completed week (uid champbot — distinct from the legacy
+    // breakfast brkbot which stays hidden). First-run fence skips the already-announced week; only NEWER weeks post.
+    try {
+      const fence = localStorage.getItem("cs_champ_fence");
+      if (fence == null) { localStorage.setItem("cs_champ_fence", w.wk); }   // first load of this build → don't re-announce the current week
+      else if (w.wk > fence && localStorage.getItem("cs_champ_" + w.wk) !== "1") {
+        localStorage.setItem("cs_champ_" + w.wk, "1");
+        localStorage.setItem("cs_champ_fence", w.wk);
+        const msg = plural
+          ? names + " share the crown — joint Prediction Champions for " + w.lab + " with " + top + " pts each! 👏"
+          : names + " is the Prediction Champion for " + w.lab + " — top of the leaderboard with " + top + " pts! Congrats 👏";
+        postRoom([{ id: "champ-w" + w.wk, uid: "champbot", name: "🏆 LEADERBOARD", text: "🏆 " + msg, ts: Date.now() }]).catch(() => {});
+      }
+    } catch (_) {}
   } catch (_) {}
 }
 
@@ -2154,7 +2167,7 @@ function showChatToast(m) {
   let wrap = $("toastWrap");
   if (!wrap) { wrap = document.createElement("div"); wrap.id = "toastWrap"; document.body.appendChild(wrap); }
   while (wrap.children.length >= 3) wrap.removeChild(wrap.firstChild);
-  const init = (((m.name || "?").trim()[0]) || "?").toUpperCase();
+  const init = ((Array.from((m.name || "?").trim())[0]) || "?").toUpperCase();   // first grapheme (handles 🏆 / emoji names)
   const el = document.createElement("div"); el.className = "ctoast";
   el.innerHTML = '<div class="ic">' + esc(init) + '</div>' +
     '<div class="body"><div class="nm">' + esc(m.name || "Someone") + '</div>' +
