@@ -40,6 +40,7 @@ header{padding:10px 16px}
 .bsub{font-family:'Oswald';font-weight:500;font-size:10.5px;letter-spacing:2px;color:var(--mut);margin-top:3px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
 #tzSel{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line);border-radius:6px;font-family:'Oswald';font-weight:600;font-size:10.5px;letter-spacing:.8px;padding:2px 4px;cursor:pointer}
 #tzOff{color:var(--gold);font-family:'Oswald';font-weight:600;letter-spacing:1px}
+#fmtTog{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line);border-radius:6px;font-family:'Oswald';font-weight:600;font-size:10px;letter-spacing:.6px;padding:2px 6px;cursor:pointer;margin-left:2px}
 .hright{margin-left:auto;text-align:right}
 .uaeclock{font-family:'Oswald';font-weight:600;font-size:17px;letter-spacing:.5px}
 .constate{display:flex;align-items:center;gap:5px;justify-content:flex-end;font-family:'Oswald';
@@ -396,7 +397,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
   <div class="crest"><img src="logo.png" alt="World Cup 2026"></div>
   <div>
    <div class="bname">WORLD CUP <b>2026</b></div>
-   <div class="bsub">ALL TIMES <select id="tzSel" onchange="setTZ(this.value)" aria-label="Time zone"></select><span id="tzOff"></span></div>
+   <div class="bsub">ALL TIMES <select id="tzSel" onchange="setTZ(this.value)" aria-label="Time zone"></select><span id="tzOff"></span><button id="fmtTog" onclick="toggleHour12()" aria-label="Time format"></button></div>
   </div>
   <div class="hright">
    <div class="uaeclock" id="clock">--:--</div>
@@ -489,6 +490,7 @@ const SEASON_RANGE = "20260611-20260719";
 const CHAT_READ = "https://textdb.online/" + CHAT_KEY;
 const CHAT_WRITE = "https://api.textdb.online/update/";
 let TZ = (function(){ try { return localStorage.getItem("cs_tz") || "Asia/Dubai"; } catch(_) { return "Asia/Dubai"; } })();
+let HOUR12 = (function(){ try { return localStorage.getItem("cs_h12") !== "0"; } catch(_) { return true; } })();
 const T0 = Date.UTC(2026, 5, 11), T1 = Date.UTC(2026, 6, 19);
 
 /* ================= STATE ================= */
@@ -525,7 +527,7 @@ function myNation() { return (cs_user && cs_user.nation) || "Egypt"; }
 
 /* ================= HELPERS ================= */
 const $ = id => document.getElementById(id);
-const fmt = (d, o) => new Intl.DateTimeFormat("en-GB", Object.assign({ timeZone: TZ }, o)).format(d);
+const fmt = (d, o) => { let s = new Intl.DateTimeFormat("en-GB", Object.assign({ timeZone: TZ, hour12: HOUR12 }, o)).format(d); return (o && o.hour && HOUR12) ? s.replace(/\b(am|pm)\b/i, m => m.toUpperCase()) : s; };
 const uaeYMD = d => {
   const p = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" })
     .formatToParts(d).reduce((a, x) => (a[x.type] = x.value, a), {});
@@ -565,14 +567,19 @@ function tzAbbr() { for (const g of ZONES) for (const z of g[1]) if (z[0] === TZ
 function tzOffset(tz) { try { const p = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "shortOffset" }).formatToParts(new Date()).find(x => x.type === "timeZoneName"); return p ? p.value.replace("GMT", "UTC") : ""; } catch (_) { return ""; } }
 function fillTZ() { const s = $("tzSel"); if (!s || s.options.length) return; s.innerHTML = ZONES.map(g => '<optgroup label="' + g[0] + '">' + g[1].map(z => '<option value="' + z[0] + '"' + (z[0] === TZ ? " selected" : "") + '>' + z[1] + '</option>').join("") + '</optgroup>').join(""); updateTzLabel(); }
 function updateTzLabel() { const o = $("tzOff"); if (o) { const off = tzOffset(TZ); o.textContent = off ? " · " + off : ""; } }
-function setTZ(v) {
-  TZ = v; try { localStorage.setItem("cs_tz", v); } catch (_) {}
-  const s = $("tzSel"); if (s) s.value = v;
-  updateTzLabel(); buildStrip(); renderHero();
+function reRenderTimes() {
+  buildStrip(); renderHero();
   if (!$("paneG").classList.contains("hide")) loadStandings();
   if (!$("paneP").classList.contains("hide")) renderPredict();
   if (!$("paneS").classList.contains("hide")) renderStats();
 }
+function setTZ(v) {
+  TZ = v; try { localStorage.setItem("cs_tz", v); } catch (_) {}
+  const s = $("tzSel"); if (s) s.value = v;
+  updateTzLabel(); reRenderTimes();
+}
+function updateFmtTog() { const b = $("fmtTog"); if (b) b.textContent = HOUR12 ? "AM·PM" : "24H"; }
+function toggleHour12() { HOUR12 = !HOUR12; try { localStorage.setItem("cs_h12", HOUR12 ? "1" : "0"); } catch (_) {} updateFmtTog(); reRenderTimes(); }
 
 /* ================= TABS ================= */
 function showTab(t) {
@@ -2072,6 +2079,7 @@ async function renderStats() {
 }
 setCon(null, "CONNECTING");
 fillTZ();
+updateFmtTog();
 buildStrip();
 renderChatComposer();
 if (cs_user) {
