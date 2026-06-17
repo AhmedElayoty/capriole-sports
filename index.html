@@ -912,163 +912,192 @@ function renderBracket() {
     '<div class="brbody">' + body + '</div>';
 }
 
-/* ===== BRACKET POSTER (full landscape tree, opens in a new tab) ===== */
-let _nodeResult = {};                 // phase 2: num -> {hs,as,note,egyWin}
-function brResult(n) { return _nodeResult[n] || null; }
+/* ===== BRACKET POSTER (premium wallchart, opens in a new landscape tab) ===== */
+let _nodeResult = {};                 // phase 2: num -> {hs,as,note,ht,at}
 const bpBR = n => BRACKET.find(x => x.n === n);
 const bpTrunc = (s, m) => { s = String(s == null ? "" : s); return s.length > m ? s.slice(0, m - 1) + "…" : s; };
-function bpPos() {
-  const Lord = [74, 77, 73, 75, 83, 84, 81, 82], Rord = [76, 78, 79, 80, 86, 88, 85, 87];
-  const ys = [250, 368, 486, 604, 740, 858, 976, 1094];
-  const CW = 170;
-  const cxL = { R32: 131, R16: 309, QF: 487, SF: 665 }, cxR = { R32: 1553, R16: 1375, QF: 1197, SF: 1019 };
-  const dim = { R32: [CW, 84], R16: [CW, 90], QF: [CW, 96], SF: [CW, 102] };
-  const pos = {};
-  Lord.forEach((n, i) => pos[n] = { y: ys[i], side: "L", round: "R32", w: CW, h: 84, x: cxL.R32 - CW / 2 });
-  Rord.forEach((n, i) => pos[n] = { y: ys[i], side: "R", round: "R32", w: CW, h: 84, x: cxR.R32 - CW / 2 });
-  const add = (n, side, round) => { const nd = bpBR(n); const y = (pos[nd.h.m].y + pos[nd.a.m].y) / 2; const [w, h] = dim[round]; const cx = (side === "L" ? cxL : cxR)[round]; pos[n] = { y, side, round, w, h, x: cx - w / 2 }; };
-  [89, 90, 93, 94].forEach(n => add(n, "L", "R16")); [91, 92, 95, 96].forEach(n => add(n, "R", "R16"));
-  [97, 98].forEach(n => add(n, "L", "QF")); [99, 100].forEach(n => add(n, "R", "QF"));
-  add(101, "L", "SF"); add(102, "R", "SF");
-  pos[104] = { y: 672, side: "C", round: "FINAL", w: 180, h: 150, x: 842 - 90 };
-  pos[103] = { y: 912, side: "C", round: "BRONZE", w: 184, h: 82, x: 842 - 92 };
+const BPC = { txt:"#EAD9EE", win:"#F4D27A", lose:"#7A6A72", ph:"#9A8AA0", meta:"#9A8AA0", plat:"#BFC6D8", hair:"#4A3550", div:"#38263E", ember:"#FF5C3B", nat:"#00E08A", bronze:"#B07A3A", gold:"#E7B85A" };
+const BPCW = 216, BPHW = 108;
+const bpcxL = { R32:176, R16:424, QF:672, SF:920 }, bpcxR = { R32:2224, R16:1976, QF:1728, SF:1480 };
+const bpYs = [232,352,472,592,712,832,952,1072];
+const bpDimH = { R32:92, R16:92, QF:100, SF:108 };
+function bpRes(n){ return _nodeResult[n] || null; }
+function bpDecided(n){ const r=_nodeResult[n]; return !!(r && r.hs!=null && r.as!=null); }
+function bpWinTeam(n){ const r=_nodeResult[n]; if(!bpDecided(n)) return null; return r.hs>=r.as ? (r.ht||null) : (r.at||null); }
+function bpSlotTeam(node, side){ const slot = side==="h"?node.h:node.a; const t=slotTeam(slot); if(t) return t; if(slot.t==="WM") return bpWinTeam(slot.m); if(slot.t==="LM"){ const r=_nodeResult[slot.m]; if(bpDecided(slot.m)) return r.hs>=r.as?(r.at||null):(r.ht||null); } return null; }
+function bpNatIn(n){ const nd=bpBR(n); const th=bpSlotTeam(nd,"h"), ta=bpSlotTeam(nd,"a"); if((th&&th.name===myNation())||(ta&&ta.name===myNation())) return true; if(egyProvisional(nd.h)||egyProvisional(nd.a)) return true; return false; }
+function bpBuildPos(){
+  const Lord=[74,77,73,75,83,84,81,82], Rord=[76,78,79,80,86,88,85,87], pos={};
+  Lord.forEach((n,i)=>pos[n]={n,y:bpYs[i],side:"L",round:"R32",w:BPCW,h:92,x:bpcxL.R32-BPHW});
+  Rord.forEach((n,i)=>pos[n]={n,y:bpYs[i],side:"R",round:"R32",w:BPCW,h:92,x:bpcxR.R32-BPHW});
+  const add=(n,side,round)=>{ const nd=bpBR(n); const y=(pos[nd.h.m].y+pos[nd.a.m].y)/2; const h=bpDimH[round]; const cx=(side==="L"?bpcxL:bpcxR)[round]; pos[n]={n,y,side,round,w:BPCW,h,x:cx-BPHW}; };
+  [89,90,93,94].forEach(n=>add(n,"L","R16")); [91,92,95,96].forEach(n=>add(n,"R","R16"));
+  [97,98].forEach(n=>add(n,"L","QF")); [99,100].forEach(n=>add(n,"R","QF"));
+  add(101,"L","SF"); add(102,"R","SF");
+  pos[104]={n:104,y:652,side:"C",round:"FINAL",w:280,h:150,x:1060};
+  pos[103]={n:103,y:858,side:"C",round:"BRONZE",w:240,h:84,x:1080};
   return pos;
 }
-function bpSlot(node, side, x, top, w, slotH, big) {
-  const slot = side === "h" ? node.h : node.a, team = slotTeam(slot), r = brResult(node.n);
-  const tileW = big ? 40 : 28, tileH = big ? 28 : 20, fx = x + 11, fy = top + (slotH - tileH) / 2, nameX = fx + tileW + 11, ns = big ? 23 : 15.5, cy = top + slotH / 2;
-  const score = r ? (side === "h" ? r.hs : r.as) : null, win = r && r.hs != null ? (r.hs >= r.as ? "h" : "a") : null, isWin = win === side;
-  let out = "";
-  if (team) {
-    const egy = team.name === myNation();
-    out += '<rect x="' + (fx - 1.5) + '" y="' + (fy - 1.5) + '" width="' + (tileW + 3) + '" height="' + (tileH + 3) + '" rx="4" fill="#fff"/>';
-    out += '<clipPath id="cl' + node.n + side + '"><rect x="' + fx + '" y="' + fy + '" width="' + tileW + '" height="' + tileH + '" rx="3"/></clipPath>';
-    out += '<image href="' + (team.logo || "") + '" x="' + fx + '" y="' + fy + '" width="' + tileW + '" height="' + tileH + '" preserveAspectRatio="xMidYMid meet" clip-path="url(#cl' + node.n + side + ')"/>';
-    if (egy) out += '<rect x="' + (fx - 1.5) + '" y="' + (fy - 1.5) + '" width="' + (tileW + 3) + '" height="' + (tileH + 3) + '" rx="4" fill="none" stroke="#00d26a" stroke-width="1.5"/>';
-    const fill = egy ? "#00d26a" : (isWin ? "#fff" : (win && !isWin ? "#6b78a8" : "#eef2ff"));
-    out += '<text x="' + nameX + '" y="' + cy + '" dominant-baseline="central" font-family="Oswald" font-weight="' + (isWin ? 700 : 600) + '" font-size="' + ns + '" fill="' + fill + '">' + esc(bpTrunc(team.name, big ? 18 : 16)) + '</text>';
-    if (score != null) { const sx = x + w - 12;
-      if (isWin) out += '<rect x="' + (sx - 26) + '" y="' + (cy - 12) + '" width="26" height="24" rx="5" fill="' + (egy ? "#00d26a" : "#ffc02e") + '"/><text x="' + (sx - 13) + '" y="' + cy + '" text-anchor="middle" dominant-baseline="central" font-family="Oswald" font-weight="700" font-size="' + (big ? 22 : 17) + '" fill="#0a1230">' + score + '</text>';
-      else out += '<text x="' + sx + '" y="' + cy + '" text-anchor="end" dominant-baseline="central" font-family="Oswald" font-weight="700" font-size="' + (big ? 22 : 17) + '" fill="#6b78a8">' + score + '</text>'; }
+function bpStateCol(n){ const w=bpWinTeam(n); if(w&&w.name===myNation()) return BPC.nat; if(bpDecided(n)) return BPC.gold; return "#4A3550"; }
+function bpRailInto(p){ if(bpNatIn(p.n) && (function(){ const nd=bpBR(p.n); return [nd.h,nd.a].some(s=>s.t==="WM" && bpWinTeam(s.m) && bpWinTeam(s.m).name===myNation()); })()) return BPC.nat; if(bpDecided(p.n)) return BPC.gold; return "#4A5560"; }
+function bpArw(c){ return c===BPC.nat?"bparwNat":(c===BPC.gold?"bparwGold":"bparwN"); }
+function bpMergeConn(p, pos){
+  const nd=bpBR(p.n), c1=pos[nd.h.m], c2=pos[nd.a.m], pp=pos[p.n], left=pp.side==="L", r=7, dir=left?1:-1;
+  const cEdge=ch=>left?ch.x+ch.w:ch.x, pEdge=left?pp.x:pp.x+pp.w, trunkX=Math.round((cEdge(c1)+pEdge)/2);
+  let o="";
+  [c1,c2].forEach(ch=>{ const col=bpStateCol(ch.n), cy=ch.y, vs=(pp.y>cy)?1:-1, cE=cEdge(ch);
+    o+='<path d="M'+cE+' '+cy+' H'+(trunkX-dir*r)+' Q'+trunkX+' '+cy+' '+trunkX+' '+(cy+vs*r)+' V'+pp.y+'" fill="none" stroke="'+col+'" stroke-width="'+(col===BPC.nat?3:(col===BPC.gold?2.2:1.6))+'" stroke-linecap="round"'+(col===BPC.nat?' filter="url(#bpNat)"':"")+'/>'; });
+  const ac=bpRailInto(pp);
+  o+='<path d="M'+trunkX+' '+pp.y+' H'+(pEdge-dir*8)+'" fill="none" stroke="'+ac+'" stroke-width="'+(ac===BPC.nat?3:2.2)+'" marker-end="url(#'+bpArw(ac)+')"'+(ac===BPC.nat?' filter="url(#bpNat)"':"")+'/>';
+  return o;
+}
+function bpSideConn(childN, toX, toY, pos){ const c=pos[childN], left=c.side==="L", cE=left?c.x+c.w:c.x, dir=left?1:-1; const w=bpWinTeam(childN); const ac=(w&&w.name===myNation())?BPC.nat:(bpDecided(childN)?BPC.gold:"#4A5560");
+  return '<path d="M'+cE+' '+c.y+' H'+(toX-dir*8)+'" fill="none" stroke="'+ac+'" stroke-width="'+(ac===BPC.nat?3:2.4)+'" marker-end="url(#'+bpArw(ac)+')"'+(ac===BPC.nat?' filter="url(#bpNat)"':"")+'/>'; }
+function bpSlotR(node, side, x, top, w, sh, scale){
+  const team=bpSlotTeam(node,side), r=bpRes(node.n), s=scale||1, tileW=30*s, tileH=22*s, fx=x+11, fy=top+(sh-tileH)/2, nameX=fx+tileW+11, cy=top+sh/2;
+  const ns=(scale&&scale>1.2)?22:16, score=r?(side==="h"?r.hs:r.as):null, win=r&&r.hs!=null?(r.hs>=r.as?"h":"a"):null, isWin=win===side;
+  let o="";
+  if(team){
+    const egy=team.name===myNation();
+    o+='<rect x="'+fx+'" y="'+fy+'" width="'+tileW+'" height="'+tileH+'" rx="3" fill="#fff" stroke="'+BPC.hair+'" stroke-width="0.5"/>';
+    o+='<clipPath id="bpc'+node.n+side+'"><rect x="'+fx+'" y="'+fy+'" width="'+tileW+'" height="'+tileH+'" rx="3"/></clipPath>';
+    o+='<image href="'+(team.logo||"")+'" x="'+fx+'" y="'+fy+'" width="'+tileW+'" height="'+tileH+'" preserveAspectRatio="xMidYMid meet" clip-path="url(#bpc'+node.n+side+')"'+(win&&!isWin?' opacity="0.6"':"")+'/>';
+    const fill=egy?BPC.nat:(isWin?BPC.win:(win&&!isWin?BPC.lose:BPC.txt));
+    if(isWin&&!egy&&node.n!==104) o+='<rect x="'+(x+2)+'" y="'+(top+4)+'" width="3" height="'+(sh-8)+'" rx="1.5" fill="'+BPC.win+'"/>';
+    o+='<text x="'+nameX+'" y="'+cy+'" dominant-baseline="central" font-family="Oswald" font-weight="'+(isWin?700:600)+'" font-size="'+ns+'" fill="'+fill+'">'+esc(bpTrunc(team.name,scale&&scale>1.2?16:18))+'</text>';
+    if(score!=null){ const sx=x+w-12;
+      if(isWin) o+='<rect x="'+(sx-24)+'" y="'+(cy-12)+'" width="24" height="24" rx="5" fill="url(#bpGold)"/><text x="'+(sx-12)+'" y="'+cy+'" text-anchor="middle" dominant-baseline="central" font-family="Oswald" font-weight="700" font-size="17" fill="#2A1622">'+score+'</text>';
+      else o+='<text x="'+sx+'" y="'+cy+'" text-anchor="end" dominant-baseline="central" font-family="Oswald" font-weight="700" font-size="16" fill="'+BPC.lose+'">'+score+'</text>'; }
   } else {
-    const L = slotLabel(slot), egy = egyProvisional(slot);
-    out += '<rect x="' + fx + '" y="' + fy + '" width="' + tileW + '" height="' + tileH + '" rx="4" fill="#0d1838" stroke="' + (egy ? "#00d26a" : "#2a3a6e") + '" stroke-width="' + (egy ? 1.2 : 0.75) + '" stroke-dasharray="2 2"/>';
-    out += '<text x="' + nameX + '" y="' + cy + '" dominant-baseline="central" font-family="Oswald" font-style="italic" font-weight="400" font-size="' + ns + '" fill="' + (egy ? "#00d26a" : "#8a97c8") + '">' + esc(bpTrunc(L.main, big ? 20 : 18)) + (L.sub ? '<tspan font-family="Inter" font-style="normal" font-size="' + (ns - 5) + '" fill="#5e6da0">  ' + esc(L.sub) + '</tspan>' : "") + '</text>';
+    const L=slotLabel(side==="h"?node.h:node.a);
+    o+='<rect x="'+fx+'" y="'+fy+'" width="'+tileW+'" height="'+tileH+'" rx="3" fill="none" stroke="'+BPC.hair+'" stroke-width="1" stroke-dasharray="2 2"/>';
+    o+='<text x="'+nameX+'" y="'+cy+'" dominant-baseline="central" font-family="Oswald" font-style="italic" font-weight="400" font-size="'+(ns-1.5)+'" fill="'+BPC.ph+'">'+esc(bpTrunc(L.main,20))+'</text>';
   }
-  return out;
-}
-function bpCell(n, p) {
-  const node = bpBR(n), big = p.round === "FINAL", bronze = p.round === "BRONZE", top = p.y - p.h / 2;
-  const th = slotTeam(node.h), ta = slotTeam(node.a);
-  const egyCell = (th && th.name === myNation()) || (ta && ta.name === myNation()) || egyProvisional(node.h) || egyProvisional(node.a);
-  const spineCol = { R32: "#19c8ff", R16: "#19c8ff", QF: "#ffc02e", SF: "#ff7a45", FINAL: "#ffc02e", BRONZE: "#cd7f32" }[p.round];
-  const stripH = 20, slotH = (p.h - stripH) / 2, parts = node.uae.split(" "), time = parts.pop(), ko = parts.join(" ") + " · " + time;
-  const stroke = egyCell ? "#00d26a" : (big ? "#ffc02e" : (bronze ? "#cd7f32" : "#2a3a63")), sw = egyCell ? 2 : (big ? 2.5 : 1.4), spineX = p.side === "R" ? p.x + p.w - 4 : p.x, r = brResult(n);
-  let o = '<rect x="' + p.x + '" y="' + top + '" width="' + p.w + '" height="' + p.h + '" rx="11" fill="#121d44" stroke="' + stroke + '" stroke-width="' + sw + '"' + (big ? ' filter="url(#gg)"' : "") + '/>';
-  o += '<rect x="' + spineX + '" y="' + top + '" width="4" height="' + p.h + '" rx="2" fill="' + (egyCell ? "#00d26a" : spineCol) + '"/>';
-  o += '<text x="' + (p.x + 13) + '" y="' + (top + 13) + '" font-family="Oswald" font-weight="600" font-size="10.5" letter-spacing="1.1" fill="#5e6da0">M' + n + ' · ' + (bronze ? "3RD PLACE" : p.round) + '</text>';
-  o += '<text x="' + (p.x + p.w - 13) + '" y="' + (top + 13) + '" text-anchor="end" font-family="Oswald" font-weight="500" font-size="10" fill="#8fa2d8">' + esc(ko) + '</text>';
-  o += '<line x1="' + (p.x + 11) + '" y1="' + (top + stripH) + '" x2="' + (p.x + p.w - 11) + '" y2="' + (top + stripH) + '" stroke="#22305f" stroke-width="1"/>';
-  o += bpSlot(node, "h", p.x, top + stripH, p.w, slotH, big);
-  o += '<line x1="' + (p.x + 11) + '" y1="' + (top + stripH + slotH) + '" x2="' + (p.x + p.w - 11) + '" y2="' + (top + stripH + slotH) + '" stroke="#22305f" stroke-width="1"/>';
-  o += bpSlot(node, "a", p.x, top + stripH + slotH, p.w, slotH, big);
-  if (r && r.note) o += '<rect x="' + (p.x + p.w - 46) + '" y="' + (top + p.h - 15) + '" width="38" height="12" rx="3" fill="#ff3b5c"/><text x="' + (p.x + p.w - 27) + '" y="' + (top + p.h - 9) + '" text-anchor="middle" dominant-baseline="central" font-family="Inter" font-weight="600" font-size="8" fill="#fff">' + esc(r.note) + '</text>';
   return o;
 }
-function bpConnCol(f) { const r = brResult(f); if (!r || r.hs == null) return "#33477a"; return r.egyWin ? "#00d26a" : "#ffc02e"; }
-function bpConn(fromN, toN, pos) {
-  const f = pos[fromN], t = pos[toN]; let fx, tx;
-  if (t.side === "C") { fx = f.side === "L" ? f.x + f.w : f.x; tx = f.side === "L" ? t.x : t.x + t.w; }
-  else if (t.side === "L") { fx = f.x + f.w; tx = t.x; } else { fx = f.x; tx = t.x + t.w; }
-  const midx = (fx + tx) / 2, col = bpConnCol(fromN), egy = col === "#00d26a";
-  return '<path d="M' + fx + ' ' + f.y + ' H' + midx + ' V' + t.y + ' H' + tx + '" fill="none" stroke="' + col + '" stroke-width="' + (egy ? 3 : (col === "#ffc02e" ? 2.2 : 1.6)) + '" stroke-linejoin="round"' + (egy ? ' filter="url(#gg)"' : "") + '/>';
+function bpCardDepth(x,y,w,h,op,stroke,sw){
+  return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="12" fill="url(#bpCard)" opacity="'+op+'" filter="url(#bpSoft)"/>'+
+    '<rect x="'+(x+1)+'" y="'+(y+1)+'" width="'+(w-2)+'" height="'+(h-2)+'" rx="11" fill="none" stroke="#FFFFFF" stroke-opacity="0.12" stroke-width="1"/>'+
+    '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="12" fill="none" stroke="'+(stroke||BPC.hair)+'" stroke-width="'+(sw||0.9)+'"'+(stroke===BPC.nat?' filter="url(#bpNat)"':"")+'/>';
 }
-function bpHeader(emb) {
-  return '<rect x="56" y="42" width="92" height="92" rx="18" fill="#fff"/><image href="' + emb + '" x="62" y="48" width="80" height="80" preserveAspectRatio="xMidYMid meet"/>' +
-    '<text x="170" y="86" font-family="Oswald" font-weight="700" font-size="52" letter-spacing="3" fill="#fff">FIFA WORLD CUP 2026</text>' +
-    '<text x="172" y="120" font-family="Oswald" font-weight="500" font-size="18" letter-spacing="5" fill="#19c8ff">ROAD TO THE FINAL · KNOCKOUT BRACKET</text>' +
-    '<rect x="1620" y="44" width="4" height="86" rx="2" fill="url(#rg)"/>' +
-    '<text x="1604" y="62" text-anchor="end" font-family="Oswald" font-weight="500" font-size="13" letter-spacing="2" fill="#8fa2d8">48 TEAMS</text>' +
-    '<text x="1604" y="88" text-anchor="end" font-family="Oswald" font-weight="500" font-size="13" letter-spacing="2" fill="#8fa2d8">16 HOST CITIES</text>' +
-    '<text x="1604" y="114" text-anchor="end" font-family="Oswald" font-weight="500" font-size="13" letter-spacing="2" fill="#8fa2d8">ALL TIMES <tspan fill="#ffc02e">UAE</tspan> · GST (UTC+4)</text>' +
-    '<line x1="56" y1="168" x2="1628" y2="168" stroke="#22305f" stroke-width="2"/>';
-}
-function bpRoundHeaders() {
-  const cols = [[131, "ROUND OF 32", "28 JUN – 1 JUL", "#19c8ff"], [309, "ROUND OF 16", "4 – 8 JUL", "#4ea7d6"], [487, "QUARTER-FINAL", "10 – 12 JUL", "#ffc02e"], [1553, "ROUND OF 32", "28 JUN – 1 JUL", "#19c8ff"], [1375, "ROUND OF 16", "4 – 8 JUL", "#4ea7d6"], [1197, "QUARTER-FINAL", "10 – 12 JUL", "#ffc02e"]];
-  let o = ""; cols.forEach(([cx, lab, dt, col]) => { o += '<text x="' + cx + '" y="198" text-anchor="middle" font-family="Oswald" font-weight="600" font-size="13" letter-spacing="2" fill="' + col + '">' + lab + '</text><line x1="' + (cx - 44) + '" y1="207" x2="' + (cx + 44) + '" y2="207" stroke="' + col + '" stroke-width="1.5"/><text x="' + cx + '" y="221" text-anchor="middle" font-family="Inter" font-weight="500" font-size="8.5" letter-spacing="0.5" fill="#5e6da0">' + dt + '</text>'; });
-  o += '<text x="665" y="198" text-anchor="middle" font-family="Oswald" font-weight="600" font-size="12" letter-spacing="2" fill="#ffc02e">SEMI</text><text x="665" y="216" text-anchor="middle" font-family="Inter" font-weight="500" font-size="8" fill="#5e6da0">14–15 JUL</text>';
-  o += '<text x="1019" y="198" text-anchor="middle" font-family="Oswald" font-weight="600" font-size="12" letter-spacing="2" fill="#ffc02e">SEMI</text><text x="1019" y="216" text-anchor="middle" font-family="Inter" font-weight="500" font-size="8" fill="#5e6da0">14–15 JUL</text>';
-  o += '<text x="842" y="198" text-anchor="middle" font-family="Oswald" font-weight="700" font-size="13" letter-spacing="3" fill="#ffc02e">FINAL</text><text x="842" y="216" text-anchor="middle" font-family="Inter" font-weight="500" font-size="8" fill="#5e6da0">19 JUL</text>';
+function bpCell(p, pos){
+  const node=bpBR(p.n), top=p.y-p.h/2, op={R32:0.92,R16:0.95,QF:0.97,SF:1}[p.round]||1, egy=bpNatIn(p.n), stroke=egy?BPC.nat:BPC.hair, sw=egy?2:0.9;
+  let o=bpCardDepth(p.x,top,p.w,p.h,op,stroke,sw);
+  if(egy){ const railX=p.side==="R"?p.x+p.w-4:p.x; o+='<rect x="'+railX+'" y="'+(top+5)+'" width="4" height="'+(p.h-10)+'" rx="2" fill="'+BPC.nat+'" filter="url(#bpNat)"/>'; }
+  const parts=node.uae.split(" "), time=parts.pop(), dd=parts.slice(1).join(" ").toUpperCase();
+  o+='<text x="'+(p.x+12)+'" y="'+(top+15)+'" font-family="Oswald" font-weight="600" font-size="10.5" letter-spacing="1.1" fill="'+BPC.meta+'">M'+p.n+' · '+p.round+'</text>';
+  o+='<text x="'+(p.x+p.w-12)+'" y="'+(top+15)+'" text-anchor="end" font-family="Inter" font-weight="500" font-size="10" fill="'+BPC.plat+'">'+esc(dd+" · "+time)+'</text>';
+  o+='<line x1="'+(p.x+11)+'" y1="'+(top+22)+'" x2="'+(p.x+p.w-11)+'" y2="'+(top+22)+'" stroke="'+BPC.div+'" stroke-width="0.9"/>';
+  const sh=(p.h-22)/2;
+  o+=bpSlotR(node,"h",p.x,top+22,p.w,sh);
+  o+='<line x1="'+(p.x+11)+'" y1="'+(top+22+sh)+'" x2="'+(p.x+p.w-11)+'" y2="'+(top+22+sh)+'" stroke="'+BPC.div+'" stroke-width="0.9"/>';
+  o+=bpSlotR(node,"a",p.x,top+22+sh,p.w,sh);
+  const r=bpRes(p.n);
+  if(r&&r.note) o+='<rect x="'+(p.x+p.w-44)+'" y="'+(top+p.h-15)+'" width="38" height="12" rx="3" fill="'+BPC.ember+'"/><text x="'+(p.x+p.w-25)+'" y="'+(top+p.h-9)+'" text-anchor="middle" dominant-baseline="central" font-family="Inter" font-weight="600" font-size="8" fill="#fff">'+esc(r.note)+'</text>';
   return o;
 }
-function bpTrophy(cx, cy) {
-  let rays = ""; for (let i = 0; i < 12; i++) { const a = i * 30 * Math.PI / 180, x1 = cx + Math.cos(a) * 40, y1 = cy - 6 + Math.sin(a) * 40, x2 = cx + Math.cos(a) * 88, y2 = cy - 6 + Math.sin(a) * 88; rays += '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="#ffc02e" stroke-width="1" opacity="0.14"/>'; }
-  return '<circle cx="' + cx + '" cy="' + (cy - 6) + '" r="96" fill="url(#spot)"/>' + rays + '<g transform="translate(' + cx + ' ' + cy + ')" filter="url(#gg)">' +
-    '<ellipse cx="0" cy="60" rx="60" ry="9" fill="#ffc02e" opacity="0.18"/>' +
-    '<path d="M-24 -38 h48 v6 q0 23 -15 30 l-2 13 h9 v7 h-34 v-7 h9 l-2 -13 q-15 -7 -15 -30 z" fill="url(#tg)"/>' +
-    '<path d="M-24 -34 q-18 0 -18 -16 q0 -9 9 -9 v7 q-3 0 -3 2 q0 9 12 9 z" fill="url(#tg)"/>' +
-    '<path d="M24 -34 q18 0 18 -16 q0 -9 -9 -9 v7 q3 0 3 2 q0 9 -12 9 z" fill="url(#tg)"/>' +
-    '<ellipse cx="0" cy="-34" rx="24" ry="5" fill="#fff3d6" opacity="0.5"/>' +
-    '<rect x="-14" y="22" width="28" height="6" rx="2" fill="#e0962b"/><rect x="-19" y="28" width="38" height="8" rx="2" fill="#ffc02e"/></g>';
+function bpHeader(){
+  return '<text x="120" y="116" font-family="Oswald" font-weight="700" font-size="54" letter-spacing="3" fill="'+BPC.txt+'">FIFA WORLD CUP 2026</text>'+
+    '<text x="122" y="146" font-family="Oswald" font-weight="500" font-size="17" letter-spacing="5" fill="url(#bpGold)">ROAD TO THE FINAL · KNOCKOUT BRACKET</text>'+
+    '<text x="2336" y="92" text-anchor="end" font-family="Oswald" font-weight="500" font-size="13" letter-spacing="2" fill="'+BPC.plat+'">48 TEAMS · 16 HOST CITIES</text>'+
+    '<text x="2336" y="120" text-anchor="end" font-family="Oswald" font-weight="500" font-size="13" letter-spacing="2" fill="'+BPC.plat+'">ALL TIMES <tspan fill="'+BPC.gold+'">UAE</tspan> · GST (UTC+4)</text>';
 }
-function bpChampion(pos) {
-  const node = bpBR(104), r = brResult(104); if (!r || r.hs == null) return "";
-  const t = r.hs >= r.as ? slotTeam(node.h) : slotTeam(node.a); if (!t) return "";
-  const egy = t.name === myNation(), bg = egy ? "#00d26a" : "#ffc02e";
-  return '<g transform="translate(842 802)"><rect x="-168" y="-21" width="336" height="42" rx="10" fill="' + bg + '"/>' +
-    '<rect x="-158" y="-13" width="26" height="18" rx="3" fill="#fff"/><clipPath id="cchamp"><rect x="-158" y="-13" width="26" height="18" rx="3"/></clipPath>' +
-    '<image href="' + (t.logo || "") + '" x="-158" y="-13" width="26" height="18" preserveAspectRatio="xMidYMid meet" clip-path="url(#cchamp)"/>' +
-    '<text x="-120" y="-1" font-family="Oswald" font-weight="700" font-size="19" fill="#0a1230">' + esc(t.name.toUpperCase()) + '</text>' +
-    '<text x="-120" y="14" font-family="Oswald" font-weight="600" font-size="10.5" letter-spacing="3" fill="#0a1230">CHAMPIONS 2026</text>' +
-    '<text x="152" y="4" text-anchor="end" font-family="Oswald" font-weight="700" font-size="20" fill="#0a1230">★</text></g>';
-}
-function bpCentre(pos, emb) {
-  let o = '<ellipse cx="842" cy="650" rx="220" ry="250" fill="#ffc02e" opacity="0.045"/>';
-  o += '<rect x="810" y="262" width="64" height="86" rx="12" fill="#fff"/><image href="' + emb + '" x="816" y="268" width="52" height="74" preserveAspectRatio="xMidYMid meet"/>';
-  o += bpTrophy(842, 478);
-  o += bpCell(104, pos[104]);
-  o += '<text x="842" y="770" text-anchor="middle" font-family="Oswald" font-weight="500" font-size="11" letter-spacing="0.8" fill="#8a90b8">Sun 19 Jul · 23:00 GST · MetLife Stadium, New York/NJ</text>';
-  const champ = bpChampion(pos);
-  o += champ || '<text x="842" y="806" text-anchor="middle" font-family="Oswald" font-weight="600" font-size="13" letter-spacing="3" fill="#5e6da0">— AWAITING THE FINAL —</text>';
-  o += bpCell(103, pos[103]);
-  o += '<text x="842" y="976" text-anchor="middle" font-family="Oswald" font-weight="500" font-size="10" letter-spacing="0.8" fill="#9a7a44">3rd place · Sun 19 Jul · Hard Rock Stadium, Miami</text>';
+function bpRoundHeaders(){
+  const cols=[[176,"ROUND OF 32","28 JUN – 1 JUL",BPC.plat],[424,"ROUND OF 16","4 – 8 JUL",BPC.plat],[672,"QUARTER-FINAL","10 – 12 JUL","g"],[920,"SEMI-FINAL","14 – 15 JUL","g"],[2224,"ROUND OF 32","28 JUN – 1 JUL",BPC.plat],[1976,"ROUND OF 16","4 – 8 JUL",BPC.plat],[1728,"QUARTER-FINAL","10 – 12 JUL","g"],[1480,"SEMI-FINAL","14 – 15 JUL","g"]];
+  let o=""; cols.forEach(c=>{ const fill=c[3]==="g"?"url(#bpGold)":c[3]; o+='<text x="'+c[0]+'" y="186" text-anchor="middle" font-family="Oswald" font-weight="600" font-size="13" letter-spacing="2" fill="'+fill+'">'+c[1]+'</text><text x="'+c[0]+'" y="204" text-anchor="middle" font-family="Inter" font-weight="500" font-size="8.5" fill="'+BPC.meta+'">'+c[2]+'</text>'; });
+  o+='<text x="1200" y="186" text-anchor="middle" font-family="Oswald" font-weight="700" font-size="14" letter-spacing="3" fill="url(#bpGold)">FINAL</text><text x="1200" y="204" text-anchor="middle" font-family="Inter" font-weight="500" font-size="8.5" fill="'+BPC.meta+'">19 JUL</text>';
   return o;
 }
-function bpFooter() {
-  const items = [["#00d26a", esc(myNation()) + " — your nation"], ["#ffc02e", "Winner / score"], ["#19c8ff", "To be played"], ["#22305f", "Awaiting result"], ["#ff3b5c", "AET / Pens"]];
-  let x = 56, o = ""; items.forEach(([c, l]) => { o += '<rect x="' + x + '" y="1150" width="12" height="12" rx="2" fill="' + c + '"/><text x="' + (x + 18) + '" y="1160" font-family="Inter" font-weight="600" font-size="9.5" fill="#8fa2d8">' + l + '</text>'; x += Math.max(150, l.length * 6.6 + 40); });
-  o += '<text x="842" y="1160" text-anchor="middle" font-family="Inter" font-weight="400" font-size="9.5" fill="#5e6da0">Unofficial fan wallchart · World Cup 2026 · not affiliated with FIFA</text>';
+function bpTrophyBlock(tro){
+  const cx=1200, cy=410, tw=246, th=Math.round(tw/0.648);
+  let o='<polygon points="'+(cx-70)+','+(cy+150)+' '+(cx-26)+','+(cy-120)+' '+(cx+26)+','+(cy-120)+' '+(cx+70)+','+(cy+150)+'" fill="#FFE9A8" opacity="0.07" filter="url(#bpShaft)"/>';
+  for(let i=0;i<16;i++){ const a=i*22.5*Math.PI/180,x1=cx+Math.cos(a)*70,y1=cy+Math.sin(a)*70,x2=cx+Math.cos(a)*150,y2=cy+Math.sin(a)*150; o+='<line x1="'+x1.toFixed(0)+'" y1="'+y1.toFixed(0)+'" x2="'+x2.toFixed(0)+'" y2="'+y2.toFixed(0)+'" stroke="'+BPC.gold+'" stroke-width="1" opacity="0.10"/>'; }
+  o+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="170" ry="190" fill="rgba(255,210,130,0.13)" filter="url(#bpShaft)"/>';
+  o+='<image href="'+tro+'" x="'+(cx-tw/2)+'" y="'+(cy-th/2)+'" width="'+tw+'" height="'+th+'" preserveAspectRatio="xMidYMid meet"/>';
+  o+='<ellipse cx="'+cx+'" cy="'+(cy+th/2-6)+'" rx="120" ry="16" fill="url(#bpGold)" opacity="0.32" filter="url(#bpSoft)"/>';
   return o;
 }
-function bracketPosterSVG() {
-  const pos = bpPos(), emb = new URL("logo.png", location.href).href;
-  let s = '<defs><filter id="gg" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
-    '<linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9b8"/><stop offset="0.5" stop-color="#ffc02e"/><stop offset="1" stop-color="#e0962b"/></linearGradient>' +
-    '<linearGradient id="rg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e05a2b"/><stop offset="1" stop-color="#ffc02e"/></linearGradient>' +
-    '<radialGradient id="vig" cx="50%" cy="55%" r="60%"><stop offset="0" stop-color="#0e1840"/><stop offset="1" stop-color="#0a1230"/></radialGradient>' +
-    '<radialGradient id="spot" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffc02e" stop-opacity="0.24"/><stop offset="0.6" stop-color="#ffc02e" stop-opacity="0.06"/><stop offset="1" stop-color="#ffc02e" stop-opacity="0"/></radialGradient>' +
-    '<linearGradient id="frame" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9c877"/><stop offset="0.5" stop-color="#a9863f"/><stop offset="1" stop-color="#e9c877"/></linearGradient></defs>';
-  s += '<rect x="0" y="0" width="1684" height="1190" fill="url(#vig)"/>';
-  s += '<rect x="18" y="18" width="1648" height="1154" rx="14" fill="none" stroke="url(#frame)" stroke-width="2.5" opacity="0.7"/>';
-  s += '<rect x="25" y="25" width="1634" height="1140" rx="10" fill="none" stroke="#2a3a63" stroke-width="1"/>';
-  s += '<line x1="842" y1="232" x2="842" y2="1096" stroke="#16335c" stroke-width="1"/>';
-  s += bpHeader(emb) + bpRoundHeaders();
-  [89, 90, 93, 94, 91, 92, 95, 96, 97, 98, 99, 100, 101, 102, 104].forEach(n => { const nd = bpBR(n); s += bpConn(nd.h.m, n, pos) + bpConn(nd.a.m, n, pos); });
-  Object.keys(pos).forEach(k => { const n = +k; if (n !== 104 && n !== 103) s += bpCell(n, pos[n]); });
-  s += bpCentre(pos, emb) + bpFooter();
-  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1684 1190" width="1684" height="1190">' + s + '</svg>';
+function bpFinalBlock(pos){
+  const x=pos[104].x, w=pos[104].w, top=652-75, node=bpBR(104);
+  let o=bpSideConn(101,x,top+58,pos)+bpSideConn(102,x+w,top+58,pos);
+  o+='<rect x="'+x+'" y="'+top+'" width="'+w+'" height="150" rx="14" fill="url(#bpCard)" filter="url(#bpSoft)"/>';
+  o+='<rect x="'+x+'" y="'+top+'" width="'+w+'" height="150" rx="14" fill="none" stroke="url(#bpGold)" stroke-width="2.5" filter="url(#bpGoldGlow)"/>';
+  o+='<rect x="'+(x+1)+'" y="'+(top+1)+'" width="'+(w-2)+'" height="148" rx="13" fill="none" stroke="#FFFFFF" stroke-opacity="0.12" stroke-width="1"/>';
+  o+='<text x="1200" y="'+(top+24)+'" text-anchor="middle" font-family="Oswald" font-weight="700" font-size="16" letter-spacing="4" fill="url(#bpGold)">THE FINAL</text>';
+  o+='<text x="1200" y="'+(top+40)+'" text-anchor="middle" font-family="Inter" font-weight="400" font-size="10" fill="'+BPC.plat+'">Sun 19 Jul · MetLife Stadium</text>';
+  const sh=52, sy=top+52;
+  o+=bpSlotR(node,"h",x,sy,w,sh,1.3);
+  o+='<line x1="'+(x+12)+'" y1="'+(sy+sh)+'" x2="'+(x+w-12)+'" y2="'+(sy+sh)+'" stroke="'+BPC.div+'" stroke-width="0.9"/>';
+  o+=bpSlotR(node,"a",x,sy+sh,w,sh,1.3);
+  const champ=bpWinTeam(104);
+  if(champ){ const egy=champ.name===myNation(), cby=top+158;
+    o+='<rect x="'+x+'" y="'+cby+'" width="'+w+'" height="46" rx="12" fill="'+(egy?BPC.nat:"url(#bpGold)")+'" filter="url(#bpSoft)"/>';
+    o+='<rect x="'+(x+16)+'" y="'+(cby+13)+'" width="28" height="20" rx="3" fill="#fff"/><clipPath id="bpch"><rect x="'+(x+16)+'" y="'+(cby+13)+'" width="28" height="20" rx="3"/></clipPath><image href="'+(champ.logo||"")+'" x="'+(x+16)+'" y="'+(cby+13)+'" width="28" height="20" preserveAspectRatio="xMidYMid meet" clip-path="url(#bpch)"/>';
+    o+='<text x="'+(x+54)+'" y="'+(cby+22)+'" font-family="Oswald" font-weight="700" font-size="20" fill="#2A1622">'+esc(champ.name.toUpperCase())+'</text>';
+    o+='<text x="'+(x+54)+'" y="'+(cby+38)+'" font-family="Oswald" font-weight="600" font-size="10" letter-spacing="3" fill="#2A1622">WORLD CHAMPIONS 2026</text>';
+    o+='<text x="'+(x+w-18)+'" y="'+(cby+30)+'" text-anchor="end" font-family="Oswald" font-weight="700" font-size="22" fill="#2A1622">★</text>';
+  } else { o+='<text x="1200" y="'+(top+182)+'" text-anchor="middle" font-family="Oswald" font-weight="600" font-size="13" letter-spacing="3" fill="'+BPC.ph+'">— AWAITING THE FINAL —</text>'; }
+  const b=pos[103], bt=b.y-b.h/2;
+  o+='<rect x="'+b.x+'" y="'+bt+'" width="'+b.w+'" height="'+b.h+'" rx="10" fill="url(#bpCard)" opacity="0.95" filter="url(#bpSoft)"/>';
+  o+='<rect x="'+b.x+'" y="'+bt+'" width="'+b.w+'" height="'+b.h+'" rx="10" fill="none" stroke="'+BPC.bronze+'" stroke-width="1.4"/>';
+  o+='<text x="1200" y="'+(bt+16)+'" text-anchor="middle" font-family="Oswald" font-weight="600" font-size="11" letter-spacing="2" fill="'+BPC.bronze+'">THIRD-PLACE PLAY-OFF</text>';
+  const bsh=(b.h-22)/2;
+  o+=bpSlotR(bpBR(103),"h",b.x,bt+22,b.w,bsh,0.85);
+  o+=bpSlotR(bpBR(103),"a",b.x,bt+22+bsh,b.w,bsh,0.85);
+  return o;
 }
-function openBracketPoster() {
-  const svg = bracketPosterSVG();
-  const html = '<!doctype html><html><head><meta charset="utf-8"><title>World Cup 2026 — Bracket</title>' +
-    '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-    '<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">' +
-    '<style>html,body{margin:0;background:#0a1230}svg{display:block;width:100%;height:auto}' +
-    '.tip{font-family:Inter,sans-serif;color:#8fa2d8;font-size:13px;text-align:center;padding:10px}</style></head>' +
-    '<body><div class="tip">World Cup 2026 — full bracket · screenshot or rotate to landscape to share</div>' + svg + '</body></html>';
-  const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-  const w = window.open(url, "_blank");
-  if (!w) location.href = url;
+function bpFooter(){
+  const items=[[BPC.nat,esc(myNation())+" — your road to the final"],["url(#bpGold)","Winner"],[BPC.plat,"To be played"],["#4A3550","Awaiting"],[BPC.ember,"AET / Pens"]];
+  let x=120,o=""; items.forEach(it=>{ o+='<rect x="'+x+'" y="1156" width="12" height="12" rx="2" fill="'+it[0]+'"/><text x="'+(x+18)+'" y="1166" font-family="Inter" font-weight="600" font-size="10" fill="'+BPC.plat+'">'+it[1]+'</text>'; x+=Math.max(190,it[1].length*7+44); });
+  o+='<text x="2336" y="1166" text-anchor="end" font-family="Inter" font-weight="400" font-size="10" fill="'+BPC.meta+'">Unofficial fan wallchart · World Cup 2026</text>';
+  return o;
+}
+function bpDefs(){
+  return '<defs>'+
+  '<radialGradient id="bpField" cx="50%" cy="44%" r="78%"><stop offset="0" stop-color="#241326"/><stop offset="0.46" stop-color="#1A0E1C"/><stop offset="1" stop-color="#100810"/></radialGradient>'+
+  '<radialGradient id="bpSpot" cx="50%" cy="36%" r="46%"><stop offset="0" stop-color="rgba(255,225,150,0.12)"/><stop offset="1" stop-color="rgba(255,225,150,0)"/></radialGradient>'+
+  '<linearGradient id="bpCard" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E1B30"/><stop offset="1" stop-color="#1C1020"/></linearGradient>'+
+  '<linearGradient id="bpGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1C4"/><stop offset="0.18" stop-color="#F4D27A"/><stop offset="0.52" stop-color="#C8922E"/><stop offset="0.78" stop-color="#E7B85A"/><stop offset="1" stop-color="#9A6A1E"/></linearGradient>'+
+  '<filter id="bpSoft" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.45"/></filter>'+
+  '<filter id="bpGoldGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'+
+  '<filter id="bpNat" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'+
+  '<filter id="bpShaft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="16"/></filter>'+
+  '<pattern id="bpDots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="0.7" fill="#FFFFFF" opacity="0.025"/></pattern>'+
+  '<marker id="bparwGold" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L6,3 L0,6 Z" fill="#E7B85A"/></marker>'+
+  '<marker id="bparwNat" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L6,3 L0,6 Z" fill="#00E08A"/></marker>'+
+  '<marker id="bparwN" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L5.5,3 L0,6 Z" fill="#4A5560"/></marker>'+
+  '</defs>';
+}
+function bracketPosterSVG(){
+  const pos=bpBuildPos(), tro=new URL("trophy.png", location.href).href;
+  let s=bpDefs();
+  s+='<rect x="0" y="0" width="2400" height="1200" fill="url(#bpField)"/>';
+  s+='<rect x="0" y="0" width="2400" height="1200" fill="url(#bpSpot)"/>';
+  s+='<rect x="0" y="0" width="900" height="320" fill="url(#bpDots)"/><rect x="1500" y="0" width="900" height="320" fill="url(#bpDots)"/>';
+  for(let i=0;i<5;i++){ const rr=900+i*120; s+='<path d="M'+(1200-rr)+' 1340 A'+rr+' '+rr+' 0 0 1 '+(1200+rr)+' 1340" fill="none" stroke="#FFFFFF" stroke-opacity="0.03" stroke-width="0.7"/>'; }
+  s+='<rect x="18" y="18" width="2364" height="1164" rx="16" fill="none" stroke="url(#bpGold)" stroke-width="2.5" opacity="0.8"/>';
+  s+='<rect x="25" y="25" width="2350" height="1150" rx="12" fill="none" stroke="#4A3550" stroke-width="1"/>';
+  s+=bpHeader()+bpRoundHeaders();
+  [89,90,93,94,91,92,95,96,97,98,99,100,101,102].forEach(n=>{ s+=bpMergeConn(bpBR(n),pos); });
+  s+=bpFinalBlock(pos);
+  s+=bpTrophyBlock(tro);
+  Object.values(pos).forEach(p=>{ if(p.round!=="FINAL"&&p.round!=="BRONZE") s+=bpCell(p,pos); });
+  s+=bpFooter();
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1200" width="2400" height="1200">'+s+'</svg>';
+}
+function openBracketPoster(){
+  const svg=bracketPosterSVG();
+  const html='<!doctype html><html><head><meta charset="utf-8"><title>World Cup 2026 — Bracket</title>'+
+    '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'+
+    '<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">'+
+    '<style>html,body{margin:0;background:#100810;height:100%}'+
+    '.tip{font-family:Inter,sans-serif;color:#8a90b8;font-size:12px;text-align:center;padding:8px;letter-spacing:.3px}'+
+    'svg{display:block}'+
+    '@media (orientation:portrait){svg{width:100vw;height:auto}}'+
+    '@media (orientation:landscape){body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}svg{height:94vh;width:auto;max-width:100vw}.tip{display:none}}'+
+    '</style></head><body><div class="tip">World Cup 2026 — turn your phone sideways for the full-size bracket · screenshot to share</div>'+svg+'</body></html>';
+  const url=URL.createObjectURL(new Blob([html],{type:"text/html"}));
+  const w=window.open(url,"_blank"); if(!w) location.href=url;
 }
 
 /* ================= HERO (my team) ================= */
