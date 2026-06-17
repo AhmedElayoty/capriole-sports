@@ -187,6 +187,21 @@ main{flex:1;padding:14px 14px calc(20px + env(safe-area-inset-bottom));overflow-
 .chatbar button{background:var(--rust);border:none;color:#fff;font-family:'Oswald';font-weight:600;
  letter-spacing:1px;font-size:13px;border-radius:24px;padding:0 20px;cursor:pointer}
 .chatnote{font-size:10.5px;color:var(--dim);text-align:center;padding:4px 0 8px}
+.msg{cursor:pointer}
+.natflag{width:17px;height:12px;border-radius:2px;object-fit:cover;vertical-align:-1px;margin-right:5px;box-shadow:0 1px 2px rgba(0,0,0,.5)}
+.rxrow{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.rxchip{display:inline-flex;align-items:center;gap:3px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:11px;padding:1px 7px 1px 6px;font-size:12.5px;line-height:1.6;cursor:pointer;color:var(--txt)}
+.rxchip span{font-family:'Oswald';font-weight:600;font-size:10px;color:var(--mut)}
+.rxchip.mine{background:rgba(255,122,69,.22);border-color:var(--rust)}
+.rxchip.mine span{color:#ffd2bd}
+.reactbar{position:fixed;z-index:320;display:flex;gap:1px;background:rgba(16,26,60,.98);border:1px solid var(--line);border-radius:24px;padding:5px 8px;box-shadow:0 12px 32px rgba(0,0,0,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:toastIn .16s ease}
+.reactbar button{background:none;border:none;font-size:23px;cursor:pointer;padding:3px 6px;border-radius:50%;line-height:1;transition:transform .12s}
+.reactbar button:hover,.reactbar button:active{transform:scale(1.3)}
+.chatbar .emojibtn{flex:none;width:46px;padding:0;background:var(--card);border:1px solid var(--line);color:var(--txt);font-size:20px;border-radius:24px}
+.chatbar .emojibtn:hover{border-color:var(--rust)}
+.emojipanel{position:fixed;z-index:320;max-height:208px;overflow-y:auto;background:rgba(16,26,60,.99);border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:0 -10px 32px rgba(0,0,0,.55);display:grid;grid-template-columns:repeat(8,1fr);gap:2px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.emojipanel button{background:none;border:none;font-size:21px;cursor:pointer;padding:5px 0;border-radius:8px;line-height:1}
+.emojipanel button:hover{background:rgba(255,255,255,.08)}
 /* name modal */
 #nameModal{position:fixed;inset:0;background:rgba(4,8,22,.86);z-index:100;display:flex;
  align-items:center;justify-content:center;padding:24px}
@@ -571,6 +586,7 @@ footer{padding:8px 0 14px;text-align:center;font-family:'Oswald';font-size:9.5px
   <div class="chatbar" id="chatbar">
    <input id="chatIn" maxlength="280" placeholder="Message the team…"
           onkeydown="if(event.key==='Enter')sendMsg()">
+   <button class="emojibtn" onclick="toggleEmojiPanel(event)" aria-label="Emoji">😊</button>
    <button onclick="sendMsg()">SEND</button>
   </div>
  </section>
@@ -622,6 +638,7 @@ let _openState = null;       // state of the open match at last render (to detec
 let lineups = {};            // eventId -> summary data
 let lineupsTs = {};          // eventId -> when it was fetched (re-pull stale form/H2H on reopen)
 let chatTimer = null, matchTimer = null, lastChatJson = "", _chatKnownIds = null;
+let _chatMsgs = [], _natLogos = null;   // last-rendered messages (for reactions) + nation→logo cache (for flags)
 let lastFetch = 0, lastScores = {}, flashIds = new Set();
 let seasonCache = { t: 0, events: [] };
 let myPreds = JSON.parse(localStorage.getItem("cs_preds") || "{}");
@@ -2092,7 +2109,7 @@ function authSkip() {
 function renderChatComposer() {
   const bar = $("chatbar"); if (!bar) return;
   if (cs_user) {
-    bar.innerHTML = '<input id="chatIn" maxlength="280" placeholder="Message the team…" onkeydown="if(event.key===\'Enter\')sendMsg()"><button onclick="sendMsg()">SEND</button>';
+    bar.innerHTML = '<input id="chatIn" maxlength="280" placeholder="Message the team…" onkeydown="if(event.key===\'Enter\')sendMsg()"><button class="emojibtn" onclick="toggleEmojiPanel(event)" aria-label="Emoji">😊</button><button onclick="sendMsg()">SEND</button>';
   } else {
     bar.innerHTML = '<div class="chatlock"><span>🔒 Sign in to chat — reading is free</span><button onclick="openAuth(\'C\',{ctx:\'chat\'})">SIGN IN</button></div>';
   }
@@ -2317,12 +2334,14 @@ function emojiFlags(s) {
   });
 }
 function renderChat(msgs) {
+  _chatMsgs = msgs;
   const atBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 160;
   $("chatlog").innerHTML = msgs.slice(-100).map(m => `
-    <div class="msg${m.uid === myId ? " me" : ""}">
-      <div class="who">${esc(m.name || "?")}</div>
+    <div class="msg${m.uid === myId ? " me" : ""}" onclick="openReact(event,'${m.id}')">
+      <div class="who">${m.natf ? '<img class="natflag" src="' + esc(m.natf) + '" alt="" title="' + esc(m.nat || "") + '" onerror="this.style.display=&#39;none&#39;">' : ""}${esc(m.name || "?")}</div>
       <div class="txt">${emojiFlags(esc(m.text || ""))}</div>
       <div class="when">${fmt(new Date(m.ts || Date.now()), { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}</div>
+      ${rxRow(m)}
     </div>`).join("") || `<div class="empty">No messages yet — say hello! 👋</div>`;
   if (atBottom) window.scrollTo(0, document.body.scrollHeight);
 }
@@ -2331,12 +2350,113 @@ async function sendMsg() {
   if (!text) return;
   if (!cs_user) { openAuth("C", { ctx: "chat" }); return; }
   inp.value = "";
+  const ep = $("emojiPanel"); if (ep) ep.remove();
+  const nat = myNation();
+  let natf = "";
+  try { if (nat) natf = (await natLogos())[nat] || ""; } catch (_) {}
   const mine = { id: "m" + Date.now() + Math.random().toString(36).slice(2, 6),
-                 uid: myId, name: cs_user.username, text, ts: Date.now() };
+                 uid: myId, name: cs_user.username, text, ts: Date.now(), nat, natf };
   try {
     await postRoom([mine]);
     lastChatJson = ""; pollChat();
   } catch (e) { alert("Couldn't send — check connection."); }
+}
+/* ---- chat emoji picker, sender nation flag & message reactions ---- */
+const CHAT_EMOJIS = ["😀","😃","😄","😁","😅","😂","🤣","😊","😍","😘","😎","🤩","🤔","😴","🙄","😜","😢","😭","😡","🥳","🥶","😱","🤝","🙏","👍","👎","👏","🙌","💪","🤞","👀","🔥","⚽","🥅","🏆","🎉","🎊","❤️","💔","💯","⭐","🚩","🟨","🟥"];
+const REACTS = ["❤️","😂","👏","😮","😢","🔥"];
+async function natLogos() {   // nation displayName -> ESPN crest URL (built once from the season fixtures, cached)
+  if (_natLogos) return _natLogos;
+  const map = {};
+  try {
+    (await seasonEvents()).forEach(e => ((e.competitions[0] || {}).competitors || []).forEach(c => {
+      if (c.team && c.team.displayName && c.team.logo) map[c.team.displayName] = c.team.logo;
+    }));
+  } catch (_) {}
+  _natLogos = map; return _natLogos;
+}
+function toggleEmojiPanel(ev) {
+  ev.stopPropagation();
+  if ($("emojiPanel")) { closeEmojiPanel(); return; }
+  const p = document.createElement("div"); p.id = "emojiPanel"; p.className = "emojipanel";
+  p.innerHTML = CHAT_EMOJIS.map(e => '<button type="button" onclick="insertEmoji(\'' + e + '\')">' + e + '</button>').join("");
+  document.body.appendChild(p);
+  const bar = $("chatbar").getBoundingClientRect();
+  p.style.left = Math.max(8, bar.left) + "px";
+  p.style.width = Math.min(bar.width, window.innerWidth - 16) + "px";
+  p.style.bottom = (window.innerHeight - bar.top + 6) + "px";
+  setTimeout(() => document.addEventListener("click", closeEmojiPanel), 0);
+}
+function closeEmojiPanel(e) {
+  const p = $("emojiPanel");
+  if (e && p && (p.contains(e.target) || (e.target.classList && e.target.classList.contains("emojibtn")))) return;
+  if (p) p.remove();
+  document.removeEventListener("click", closeEmojiPanel);
+}
+function insertEmoji(e) {
+  const inp = $("chatIn"); if (!inp) return;
+  const s = inp.selectionStart != null ? inp.selectionStart : inp.value.length;
+  const en = inp.selectionEnd != null ? inp.selectionEnd : inp.value.length;
+  inp.value = inp.value.slice(0, s) + e + inp.value.slice(en);
+  const np = s + e.length; inp.focus(); try { inp.setSelectionRange(np, np); } catch (_) {}
+}
+function rxRow(m) {   // reaction chips under a message (emoji + count; gold if I reacted)
+  if (!m.rx) return "";
+  const chips = Object.keys(m.rx).filter(e => m.rx[e] && m.rx[e].length).map(e => {
+    const arr = m.rx[e], mine = arr.indexOf(myId) >= 0;
+    return '<button type="button" class="rxchip' + (mine ? " mine" : "") + '" onclick="event.stopPropagation();toggleReaction(\'' + m.id + '\',\'' + e + '\')">' + e + '<span>' + arr.length + '</span></button>';
+  }).join("");
+  return chips ? '<div class="rxrow">' + chips + '</div>' : "";
+}
+function closeReact() { const b = $("reactbar"); if (b) b.remove(); }
+function openReact(ev, id) {   // tap a message → floating reaction bar (sign-in required; silent no-op for guests)
+  ev.stopPropagation();
+  if (!cs_user) return;
+  closeReact();
+  const bar = document.createElement("div"); bar.id = "reactbar"; bar.className = "reactbar";
+  bar.innerHTML = REACTS.map(e => '<button type="button" onclick="event.stopPropagation();toggleReaction(\'' + id + '\',\'' + e + '\');closeReact()">' + e + '</button>').join("");
+  document.body.appendChild(bar);
+  const bw = bar.offsetWidth || 250, bh = bar.offsetHeight || 44;
+  const x = ev.clientX || (window.innerWidth / 2), y = ev.clientY || (window.innerHeight / 2);
+  bar.style.left = Math.min(Math.max(8, x - bw / 2), window.innerWidth - bw - 8) + "px";
+  bar.style.top = (y - bh - 10 < 56 ? y + 16 : y - bh - 10) + "px";
+  setTimeout(() => document.addEventListener("click", closeReact, { once: true }), 0);
+}
+async function toggleReaction(id, emoji) {
+  if (!cs_user) { openAuth("C", { ctx: "chat" }); return; }
+  closeReact();
+  // optimistic local toggle for instant feel
+  let add = true;
+  const cm = _chatMsgs.find(x => x.id === id);
+  if (cm) {
+    cm.rx = cm.rx || {};
+    const a = cm.rx[emoji] = cm.rx[emoji] || [];
+    const i = a.indexOf(myId); add = i < 0;
+    if (i >= 0) a.splice(i, 1); else a.push(myId);
+    if (!a.length) delete cm.rx[emoji];
+    if (cm.rx && !Object.keys(cm.rx).length) delete cm.rx;
+    renderChat(_chatMsgs);
+  }
+  // persist: read-merge-write enforcing the target state, verify it landed, retry on a concurrent clobber
+  for (let t = 0; t < 4; t++) {
+    let msgs = []; try { msgs = await readRoom(); } catch (_) {}
+    const m = msgs.find(x => x.id === id);
+    if (!m) return;
+    m.rx = m.rx || {};
+    const arr = m.rx[emoji] = m.rx[emoji] || [];
+    const has = arr.indexOf(myId) >= 0;
+    if (add && !has) arr.push(myId);
+    else if (!add && has) arr.splice(arr.indexOf(myId), 1);
+    if (!arr.length) delete m.rx[emoji];
+    if (m.rx && !Object.keys(m.rx).length) delete m.rx;
+    const last = [...new Map(msgs.map(x => [x.id, x])).values()].sort((a, b) => (a.ts || 0) - (b.ts || 0)).slice(-80);
+    try { await writeKey(CHAT_KEY, last); } catch (_) {}
+    await new Promise(r => setTimeout(r, 160 + Math.random() * 240));
+    let back = []; try { back = await readRoom(); } catch (_) { break; }
+    const bm = back.find(x => x.id === id);
+    const landed = !!(bm && bm.rx && bm.rx[emoji] && bm.rx[emoji].indexOf(myId) >= 0);
+    if (landed === add) { _chatMsgs = back.filter(x => !isBot(x)); lastChatJson = JSON.stringify(_chatMsgs); renderChat(_chatMsgs); return; }
+  }
+  lastChatJson = ""; pollChat();
 }
 
 /* ================= BOOT ================= */
