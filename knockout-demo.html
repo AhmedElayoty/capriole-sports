@@ -122,7 +122,7 @@ const FINALE_HTML = `<div style="font-size:38px;line-height:1;margin-bottom:4px"
 <p>This is it — the final days of the World Cup, and the prediction championship is decided <b style="color:#fff">now</b>.</p>
 <div class="irow"><span class="ic">📊</span><div><b>Overall table is live</b> — the leaderboard now shows your total points across <b style="color:var(--gold)">every week</b> combined.</div></div>
 <div class="irow"><span class="ic">⚽</span><div><b>Last chance to score</b> — the 3rd-place play-off and the FINAL are open to predict.</div></div>
-<div class="irow"><span class="ic">⭐</span><div><b>The final is worth the most</b> — exact result scores <b style="color:var(--gold)">10 pts</b> and the correct winner scores <b style="color:var(--gold)">4 pts</b>.</div></div>
+<div class="irow"><span class="ic">⭐</span><div><b>The final is worth the most</b> — the exact score = <b style="color:var(--gold)">10 pts</b>, the correct winner = <b style="color:var(--gold)">4 pts</b>.</div></div>
 <div class="irow"><span class="ic">🥇</span><div><b>Winner takes all</b> — top the overall table at the final whistle to be crowned <b style="color:var(--gold)">Prediction Champion</b>.</div></div>
 <p style="margin-top:2px">Good luck — may the best predictor win! 🍀</p>
 <button class="igo" onclick="closeInfo()">LET'S GO ⚽</button>`;
@@ -151,7 +151,7 @@ function render(){
         ptA+'</div>'+
         '<div class="penpick" id="pp-'+d.id+'"><div class="pplbl">👇 WHO WINS ON PENALTIES?</div><div class="ppb"><button type="button" class="wbtn" data-w="home" onclick="pickWinner(\''+d.id+'\',\'home\')">'+d.H.n+'</button><button type="button" class="wbtn" data-w="away" onclick="pickWinner(\''+d.id+'\',\'away\')">'+d.A.n+'</button></div></div>'+
         '<button type="button" class="pentog" id="ptg-'+d.id+'" onclick="togglePens(\''+d.id+'\')">⚽ This match will go to penalties</button>'+
-        (d.final?'<div class="finnote">⭐ <b>FINAL:</b> 10 pts for the exact result · 4 pts for the winner</div>':'')+
+        (d.final?'<div class="finnote">⭐ <b>FINAL:</b> 10 pts for the exact score · 4 pts for the winner</div>':'')+
         '<button class="subbtn" onclick="lockPred(\''+d.id+'\')">LOCK MY PREDICTION</button>';
     } else {
       const predTxt = p.pens ? (p.w==="home"?d.H.n:d.A.n)+' on penalties' : p.h+'–'+p.a;
