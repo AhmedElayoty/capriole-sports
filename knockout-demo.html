@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Knockout Scoring — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1230;--navy2:#0d1838;--card:#121d44;--card2:#0e1736;--line:#22305f;--txt:#eef2ff;--mut:#8fa2d8;--dim:#5e6da0;--rust:#e05a2b;--rust2:#ff7a45;--cyan:#19c8ff;--gold:#ffc02e;--green:#00d26a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--navy);color:var(--txt);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:0 0 40px}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+.hd{display:flex;align-items:center;gap:10px;padding:6px 2px 4px}
+.hd .lg{font-family:'Oswald';font-weight:700;font-size:22px;letter-spacing:.5px}
+.hd .lg b{color:var(--gold)}
+.sub{color:var(--mut);font-size:12.5px;line-height:1.5;margin:2px 2px 14px}
+.demobar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.demobar button{flex:1;min-width:150px;background:var(--card2);border:1px solid var(--line);color:var(--txt);font-family:'Oswald';font-weight:600;font-size:11.5px;letter-spacing:.5px;border-radius:10px;padding:11px;cursor:pointer}
+.demobar button:hover{border-color:var(--gold);color:var(--gold)}
+.rndlbl{font-family:'Oswald';font-weight:600;font-size:11px;letter-spacing:1.5px;color:var(--gold);margin:18px 2px 8px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.pmeta{display:flex;justify-content:space-between;font-family:'Oswald';font-size:10.5px;letter-spacing:.8px;color:var(--mut);margin-bottom:11px}
+.prow{display:flex;align-items:center;gap:8px}
+.prow .pt{flex:1;display:flex;align-items:center;gap:7px;font-family:'Oswald';font-weight:600;font-size:14px;min-width:0}
+.prow .pt.r{flex-direction:row-reverse;text-align:right}
+.prow .pt .fl{font-size:20px}
+.prow .pt span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pin{width:46px;height:42px;background:var(--navy2);border:1.5px solid var(--line);border-radius:10px;color:var(--txt);text-align:center;font-family:'Oswald';font-weight:700;font-size:18px}
+.pin:focus{border-color:var(--rust);outline:none}
+.pin:disabled{opacity:.55}
+.psl{display:inline-flex;gap:6px}
+.pkrow.penmode .psl{display:none}
+.pwin{display:none;align-items:center;gap:6px;flex:none}
+.pkrow.penmode .pwin{display:inline-flex}
+.pwin .wbtn{max-width:90px;background:var(--navy2);border:1.5px solid var(--line);color:var(--mut);font-family:'Oswald';font-weight:600;font-size:11px;border-radius:9px;padding:8px 8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pwin .wbtn.on{background:var(--rust);border-color:var(--rust2);color:#fff}
+.pwin .pvs{font-style:normal;color:var(--dim);font-size:10px;font-family:'Oswald'}
+.pentog{display:block;width:100%;margin-top:8px;background:none;border:1px dashed var(--line);color:var(--mut);font-family:'Oswald';font-weight:600;font-size:10.5px;letter-spacing:.4px;border-radius:9px;padding:8px;cursor:pointer}
+.pentog:hover{color:var(--gold);border-color:var(--gold)}
+.finnote{margin-top:9px;font-size:11px;line-height:1.5;color:var(--gold);background:rgba(255,192,46,.08);border:1px solid rgba(255,192,46,.32);border-radius:9px;padding:8px 11px}
+.finnote b{color:#fff;font-weight:700}
+.subbtn{margin-top:10px;width:100%;background:var(--rust);border:none;color:#fff;font-family:'Oswald';font-weight:700;letter-spacing:1px;font-size:13px;padding:12px;border-radius:11px;cursor:pointer}
+.subbtn.alt{background:var(--card2);border:1px solid var(--line);color:var(--txt)}
+.locked{margin-top:9px;font-family:'Oswald';font-weight:600;font-size:12px;letter-spacing:.5px;color:var(--green);text-align:center}
+.sim{margin-top:11px;border-top:1px dashed var(--line);padding-top:11px}
+.sim .sl{font-family:'Oswald';font-weight:600;font-size:10.5px;letter-spacing:1px;color:var(--cyan);margin-bottom:8px}
+.result{margin-top:10px;border-radius:11px;padding:11px 13px;text-align:center;font-family:'Oswald'}
+.result .pts{font-weight:700;font-size:30px;letter-spacing:1px}
+.result .ex{font-size:11px;font-weight:500;letter-spacing:.5px;margin-top:2px}
+.result.win{background:rgba(0,210,106,.12);border:1px solid rgba(0,210,106,.45)} .result.win .pts{color:var(--green)}
+.result.part{background:rgba(25,200,255,.1);border:1px solid rgba(25,200,255,.4)} .result.part .pts{color:var(--cyan)}
+.result.zero{background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.4)} .result.zero .pts{color:#ff6b84}
+.result .det{color:var(--mut);font-family:'Inter';font-size:11.5px;font-weight:400;line-height:1.5;margin-top:7px}
+.infomodal{position:fixed;inset:0;background:rgba(4,8,22,.86);z-index:120;display:flex;align-items:center;justify-content:center;padding:18px}
+.infomodal .ibox{position:relative;background:var(--card);border:1px solid #2a3a6b;border-radius:20px;padding:24px 20px;max-width:340px;width:100%;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.5);max-height:88vh;overflow-y:auto}
+.infomodal .modalx{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:var(--mut);font-size:18px;cursor:pointer}
+.infomodal h2{font-family:'Oswald';font-weight:700;letter-spacing:1px;font-size:20px;color:var(--gold);margin:4px 0 6px}
+.infomodal>.ibox>p{color:var(--mut);font-size:13px;line-height:1.5;margin:0 0 14px}
+.infomodal .irow{display:flex;gap:10px;text-align:left;margin:11px 0;align-items:flex-start}
+.infomodal .irow .ic{font-size:18px;flex:none;width:20px;text-align:center}
+.infomodal .irow div{font-size:12.5px;color:#cdd8f5;line-height:1.45}
+.infomodal .irow b{color:#fff}
+.infomodal .igo{width:100%;margin-top:10px;background:var(--rust);border:none;color:#fff;font-family:'Oswald';font-weight:700;letter-spacing:1px;font-size:14px;padding:13px;border-radius:12px;cursor:pointer}
+.simrow{display:flex;align-items:center;gap:8px;font-family:'Oswald'}
+.chk{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--mut);cursor:pointer;margin-top:9px;font-weight:600;letter-spacing:.3px}
+.chk input{width:16px;height:16px;accent-color:var(--rust)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd"><span style="font-size:26px">🧪</span><div class="lg">KNOCKOUT <b>DEMO</b></div></div>
+  <div class="sub">A sandbox to try the new knockout prediction + scoring. Make a prediction (scoreline <b>or</b> penalties), then <b>simulate any result</b> to see the points — using the exact same scoring code as the live app. <b>Nothing is saved.</b></div>
+
+  <div class="demobar">
+    <button onclick="showInfo(KO_RULES_HTML)">👀 Preview "Knockouts" popup</button>
+    <button onclick="showInfo(FINALE_HTML)">🏆 Preview "Finale" popup</button>
+  </div>
+
+  <div id="cards"></div>
+</div>
+
+<script>
+/* ===== EXACT scoring logic copied from the live app ===== */
+function isKOEvent(e){ return !!(e && e.season && e.season.type && e.season.type !== 13802); }
+function isFinalEvent(e){ try { return isKOEvent(e) && !!e.date && new Date(e.date) >= new Date("2026-07-19T10:00:00Z"); } catch(_){ return false; } }
+function hasPred(p){ return !!(p && (p.h !== undefined || p.pens)); }
+function scorePred(p, H, A, e){
+  if (!hasPred(p)) return 0;
+  const hs = H && H.score, as = A && A.score;
+  if (hs == null || as == null || hs === "" || as === "") return 0;
+  const h = +hs, a = +as;
+  const EXACT = isFinalEvent(e) ? 10 : 3, RESULT = isFinalEvent(e) ? 4 : 1;
+  if (isKOEvent(e)){
+    const pens = (H.shootoutScore != null && A.shootoutScore != null && (+H.shootoutScore !== 0 || +A.shootoutScore !== 0));
+    const winner = pens ? (+H.shootoutScore > +A.shootoutScore ? "home" : "away")
+                        : (h > a ? "home" : a > h ? "away" : (H.winner ? "home" : A.winner ? "away" : null));
+    if (p.pens){
+      if (pens && p.w === winner) return EXACT;
+      if (p.w === winner) return RESULT;
+      return 0;
+    }
+    const pw = +p.h > +p.a ? "home" : +p.a > +p.h ? "away" : null;
+    if (!pens && +p.h === h && +p.a === a) return EXACT;
+    if (pw && pw === winner) return RESULT;
+    return 0;
+  }
+  const ph = +p.h, pa = +(p.a ?? 0);
+  if (ph === h && pa === a) return 3;
+  if (Math.sign(ph - pa) === Math.sign(h - a)) return 1;
+  return 0;
+}
+
+/* ===== popups (same copy as the app) ===== */
+const KO_RULES_HTML = `<div style="font-size:38px;line-height:1;margin-bottom:4px">⚽</div>
+<h2>KNOCKOUTS ARE HERE</h2>
+<p>No more draws — every knockout match must have a winner. Here's how predicting works now:</p>
+<div class="irow"><span class="ic">①</span><div><b>Predict a scoreline</b> like normal (e.g. 2–1) — it just can't be a draw.</div></div>
+<div class="irow"><span class="ic">②</span><div>Think it'll be level? Tick <b>"⚽ goes to penalties"</b> and pick who wins the shootout.</div></div>
+<div class="irow"><span class="ic">🎯</span><div><b>3 pts</b> — exact score, OR you called penalties + the right winner.<br><b>1 pt</b> — right winner either way.</div></div>
+<div class="irow"><span class="ic">⭐</span><div>The <b>FINAL</b> is worth more — <b>10 pts</b> exact / <b>4 pts</b> for the winner.</div></div>
+<button class="igo" onclick="closeInfo()">GOT IT ⚽</button>`;
+const FINALE_HTML = `<div style="font-size:38px;line-height:1;margin-bottom:4px">🏆</div>
+<h2>GRAND FINALE</h2>
+<p>This is it — the final days of the World Cup, and the prediction championship is decided <b style="color:#fff">now</b>.</p>
+<div class="irow"><span class="ic">📊</span><div><b>Overall table is live</b> — the leaderboard now shows your total points across <b style="color:var(--gold)">every week</b> combined.</div></div>
+<div class="irow"><span class="ic">⚽</span><div><b>Last chance to score</b> — the 3rd-place play-off and the FINAL are open to predict.</div></div>
+<div class="irow"><span class="ic">🥇</span><div><b>Winner takes all</b> — top the overall table at the final whistle to be crowned <b style="color:var(--gold)">Prediction Champion</b>.</div></div>
+<p style="margin-top:2px">Good luck — may the best predictor win! 🍀</p>
+<button class="igo" onclick="closeInfo()">LET'S GO ⚽</button>`;
+function showInfo(html){ closeInfo(); const ov=document.createElement("div"); ov.id="infoModal"; ov.className="infomodal"; ov.innerHTML='<div class="ibox"><button class="modalx" onclick="closeInfo()">×</button>'+html+'</div>'; ov.addEventListener("click",ev=>{if(ev.target===ov)closeInfo();}); document.body.appendChild(ov); }
+function closeInfo(){ const m=document.getElementById("infoModal"); if(m)m.remove(); }
+
+/* ===== demo fixtures ===== */
+const DEMO = [
+  { id:"d16", round:"ROUND OF 16", final:false, H:{n:"Brazil",f:"🇧🇷"}, A:{n:"Argentina",f:"🇦🇷"} },
+  { id:"dqf", round:"QUARTER-FINAL", final:false, H:{n:"Spain",f:"🇪🇸"}, A:{n:"France",f:"🇫🇷"} },
+  { id:"dfn", round:"⭐ THE FINAL", final:true, H:{n:"Portugal",f:"🇵🇹"}, A:{n:"Germany",f:"🇩🇪"} },
+];
+const evOf = d => ({ season:{type: d.final?13796:13800}, date: d.final?"2026-07-19T19:00Z":"2026-07-05T19:00Z" });
+const preds = {};   // local only
+
+function render(){
+  document.getElementById("cards").innerHTML = DEMO.map(d=>{
+    const p = preds[d.id];
+    const ptH = '<div class="pt"><span class="fl">'+d.H.f+'</span><span>'+d.H.n+'</span></div>';
+    const ptA = '<div class="pt r"><span class="fl">'+d.A.f+'</span><span>'+d.A.n+'</span></div>';
+    let inner;
+    if (!p || !p.locked){
+      // PREDICT phase
+      inner =
+        '<div class="prow pkrow" id="pcw-'+d.id+'" data-pen="0">'+ptH+
+          '<span class="psl"><input class="pin" id="ph-'+d.id+'" type="number" min="0" max="20" inputmode="numeric"><input class="pin" id="pa-'+d.id+'" type="number" min="0" max="20" inputmode="numeric"></span>'+
+          '<span class="pwin"><button type="button" class="wbtn" data-w="home" onclick="pickWinner(\''+d.id+'\',\'home\')">'+d.H.n+'</button><i class="pvs">v</i><button type="button" class="wbtn" data-w="away" onclick="pickWinner(\''+d.id+'\',\'away\')">'+d.A.n+'</button></span>'+
+        ptA+'</div>'+
+        '<button type="button" class="pentog" id="ptg-'+d.id+'" onclick="togglePens(\''+d.id+'\')">⚽ No winner in normal time? → goes to penalties</button>'+
+        (d.final?'<div class="finnote">⭐ <b>THE FINAL</b> — exact score (or the right penalty winner) scores <b>10 pts</b>; the correct winner scores <b>4 pts</b>.</div>':'')+
+        '<button class="subbtn" onclick="lockPred(\''+d.id+'\')">LOCK MY PREDICTION</button>';
+    } else {
+      // SIMULATE phase
+      const predTxt = p.pens ? (p.w==="home"?d.H.n:d.A.n)+' on penalties' : p.h+'–'+p.a;
+      inner =
+        '<div class="prow">'+ptH+'<span style="font-family:Oswald;font-weight:700;font-size:18px;color:var(--mut)">'+(p.pens?'PENS':p.h+'–'+p.a)+'</span>'+ptA+'</div>'+
+        '<div class="locked">✅ YOUR PREDICTION: '+predTxt+'</div>'+
+        '<div class="sim"><div class="sl">⚙️ NOW SIMULATE THE ACTUAL RESULT</div>'+
+          '<div class="prow sim-'+d.id+'" id="sim-'+d.id+'" data-pen="0">'+ptH+
+            '<span class="psl"><input class="pin" id="sh-'+d.id+'" type="number" min="0" max="20" inputmode="numeric" placeholder="0"><input class="pin" id="sa-'+d.id+'" type="number" min="0" max="20" inputmode="numeric" placeholder="0"></span>'+
+            '<span class="pwin"><button type="button" class="wbtn" data-w="home" onclick="simWinner(\''+d.id+'\',\'home\')">'+d.H.n+'</button><i class="pvs">v</i><button type="button" class="wbtn" data-w="away" onclick="simWinner(\''+d.id+'\',\'away\')">'+d.A.n+'</button></span>'+
+          ptA+'</div>'+
+          '<label class="chk"><input type="checkbox" id="sp-'+d.id+'" onchange="simPensToggle(\''+d.id+'\')"> Level after extra time → decided on penalties</label>'+
+          '<button class="subbtn" onclick="reveal(\''+d.id+'\')">SCORE IT →</button>'+
+          '<div id="res-'+d.id+'"></div>'+
+        '</div>'+
+        '<button class="subbtn alt" onclick="resetCard(\''+d.id+'\')">↺ Try a different prediction</button>';
+    }
+    return '<div class="rndlbl">'+d.round+'</div><div class="pcard">'+
+      '<div class="pmeta"><span>'+(d.final?'19 JUL · the decider':'KNOCKOUT')+'</span><span>'+(d.final?'10 / 4 pts':'3 / 1 pts')+'</span></div>'+inner+'</div>';
+  }).join("");
+}
+function togglePens(id){ const r=document.getElementById("pcw-"+id); const on=r.classList.toggle("penmode"); r.dataset.pen=on?"1":"0"; const t=document.getElementById("ptg-"+id); if(t)t.textContent=on?"↩ Predict a scoreline instead":"⚽ No winner in normal time? → goes to penalties"; }
+function pickWinner(id,w){ const r=document.getElementById("pcw-"+id); r.dataset.w=w; r.querySelectorAll(".wbtn").forEach(b=>b.classList.toggle("on",b.dataset.w===w)); }
+function simPensToggle(id){ const r=document.getElementById("sim-"+id); const on=document.getElementById("sp-"+id).checked; r.classList.toggle("penmode",on); r.dataset.pen=on?"1":"0"; }
+function simWinner(id,w){ const r=document.getElementById("sim-"+id); r.dataset.w=w; r.querySelectorAll(".wbtn").forEach(b=>b.classList.toggle("on",b.dataset.w===w)); }
+function lockPred(id){
+  const r=document.getElementById("pcw-"+id);
+  if (r.dataset.pen==="1"){
+    const w=r.dataset.w; if(w!=="home"&&w!=="away"){ alert("Pick the penalty winner first."); return; }
+    preds[id]={pens:1,w,locked:true};
+  } else {
+    const h=document.getElementById("ph-"+id).value, a=document.getElementById("pa-"+id).value;
+    if(h===""||a===""||isNaN(+h)||isNaN(+a)){ alert("Enter both scores first."); return; }
+    if(+h===+a){ alert("No draws in knockouts — tick “goes to penalties” instead."); return; }
+    preds[id]={h:+h,a:+a,locked:true};
+  }
+  render();
+}
+function resetCard(id){ delete preds[id]; render(); }
+function reveal(id){
+  const d=DEMO.find(x=>x.id===id), p=preds[id], r=document.getElementById("sim-"+id);
+  const e=evOf(d);
+  let H,A;
+  if (r.dataset.pen==="1"){
+    const w=r.dataset.w; if(w!=="home"&&w!=="away"){ alert("Pick who won the shootout."); return; }
+    H={score:1,shootoutScore:w==="home"?5:4,winner:w==="home"}; A={score:1,shootoutScore:w==="away"?5:4,winner:w==="away"};
+  } else {
+    const h=document.getElementById("sh-"+id).value, a=document.getElementById("sa-"+id).value;
+    if(h===""||a===""||isNaN(+h)||isNaN(+a)){ alert("Enter the actual score (or tick penalties)."); return; }
+    if(+h===+a){ alert("A knockout can't end level without penalties — tick the penalties box."); return; }
+    H={score:+h,winner:+h>+a}; A={score:+a,winner:+a>+h};
+  }
+  const pts=scorePred(p,H,A,e);
+  const top=d.final?10:4, mid=d.final?4:1;
+  const actual = (r.dataset.pen==="1") ? '1–1, '+(r.dataset.w==="home"?d.H.n:d.A.n)+' win on penalties' : H.score+'–'+A.score;
+  const yours = p.pens ? (p.w==="home"?d.H.n:d.A.n)+' on penalties' : p.h+'–'+p.a;
+  let why;
+  if (pts===0) why='Wrong winner — no points.';
+  else if (pts===top && p.pens) why='Called penalties AND the right winner — top marks!';
+  else if (pts===top) why='Exact score — top marks!';
+  else why='Right winner, but not the exact outcome.';
+  const cls = pts===0?"zero":(pts>=top?"win":"part");
+  document.getElementById("res-"+id).innerHTML =
+    '<div class="result '+cls+'"><div class="pts">+'+pts+' PTS</div><div class="ex">'+why+'</div>'+
+    '<div class="det">You predicted <b style="color:var(--txt)">'+yours+'</b> · actual result <b style="color:var(--txt)">'+actual+'</b></div></div>';
+}
+render();
+</script>
+</body>
+</html>
