@@ -69,6 +69,9 @@ html[dir="rtl"] .fmtseg{direction:ltr}
 html[dir="rtl"] .otdkey{margin-left:0;margin-right:auto}
 html[dir="rtl"] .dstrip,html[dir="rtl"] .htiles,html[dir="rtl"] .facts{direction:rtl}
 html[dir="rtl"] .score,html[dir="rtl"] .mscore,html[dir="rtl"] .bpc,html[dir="rtl"] .cd{direction:ltr}
+html[dir="rtl"] .gsum2 .gcol.l{text-align:right}
+html[dir="rtl"] .gsum2 .gcol.r{text-align:left}
+html[dir="rtl"] .gt th,html[dir="rtl"] .gt td{text-align:right}
 .hright{margin-left:auto;text-align:right}
 .uaeclock{font-family:'Oswald';font-weight:600;font-size:17px;letter-spacing:.5px}
 .constate{display:flex;align-items:center;gap:5px;justify-content:flex-end;font-family:'Oswald';
@@ -920,13 +923,20 @@ Object.assign(AR, AR_TEAMS);
 Object.assign(AR, {"UAE":"الإمارات","Kuwait":"الكويت","Bahrain":"البحرين","Oman":"عُمان","Libya":"ليبيا","Sudan":"السودان","Lebanon":"لبنان","UK — Eng/Sco":"بريطانيا — إنجلترا/إسكتلندا","Bosnia & H.":"البوسنة","USA — East":"أمريكا — الشرق","USA — Central":"أمريكا — الوسط","USA — West":"أمريكا — الغرب","Canada — East":"كندا — الشرق","Canada — West":"كندا — الغرب"});
 const AR_TZABBR = {UAE:"الإمارات",KSA:"السعودية",QAT:"قطر",KWT:"الكويت",BHR:"البحرين",OMN:"عُمان",IRQ:"العراق",EGY:"مصر",MAR:"المغرب",ALG:"الجزائر",TUN:"تونس",LBY:"ليبيا",SDN:"السودان",JOR:"الأردن",LBN:"لبنان",UK:"بريطانيا",POR:"البرتغال",ESP:"إسبانيا",FRA:"فرنسا",BEL:"بلجيكا",NED:"هولندا",GER:"ألمانيا",SUI:"سويسرا",AUT:"النمسا",CRO:"كرواتيا",NOR:"النرويج",SWE:"السويد",CZE:"التشيك",BIH:"البوسنة","USA-E":"أمريكا الشرق","USA-C":"أمريكا الوسط","USA-W":"أمريكا الغرب","CAN-E":"كندا الشرق","CAN-W":"كندا الغرب",MEX:"المكسيك"};
 const AR_GROUPS = {"Gulf":"الخليج","North Africa":"شمال أفريقيا","Levant":"بلاد الشام","Europe 🇪🇺":"أوروبا 🇪🇺","Host Nations 🌎":"الدول المضيفة 🌎"};
+const AR_TEAMS_LC = {}; for(const _t in AR_TEAMS) AR_TEAMS_LC[_t.toLowerCase()] = AR_TEAMS[_t];
+const AR_TEAM_RX = new RegExp("\\b(" + Object.keys(AR_TEAMS).sort((a,b)=>b.length-a.length).map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|") + ")\\b","gi");
 Object.assign(AR, {
   "Press for line-ups, formation & stats":"اضغط لعرض التشكيلة والإحصائيات","Press for match details":"اضغط لتفاصيل المباراة","Loading line-ups…":"جارٍ تحميل التشكيلات…","TV":"البثّ",
   "CREATE ACCOUNT":"إنشاء حساب","LOG IN":"تسجيل الدخول","Remember me on this device":"تذكّرني على هذا الجهاز","Choose your nation…":"اختر منتخبك…","Choose your nation":"اختر منتخبك","Username — letters, numbers, _":"اسم المستخدم · أحرف وأرقام و _","Password":"كلمة المرور",
   "Shared team room · be nice, it's football 🏆":"غرفة الفريق المشتركة · كن لطيفاً، إنها كرة قدم 🏆","🔒 Sign in to chat — reading is free":"🔒 سجّل الدخول للمشاركة · القراءة مجانية","WORLD CUP 2026 · UNOFFICIAL FAN APP · DATA: ESPN PUBLIC API":"كأس العالم 2026 · تطبيق جماهيري غير رسمي · البيانات من ESPN",
   "🏆 Weekly top predictor is crowned the":"🏆 يُتوَّج صاحب أعلى التوقّعات أسبوعياً ليكون","CHAMPION OF THE WEEK!":"بطل الأسبوع!","topped last week":"تصدّر الأسبوع الماضي","🏆 OVERALL · ALL WEEKS":"🏆 الإجمالي · كل الأسابيع","Total points across the whole tournament":"مجموع النقاط طوال البطولة","highest wins on finals day":"الأعلى يفوز يوم النهائي",
   "Sign in to make predictions, earn points & climb the leaderboard — browsing stays free.":"سجّل الدخول لإجراء التوقّعات وجمع النقاط وتصدّر الترتيب · التصفّح يبقى مجانياً.","Sign in to post in the team chat — reading is always free.":"سجّل الدخول للكتابة في دردشة الفريق · القراءة مجانية دائماً.",
-  "AM·PM":"ص·م","24H":"24 س"
+  "AM·PM":"ص·م","24H":"24 س",
+  "⤢ OPEN FULL TREE":"⤢ عرض الشجرة كاملة","⬇ DOWNLOAD (PNG)":"⬇ تنزيل (PNG)","3rd place":"المركز الثالث","Winner":"الفائز","To be played":"لم تُلعب بعد","Awaiting":"بانتظار النتيجة","AET / Pens":"تمديد / ترجيح","THIRD-PLACE PLAY-OFF":"مباراة المركز الثالث",
+  "TOP 2 — DIRECT R32":"الأول والثاني · تأهّل مباشر لدور الـ32","3RD — BEST-THIRD RACE":"الثالث · سباق أفضل ثالث","4TH — OUT":"الرابع · خارج",
+  "ROUND OF 32":"دور الـ32","ROUND OF 16":"دور الـ16","QUARTER-FINALS":"ربع النهائي","SEMI-FINALS":"نصف النهائي","QUARTER-FINAL":"ربع النهائي","SEMI-FINAL":"نصف النهائي","FINAL":"النهائي","R32":"دور الـ32","R16":"دور الـ16","QF":"ربع النهائي","SF":"نصف النهائي",
+  "GROUPS":"المجموعات","Loading standings…":"جارٍ تحميل الترتيب…",
+  "TEAM":"المنتخب","P":"لعب","W":"فاز","D":"تعادل","L":"خسر","GD":"الفارق","GF":"له","GA":"عليه","PTS":"نقاط"
 });
 // multi-word phrases for substring replacement inside composite nodes (longest first; safe, no single short words)
 const AR_PHRASES = Object.keys(AR).filter(k => /\s/.test(k) && /[A-Za-z]/.test(k)).sort((a,b)=>b.length-a.length);
@@ -953,16 +963,25 @@ const AR_RX = [
   [/\bAET\b/g, "بعد التمديد"],
   [/\bFT\b/g, "انتهت"]
 ];
-AR_RX.push([/PREDICTION CHAMPIONS?/g,"برنس التوقّعات"],[/with (\d+) pts\b/g,"بـ $1 نقطة"],[/(\d+) PT\b/g,"$1 نقطة"],[/KICK-OFF/g,"انطلاق"],[/Sign in/g,"تسجيل الدخول"],[/UTC/g,"غرينتش"]);
+AR_RX.push(
+  [/PREDICTION CHAMPIONS?/g,"برنس التوقّعات"],[/with (\d+) pts\b/g,"بـ $1 نقطة"],[/(\d+) PT\b/g,"$1 نقطة"],
+  [/KICK-OFF (.+)/g,"بتوقيت $1"],[/KICK-OFF/g,"انطلاق المباراة"],[/Sign in/g,"تسجيل الدخول"],[/UTC/g,"غرينتش"],
+  [/Winner Group ([A-L])/g,"متصدّر المجموعة $1"],[/Runner-up Group ([A-L])/g,"وصيف المجموعة $1"],[/Winner Match (\d+)/g,"الفائز من مباراة $1"],
+  [/from ([A-L/]+)/g,"من $1"],
+  [/(\d)(?:ST|ND|RD|TH) IN GROUP ([A-L]) — DIRECT R32 SPOT/g,(m,n,g)=>"المركز "+(n==="1"?"الأول":"الثاني")+" في المجموعة "+g+" · تأهّل مباشر لدور الـ32"],
+  [/TOP HALF → Semi-final 1/g,"النصف العلوي ← نصف النهائي 1"],[/BOTTOM HALF → Semi-final 2/g,"النصف السفلي ← نصف النهائي 2"]
+);
 function tAR(s){
   if(!s) return s; const k = s.trim(); if(!k || !/[A-Za-z]/.test(k)) return s;
   if(AR[k] !== undefined) return s.replace(k, AR[k]);          // whole-node exact match
   let out = s;
   for(const [rx,rep] of AR_RX) out = out.replace(rx, rep);     // dynamic templates
   for(const p of AR_PHRASES) if(out.indexOf(p) !== -1) out = out.split(p).join(AR[p]);  // composite phrases
+  out = out.replace(AR_TEAM_RX, m => AR_TEAMS_LC[m.toLowerCase()] || m);   // nation names inside composite text (any case)
   return out;
 }
-function _tNode(n){ const v = n.nodeValue; if(!v || !/[A-Za-z]/.test(v)) return; const t = tAR(v); if(t !== v) n.nodeValue = t; }
+function _tNode(n){ if(n.parentNode && n.parentNode.nodeType === 1 && n.parentNode.closest && n.parentNode.closest("#chatlog")) return;  // never translate chat messages (user content)
+  const v = n.nodeValue; if(!v || !/[A-Za-z]/.test(v)) return; const t = tAR(v); if(t !== v) n.nodeValue = t; }
 function translateTree(root){
   if(!root) return; if(root.nodeType === 3){ _tNode(root); return; } if(root.nodeType !== 1) return;
   const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null); const ns = []; let n; while(n = w.nextNode()) ns.push(n); ns.forEach(_tNode);
